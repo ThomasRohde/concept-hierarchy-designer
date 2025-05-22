@@ -41,36 +41,40 @@ export const MarkdownTooltip: React.FC<MarkdownTooltipProps> = ({
   const tooltipId = id || `tooltip-${Math.random().toString(36).substring(2, 9)}`;
   
   return (
-    <>
-      <div data-tooltip-id={tooltipId} className="inline-block">
+    <>      <div data-tooltip-id={tooltipId} className="inline-block">
         {children}
       </div>      <Tooltip 
         id={tooltipId}
-        className={`max-w-md text-gray-800 markdown-tooltip-container z-50 ${className || ''}`}
+        className={`max-w-md markdown-tooltip-container z-50 ${className || ''}`}
         style={{
-          opacity: 1
+          backgroundColor: 'white',
+          color: '#333',
+          opacity: 1,
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
         }}
         place="bottom"
         delayShow={300}
+        offset={5}
+        noArrow={true}
       >
         <div className="markdown-content text-sm leading-relaxed">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             urlTransform={defaultUrlTransform}
             skipHtml={!allowHtml}
-            components={{
-              a: ({ node, ...props }) => (
+            components={{              a: ({ node, ...props }) => (
                 <a {...props} target="_blank" rel="noopener noreferrer" />
-              ),              code: ({ node, className, children, ...props }) => {
+              ),
+              code: ({ node, className, children, ...props }) => {
                 const match = /language-(\w+)/.exec(className || '');
                 return match ? (
-                  <pre className={`bg-gray-100 p-2 rounded`}>
+                  <pre className={`bg-gray-50 p-2 rounded`}>
                     <code className={className} {...props}>
                       {children}
                     </code>
                   </pre>
                 ) : (
-                  <code className="bg-gray-100 px-1 py-0.5 rounded" {...props}>
+                  <code className="bg-gray-50 px-1 py-0.5 rounded" {...props}>
                     {children}
                   </code>
                 );
