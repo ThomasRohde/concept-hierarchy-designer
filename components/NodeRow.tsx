@@ -1,11 +1,13 @@
 import { motion } from 'framer-motion';
 import { ChevronDown, ChevronRight, ClipboardPaste, Copy, FileEdit, PlusSquare, Trash2, Wand2 } from 'lucide-react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { DragSourceMonitor, useDrag, useDrop } from 'react-dnd';
+import { getEmptyImage } from 'react-dnd-html5-backend';
 import { DND_ITEM_TYPE } from '../constants';
 import { NodeData } from '../types';
 import { Button } from './ui/Button';
 import { MarkdownTooltip } from './ui/MarkdownTooltip';
+import './ui/DragStyles.css';
 
 export interface NodeRowProps {
   node: NodeData;
@@ -35,14 +37,18 @@ const NodeRow: React.FC<NodeRowProps> = ({
   onMagicWand,
   onDeleteNode,
   onEditNode,
-}) => {
-  const [{ isDragging }, drag] = useDrag({
+}) => {  const [{ isDragging }, drag, preview] = useDrag({
     type: DND_ITEM_TYPE,
     item: { id: node.id },
     collect: (monitor: DragSourceMonitor<{ id: string }, unknown>) => ({
       isDragging: monitor.isDragging(),
     }),
   });
+  
+  // Use empty image as preview
+  useEffect(() => {
+    preview(getEmptyImage(), { captureDraggingState: true });
+  }, [preview]);
 
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: DND_ITEM_TYPE,
@@ -70,7 +76,6 @@ const NodeRow: React.FC<NodeRowProps> = ({
     onEditNode(node);
   };
 
-
   return (
     <motion.div
       ref={(el) => { 
@@ -80,44 +85,49 @@ const NodeRow: React.FC<NodeRowProps> = ({
       initial={{ opacity: 0, y: -4 }}
       animate={{ opacity: 1, y: 0 }}      exit={{ opacity: 0, y: 4 }}
       className={`group flex items-center justify-between h-10 rounded-lg hover:bg-gray-200/80 transition-colors duration-150 ${
-        isDragging ? "opacity-50 shadow-lg" : "shadow-sm"
+        isDragging ? "shadow-lg dragging" : "shadow-sm"
       } ${
-        isDropTarget ? "ring-2 ring-blue-500 bg-blue-50" : "bg-white"
+        isDropTarget ? "drop-target-active" : "bg-white"
       } mb-1 mx-2`}
-      style={{ paddingRight: '1.5rem' }}
-    >
-      {/* Left side – expand/collapse + label */}
+      style={{ 
+        paddingRight: '1.5rem',
+        cursor: isDragging ? 'grabbing' : 'grab'
+      }}
+    >      {/* Left side – expand/collapse + label */}
       <div
-        className="flex items-center space-x-3 flex-grow overflow-hidden"
+        className="flex items-center space-x-3 flex-grow overflow-hidden node-content"
         style={{ paddingLeft: `${depth * 1.5 + 0.5}rem` }} 
       >
-        {hasChildren ? (          <Button
+        {hasChildren ? (
+          <Button
             variant="ghost"
             size="icon"
-            className="p-1 text-gray-500 hover:text-gray-700"
+            className={`p-1 text-gray-500 hover:text-gray-700 ${isDragging ? 'opacity-0' : ''}`}
             onClick={(e) => {
               e.stopPropagation();
               toggleCollapse(node.id);
             }}
             aria-label={isCollapsed ? "Expand" : "Collapse"}
-          >            {isCollapsed ? (          <ChevronRight className="w-4 h-4" />
+            tabIndex={isDragging ? -1 : 0}
+          >            
+            {isCollapsed ? (
+              <ChevronRight className="w-4 h-4" />
             ) : (
               <ChevronDown className="w-4 h-4" />
             )}
-          </Button>        ) : (          <span className="w-4 h-4 inline-block ml-1" />        )}
-        {isDragging ? (
-          <span className="font-medium text-gray-800 text-sm select-none truncate">
+          </Button>
+        ) : (
+          <span className="w-4 h-4 inline-block ml-1" />
+        )}
+        
+        {/* Only render tooltip when not dragging */}
+        <MarkdownTooltip content={node.description || ''}>
+          <span className={`font-medium text-gray-800 text-sm select-none truncate ${isDragging ? 'opacity-0' : ''}`}>
             {node.name}
           </span>
-        ) : (
-          <MarkdownTooltip content={node.description || ''}>
-            <span className="font-medium text-gray-800 text-sm select-none truncate">
-              {node.name}
-            </span>
-          </MarkdownTooltip>
-        )}
-      </div>      {/* Right side – action icons */}
-      <div className="flex items-center space-x-2 ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-200">        <Button
+        </MarkdownTooltip>      </div>      {/* Right side – action icons */}
+      <div className={`flex items-center space-x-2 ml-auto ${isDragging ? 'opacity-0' : 'opacity-0 group-hover:opacity-100'} transition-opacity duration-200 node-content`}>
+        <Button
           variant="ghost"
           size="icon"
           className="p-1 text-gray-500 hover:text-purple-500"

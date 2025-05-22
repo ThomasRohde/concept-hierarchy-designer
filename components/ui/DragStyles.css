@@ -1,0 +1,26 @@
+.dragging .node-content {
+  opacity: 0 !important;
+}
+
+.dragging {
+  /* Make the dragging node slightly visible to show structure */
+  background-color: rgba(209, 213, 219, 0.1) !important;
+  cursor: grabbing;
+}
+
+/* Enhance drop target styling */
+.drop-target-active {
+  outline: 2px dashed #3b82f6 !important;
+  outline-offset: -2px;
+  background-color: rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Custom drag layer */
+.custom-drag-indicator {
+  pointer-events: none;
+  background-color: rgba(59, 130, 246, 0.7);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.7);
+}

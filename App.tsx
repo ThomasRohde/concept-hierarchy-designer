@@ -8,6 +8,7 @@ import ConfirmDeleteModal from './components/ConfirmDeleteModal';
 import EditNodeModal from './components/EditNodeModal';
 import LoadingSpinner from './components/LoadingSpinner';
 import LoadTreeButton from './components/LoadTreeButton';
+import CustomDragLayer from './components/CustomDragLayer';
 import NewTreeButton from './components/NewTreeButton';
 import NewTreeModal from './components/NewTreeModal';
 import NodeRow, { NodeRowProps } from './components/NodeRow';
@@ -433,10 +434,10 @@ export default function App() {
     onMagicWand: generateMagicWandPrompt,           
     onDeleteNode: openDeleteConfirmationModal,
     onEditNode: handleOpenEditNodeModal,
-  };
-  return (
+  };  return (
     <DndProvider backend={HTML5Backend}>
       <div className="min-h-screen py-8 px-4 flex flex-col items-center bg-gray-100 text-gray-900 h-screen">
+        <CustomDragLayer />
         <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
         <Card className="w-full max-w-5xl shadow-2xl flex flex-col flex-grow">
           <CardHeader>
