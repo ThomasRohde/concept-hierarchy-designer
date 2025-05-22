@@ -44,14 +44,21 @@ const NodeRow: React.FC<NodeRowProps> = ({
     }),
   });
 
-  const [, drop] = useDrop({
+  const [{ isOver, canDrop }, drop] = useDrop({
     accept: DND_ITEM_TYPE,
     drop: (item: { id: string }) => {
       if (item.id !== node.id) { 
         moveNode(item.id, node.id);
       }
     },
+    canDrop: (item: { id: string }) => item.id !== node.id,
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    }),
   });
+
+  const isDropTarget = isOver && canDrop;
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -72,9 +79,11 @@ const NodeRow: React.FC<NodeRowProps> = ({
       }}
       initial={{ opacity: 0, y: -4 }}
       animate={{ opacity: 1, y: 0 }}      exit={{ opacity: 0, y: 4 }}
-      className={`group flex items-center justify-between h-12 rounded-lg hover:bg-gray-200/80 transition-colors duration-150 ${
+      className={`group flex items-center justify-between h-10 rounded-lg hover:bg-gray-200/80 transition-colors duration-150 ${
         isDragging ? "opacity-50 shadow-lg" : "shadow-sm"
-      } bg-white mb-1 mx-2`}
+      } ${
+        isDropTarget ? "ring-2 ring-blue-500 bg-blue-50" : "bg-white"
+      } mb-1 mx-2`}
       style={{ paddingRight: '1.5rem' }}
     >
       {/* Left side – expand/collapse + label */}
@@ -95,12 +104,18 @@ const NodeRow: React.FC<NodeRowProps> = ({
             ) : (
               <ChevronDown className="w-4 h-4" />
             )}
-          </Button>        ) : (
-          <span className="w-4 h-4 inline-block ml-1" />        )}<MarkdownTooltip content={node.description || ''}>
+          </Button>        ) : (          <span className="w-4 h-4 inline-block ml-1" />        )}
+        {isDragging ? (
           <span className="font-medium text-gray-800 text-sm select-none truncate">
             {node.name}
           </span>
-        </MarkdownTooltip>
+        ) : (
+          <MarkdownTooltip content={node.description || ''}>
+            <span className="font-medium text-gray-800 text-sm select-none truncate">
+              {node.name}
+            </span>
+          </MarkdownTooltip>
+        )}
       </div>      {/* Right side – action icons */}
       <div className="flex items-center space-x-2 ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-200">        <Button
           variant="ghost"

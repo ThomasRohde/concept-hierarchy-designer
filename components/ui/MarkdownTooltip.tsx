@@ -49,9 +49,9 @@ export const MarkdownTooltip: React.FC<MarkdownTooltipProps> = ({
         style={{
           backgroundColor: 'white',
           color: '#333',
-          opacity: 1,
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
         }}
+        opacity={1}
         place="bottom"
         delayShow={300}
         offset={5}
