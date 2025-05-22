@@ -84,7 +84,7 @@ const NodeRow: React.FC<NodeRowProps> = ({
       }}
       initial={{ opacity: 0, y: -4 }}
       animate={{ opacity: 1, y: 0 }}      exit={{ opacity: 0, y: 4 }}
-      className={`group flex items-center justify-between h-10 rounded-lg hover:bg-gray-200/80 transition-colors duration-150 ${
+      className={`group flex items-center justify-between h-8 rounded-lg hover:bg-gray-200/80 transition-colors duration-150 ${
         isDragging ? "shadow-lg dragging" : "shadow-sm"
       } ${
         isDropTarget ? "drop-target-active" : "bg-white"

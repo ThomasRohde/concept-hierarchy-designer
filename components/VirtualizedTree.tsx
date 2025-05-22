@@ -64,11 +64,10 @@ const VirtualizedTree: React.FC<VirtualizedTreeProps> = ({
       </div>
     );
   };
-    return (
-    <List
+    return (    <List
       height={height}
       width={width}      itemCount={flattenedTree.length}
-      itemSize={64} // Adjusted for taller rows
+      itemSize={36} // 32px (h-8) + 4px (mb-1) margin
       className="scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
     >
       {Row}

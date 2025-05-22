@@ -490,10 +490,10 @@ export default function App() {
               </div>
             )}
           </CardContent>
-        </Card>
-        <footer className="mt-8 text-center text-sm text-gray-500">
+        </Card>        <footer className="mt-8 text-center text-sm text-gray-500">
           <p>Drag & drop to re-organize. Hover over nodes for actions.</p>
           <p>Powered by React, Tailwind CSS, Framer Motion. Clipboard actions use system clipboard.</p>
+          <p>&copy; 2025 Thomas Klok Rohde. All rights reserved.</p>
         </footer>
 
         <AddChildModal
