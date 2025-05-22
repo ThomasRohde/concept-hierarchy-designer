@@ -12,6 +12,7 @@ import NewTreeButton from './components/NewTreeButton';
 import NewTreeModal from './components/NewTreeModal';
 import NodeRow, { NodeRowProps } from './components/NodeRow';
 import SaveTreeButton from './components/SaveTreeButton';
+import TreeControls from './components/TreeControls';
 import { Card, CardContent, CardHeader, CardTitle } from './components/ui/Card';
 import { useClipboardActions } from './hooks/useClipboardActions';
 import { useMagicWand } from './hooks/useMagicWand';
@@ -147,18 +148,27 @@ export default function App() {
 
   const { copyToClipboard, pasteAsChild } = useClipboardActions({ setNodes, setCollapsed });
   const { generateMagicWandPrompt } = useMagicWand({ nodes });
-
   const toggleCollapse = useCallback((id: string) => {
     setCollapsed((prev) => {
       const next = new Set(prev);
+      
       if (next.has(id)) {
+        // Expanding a node - remove it from collapsed set
         next.delete(id);
+        
+        // But ensure all its direct children are collapsed (only expand one level)
+        const directChildren = nodes.filter(node => node.parent === id);
+        directChildren.forEach(child => {
+          next.add(child.id);
+        });
       } else {
+        // Collapsing a node - add it to collapsed set
         next.add(id);
       }
+      
       return next;
     });
-  }, []);
+  }, [nodes]);
 
   const moveNode = useCallback((dragId: string, dropTargetId: string) => {
     if (dragId === dropTargetId) return;
@@ -332,6 +342,43 @@ export default function App() {
     handleCloseEditNodeModal();
   }, [handleCloseEditNodeModal]);
 
+  // Expand and collapse all handlers
+  const handleExpandAll = useCallback(() => {
+    // Create a new set where only nodes that have grandchildren are collapsed
+    const nodesWithGrandchildren = new Set<string>();
+    
+    // First, identify all nodes with children
+    const nodesWithChildren = nodes
+      .filter(node => nodes.some(n => n.parent === node.id))
+      .map(node => node.id);
+      
+    // For each node with children, check if any of its children also have children
+    nodesWithChildren.forEach(nodeId => {
+      const childrenIds = nodes
+        .filter(node => node.parent === nodeId)
+        .map(child => child.id);
+        
+      // If any child has children, add those children to the collapsed set
+      childrenIds.forEach(childId => {
+        if (nodes.some(n => n.parent === childId)) {
+          nodesWithGrandchildren.add(childId);
+        }
+      });
+    });
+    
+    setCollapsed(nodesWithGrandchildren);
+  }, [nodes]);
+
+  const handleCollapseAll = useCallback(() => {
+    // Get the IDs of all nodes that have children
+    const nodesWithChildren = nodes
+      .filter(node => nodes.some(n => n.parent === node.id))
+      .map(node => node.id);
+    
+    // Add all of these IDs to the collapsed set
+    setCollapsed(new Set(nodesWithChildren));
+  }, [nodes]);
+
   // Function to handle clipboard operations
   const handleCopyToClipboard = useCallback((node: NodeData) => {
     copyToClipboard(node, nodes);
@@ -366,10 +413,15 @@ export default function App() {
                 />
                 <LoadTreeButton onLoad={handleLoadTree} />
               </div>
-            </div>
-          </CardHeader>
+            </div>          </CardHeader>
           <CardContent className="p-0 overflow-hidden">
-            <div className="p-2 space-y-0.5"> 
+            <div className="p-2 space-y-0.5">
+              <div className="mb-2">
+                <TreeControls 
+                  onExpandAll={handleExpandAll} 
+                  onCollapseAll={handleCollapseAll}
+                />
+              </div>
               <AnimatePresence>
                 {renderTreeRecursive(nodes, null, 0, collapsed, nodeRowProps)}
               </AnimatePresence>
