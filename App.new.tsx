@@ -1,3 +1,4 @@
+// filepath: c:\Users\E29667\GitHub\concept-hierarchy-designer\App.tsx
 import { AnimatePresence } from 'framer-motion';
 import React, { useCallback, useState } from 'react';
 import { DndProvider } from 'react-dnd';

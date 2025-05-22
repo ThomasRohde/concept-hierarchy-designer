@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { Modal } from './ui/Modal';
-import { Input } from './ui/Input';
-import { Textarea } from './ui/Textarea';
-import { Button } from './ui/Button';
 import { NodeData } from '../types';
+import { Button } from './ui/Button';
+import { Input } from './ui/Input';
+import { Modal } from './ui/Modal';
+import { Textarea } from './ui/Textarea';
 
 interface EditNodeModalProps {
   isOpen: boolean;
@@ -19,7 +19,7 @@ const EditNodeModal: React.FC<EditNodeModalProps> = ({ isOpen, onClose, onSave, 
 
   useEffect(() => {
     if (isOpen && nodeToEdit) {
-      setName(nodeToEdit.label);
+      setName(nodeToEdit.name);
       setDescription(nodeToEdit.description || '');
     } else if (!isOpen) {
       // Reset when modal is closed or no node is being edited
@@ -44,7 +44,7 @@ const EditNodeModal: React.FC<EditNodeModalProps> = ({ isOpen, onClose, onSave, 
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Edit Node: "${nodeToEdit.label}"`}
+      title={`Edit Node: "${nodeToEdit.name}"`}
     >
       <div className="space-y-4">
         <div>

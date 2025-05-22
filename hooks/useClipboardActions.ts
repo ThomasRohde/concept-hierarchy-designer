@@ -1,27 +1,46 @@
 import { useCallback } from 'react';
 import { toast } from 'react-hot-toast';
 import { NodeData } from '../types';
-import { genId, findNode } from '../utils/treeUtils';
+import { genId } from '../utils/treeUtils';
 
 interface UseClipboardActionsProps {
-  setTree: React.Dispatch<React.SetStateAction<NodeData>>;
+  setNodes: React.Dispatch<React.SetStateAction<NodeData[]>>;
   setCollapsed: React.Dispatch<React.SetStateAction<Set<string>>>;
 }
 
-export const useClipboardActions = ({ setTree, setCollapsed }: UseClipboardActionsProps) => {
-  const copyToClipboard = useCallback(async (nodeToCopy: NodeData) => {
+export const useClipboardActions = ({ setNodes, setCollapsed }: UseClipboardActionsProps) => {
+  // Function to recursively get a node and all its descendants in the flat structure
+  const getNodeAndDescendants = useCallback((nodes: NodeData[], nodeId: string): NodeData[] => {
+    const result: NodeData[] = [];
+    const node = nodes.find(n => n.id === nodeId);
+    if (!node) return result;
+    
+    // Add the node itself
+    result.push({...node});
+    
+    // Get all direct children
+    const children = nodes.filter(n => n.parent === nodeId);
+    
+    // For each child, recursively get its descendants
+    children.forEach(child => {
+      result.push(...getNodeAndDescendants(nodes, child.id));
+    });
+    
+    return result;
+  }, []);
+
+  const copyToClipboard = useCallback(async (nodeToCopy: NodeData, allNodes: NodeData[]) => {
     try {
-      // Create a deep copy to avoid modifying the original node or its children,
-      // especially if any transformations were to be done before stringifying.
-      const cleanNodeToCopy = JSON.parse(JSON.stringify(nodeToCopy));
-      const nodeJson = JSON.stringify(cleanNodeToCopy, null, 2);
+      // Get the node and all its descendants from the current nodes array
+      const nodeTree = getNodeAndDescendants(allNodes, nodeToCopy.id);
+      const nodeJson = JSON.stringify(nodeTree, null, 2);
       await navigator.clipboard.writeText(nodeJson);
-      toast.success(`"${nodeToCopy.label}" and its children copied to clipboard!`);
+      toast.success(`"${nodeToCopy.name}" and its children copied to clipboard!`);
     } catch (err) {
       console.error("Failed to copy to clipboard:", err);
       toast.error("Failed to copy to clipboard. Make sure you've granted clipboard permissions and are using HTTPS/localhost. See console for details.");
     }
-  }, []);
+  }, [getNodeAndDescendants]);
 
   const pasteAsChild = useCallback(async (targetParentNode: NodeData) => {
     try {
@@ -40,58 +59,44 @@ export const useClipboardActions = ({ setTree, setCollapsed }: UseClipboardActio
         return;
       }
       
+      // Function to validate and prepare node in the new format
       const validateAndPrepareNode = (item: any): NodeData | null => {
-        if (item && typeof item.label === 'string') { 
-          const newNode: NodeData = {
-            id: genId(), 
-            label: item.label,
-            description: typeof item.description === 'string' ? item.description : '',
-            children: [] 
+        const name = item.name || item.label; // Support both formats
+        const description = item.description || '';
+        
+        if (item && typeof name === 'string') { 
+          return {
+            id: genId(),
+            name: name,
+            description: description,
+            parent: targetParentNode.id
           };
-          // Recursively validate and prepare children
-          if (Array.isArray(item.children)) {
-            newNode.children = item.children.map(validateAndPrepareNode).filter(Boolean) as NodeData[];
-          }
-          return newNode;
         }
         return null; 
       };
       
+      // Process the parsed data into nodes
       let nodesToPaste: NodeData[] = [];
       if (Array.isArray(parsedData)) {
-          nodesToPaste = parsedData.map(validateAndPrepareNode).filter(Boolean) as NodeData[];
-          if (nodesToPaste.length !== parsedData.length && parsedData.length > 0) {
-             toast("Some items in the pasted array were not valid nodes or had missing required fields and were ignored.", { icon: '⚠️' });
-          }
+        nodesToPaste = parsedData.map(validateAndPrepareNode).filter(Boolean) as NodeData[];
+        if (nodesToPaste.length !== parsedData.length && parsedData.length > 0) {
+          toast("Some items in the pasted array were not valid nodes or had missing required fields and were ignored.", { icon: '⚠️' });
+        }
       } else {
-          const singleNode = validateAndPrepareNode(parsedData);
-          if (singleNode) {
-            nodesToPaste = [singleNode];
-          }
+        const singleNode = validateAndPrepareNode(parsedData);
+        if (singleNode) {
+          nodesToPaste = [singleNode];
+        }
       }
       
       if (nodesToPaste.length === 0) {
-          toast.error("Pasted data is not a valid node or array of nodes, or contains no valid nodes after processing (e.g., missing 'label').");
-          return;
+        toast.error("Pasted data is not a valid node or array of nodes, or contains no valid nodes after processing (e.g., missing 'name').");
+        return;
       }
 
-      setTree((currentTree) => {
-        const newTree = JSON.parse(JSON.stringify(currentTree)) as NodeData;
-        const targetParentInfo = findNode(newTree, targetParentNode.id);
-        
-        if (targetParentInfo && targetParentInfo.node) {
-          const targetParent = targetParentInfo.node;
-          targetParent.children = targetParent.children || [];
-          nodesToPaste.forEach(pastedNodeInstance => {
-            targetParent.children.push(pastedNodeInstance);
-          });
-        } else {
-            // This case should ideally not happen if targetParentNode.id is always valid
-            console.error("Paste target parent node not found in the tree:", targetParentNode.id);
-            toast.error("Error: Could not find the target parent node to paste under. The tree might have changed unexpectedly.");
-            return currentTree; // Return original tree if parent not found
-        }
-        return newTree;
+      // Add the new nodes to the existing nodes array
+      setNodes(currentNodes => {
+        return [...currentNodes, ...nodesToPaste];
       });
 
       // Auto-expand the parent node where content was pasted
@@ -100,6 +105,7 @@ export const useClipboardActions = ({ setTree, setCollapsed }: UseClipboardActio
         next.delete(targetParentNode.id); 
         return next;
       });
+      
       toast.success("Content pasted successfully as child/children!");
 
     } catch (err) {
@@ -111,7 +117,7 @@ export const useClipboardActions = ({ setTree, setCollapsed }: UseClipboardActio
         toast.error("Failed to paste from clipboard. Check permissions (HTTPS/localhost) or see console for details.");
       }
     }
-  }, [setTree, setCollapsed]);
+  }, [setNodes, setCollapsed]);
 
   return { copyToClipboard, pasteAsChild };
 };

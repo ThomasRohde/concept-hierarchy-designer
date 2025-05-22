@@ -1,15 +1,16 @@
-import React from 'react';
-import { useDrag, useDrop, DragSourceMonitor } from 'react-dnd';
 import { motion } from 'framer-motion';
-import { ChevronRight, ChevronDown, Wand2, Copy, ClipboardPaste, PlusSquare, Trash2, FileEdit } from 'lucide-react'; // Added FileEdit
-import { NodeData } from '../types';
+import { ChevronDown, ChevronRight, ClipboardPaste, Copy, FileEdit, PlusSquare, Trash2, Wand2 } from 'lucide-react';
+import React from 'react';
+import { DragSourceMonitor, useDrag, useDrop } from 'react-dnd';
 import { DND_ITEM_TYPE } from '../constants';
+import { NodeData } from '../types';
 import { Button } from './ui/Button';
 
 export interface NodeRowProps {
   node: NodeData;
   depth: number;
   isCollapsed: boolean;
+  hasChildren: boolean;
   toggleCollapse: (id: string) => void;
   moveNode: (dragId: string, dropId: string) => void;
   onAddNewChild: (parentNode: NodeData) => void;
@@ -17,13 +18,14 @@ export interface NodeRowProps {
   onPasteAsChild: (targetParentNode: NodeData) => void;
   onMagicWand: (node: NodeData) => void;
   onDeleteNode: (nodeId: string) => void;
-  onEditNode: (node: NodeData) => void; // Added onEditNode prop
+  onEditNode: (node: NodeData) => void;
 }
 
 const NodeRow: React.FC<NodeRowProps> = ({
   node,
   depth,
   isCollapsed,
+  hasChildren,
   toggleCollapse,
   moveNode,
   onAddNewChild,
@@ -31,7 +33,7 @@ const NodeRow: React.FC<NodeRowProps> = ({
   onPasteAsChild,
   onMagicWand,
   onDeleteNode,
-  onEditNode, // Added onEditNode
+  onEditNode,
 }) => {
   const [{ isDragging }, drag] = useDrag({
     type: DND_ITEM_TYPE,
@@ -55,7 +57,7 @@ const NodeRow: React.FC<NodeRowProps> = ({
     onDeleteNode(node.id);
   };
 
-  const handleEdit = (e: React.MouseEvent) => { // Added handleEdit
+  const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
     onEditNode(node);
   };
@@ -80,7 +82,7 @@ const NodeRow: React.FC<NodeRowProps> = ({
         className="flex items-center space-x-2 flex-grow overflow-hidden"
         style={{ paddingLeft: `${depth * 1.5 + 0.5}rem` }} 
       >
-        {node.children?.length > 0 ? (
+        {hasChildren ? (
           <Button
             variant="ghost"
             size="icon"
@@ -100,8 +102,8 @@ const NodeRow: React.FC<NodeRowProps> = ({
         ) : (
           <span className="w-4 h-4 inline-block ml-1" /> 
         )}
-        <span className="font-medium text-gray-800 select-none truncate" title={node.label}>
-          {node.label}
+        <span className="font-medium text-gray-800 select-none truncate" title={node.name}>
+          {node.name}
         </span>
       </div>
 
@@ -110,12 +112,12 @@ const NodeRow: React.FC<NodeRowProps> = ({
         <Button
           variant="ghost"
           size="icon"
-          className="p-1.5 text-gray-500 hover:text-purple-500" // Changed hover color for edit
-          onClick={handleEdit} // Added onClick for edit
+          className="p-1.5 text-gray-500 hover:text-purple-500"
+          onClick={handleEdit}
           aria-label="Edit Node"
           title="Edit Node"
         >
-          <FileEdit className="w-4 h-4" /> {/* Added Edit Icon */}
+          <FileEdit className="w-4 h-4" />
         </Button>
         <Button
           variant="ghost"

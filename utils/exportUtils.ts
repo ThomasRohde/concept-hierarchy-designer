@@ -5,25 +5,27 @@ import { NodeData } from '../types';
  * @param data The JSON data to validate
  * @returns Whether the data is valid NodeData
  */
-export const validateNodeData = (data: any): data is NodeData => {
-  return (
-    data &&
-    typeof data === 'object' &&
-    typeof data.id === 'string' &&
-    typeof data.label === 'string' &&
-    typeof data.description === 'string' &&
-    Array.isArray(data.children)
+export const validateNodeData = (data: any): data is NodeData[] => {
+  if (!Array.isArray(data)) return false;
+  
+  return data.every(node => 
+    node &&
+    typeof node === 'object' &&
+    typeof node.id === 'string' &&
+    typeof node.name === 'string' &&
+    typeof node.description === 'string' &&
+    (node.parent === null || typeof node.parent === 'string')
   );
 };
 
 /**
  * Saves the concept hierarchy tree as a JSON file that can be downloaded
- * @param tree The concept hierarchy tree to save
+ * @param nodes The concept hierarchy nodes to save
  * @param filename The name of the file to save (without extension)
  */
-export const saveTreeAsJson = (tree: NodeData, filename: string = 'concept-hierarchy'): void => {
+export const saveTreeAsJson = (nodes: NodeData[], filename: string = 'concept-hierarchy'): void => {
   // Create a Blob with the JSON data
-  const jsonData = JSON.stringify(tree, null, 2);
+  const jsonData = JSON.stringify(nodes, null, 2);
   const blob = new Blob([jsonData], { type: 'application/json' });
   
   // Create a temporary download link
