@@ -1,6 +1,22 @@
 import { NodeData } from '../types';
 
 /**
+ * Validates that the provided JSON data conforms to the expected NodeData structure
+ * @param data The JSON data to validate
+ * @returns Whether the data is valid NodeData
+ */
+export const validateNodeData = (data: any): data is NodeData => {
+  return (
+    data &&
+    typeof data === 'object' &&
+    typeof data.id === 'string' &&
+    typeof data.label === 'string' &&
+    typeof data.description === 'string' &&
+    Array.isArray(data.children)
+  );
+};
+
+/**
  * Saves the concept hierarchy tree as a JSON file that can be downloaded
  * @param tree The concept hierarchy tree to save
  * @param filename The name of the file to save (without extension)

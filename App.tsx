@@ -9,11 +9,12 @@ import AddChildModal from './components/AddChildModal';
 import NewTreeModal from './components/NewTreeModal';
 import NewTreeButton from './components/NewTreeButton';
 import SaveTreeButton from './components/SaveTreeButton';
+import LoadTreeButton from './components/LoadTreeButton';
 import ConfirmDeleteModal from './components/ConfirmDeleteModal';
 import EditNodeModal from './components/EditNodeModal';
 import { NodeData } from './types';
 import { genId, findNode } from './utils/treeUtils';
-import { saveTreeAsJson } from './utils/exportUtils';
+import { saveTreeAsJson, validateNodeData } from './utils/exportUtils';
 import { useClipboardActions } from './hooks/useClipboardActions';
 import { useMagicWand } from './hooks/useMagicWand';
 
@@ -242,6 +243,16 @@ export default function App() {
     setCollapsed(new Set()); 
     handleCloseNewTreeModal();
   }, [handleCloseNewTreeModal]);
+  
+  const handleLoadTree = useCallback((loadedData: any) => {
+    if (validateNodeData(loadedData)) {
+      setTree(loadedData);
+      setCollapsed(new Set());
+      toast.success("Tree loaded successfully");
+    } else {
+      toast.error("Invalid tree data format");
+    }
+  }, []);
 
   // Edit Node Modal Handlers
   const handleOpenEditNodeModal = useCallback((node: NodeData) => {
@@ -299,6 +310,7 @@ export default function App() {
                     toast.success("Concept hierarchy saved as JSON");
                   }} 
                 />
+                <LoadTreeButton onLoad={handleLoadTree} />
               </div>
             </div>
           </CardHeader>
