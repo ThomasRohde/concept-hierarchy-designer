@@ -351,7 +351,6 @@ export default function App() {
     setIsEditNodeModalOpen(false);
     setEditingNode(null);
   }, []);
-
   const handleSaveEditedNode = useCallback((nodeId: string, newName: string, newDescription: string) => {
     setNodes(currentNodes => {
       return currentNodes.map(node => {
@@ -363,22 +362,20 @@ export default function App() {
     });
     handleCloseEditNodeModal();
   }, [handleCloseEditNodeModal]);
-
+  
   // Expand and collapse all handlers
   const handleExpandAll = useCallback(() => {
     setCollapsed(new Set());
   }, []);
 
   const handleCollapseAll = useCallback(() => {
-    // Create a set with all node IDs except the root node
-    const allNodeIds = new Set<string>();
-    nodes.forEach(node => {
-      // Only add non-root nodes
-      if (node.parent !== null) {
-        allNodeIds.add(node.id);
-      }
-    });
-    setCollapsed(allNodeIds);
+    // Get the IDs of all nodes that have children
+    const nodesWithChildren = nodes
+      .filter(node => nodes.some(n => n.parent === node.id))
+      .map(node => node.id);
+    
+    // Add all of these IDs to the collapsed set
+    setCollapsed(new Set(nodesWithChildren));
   }, [nodes]);
 
   // Function to handle clipboard operations
