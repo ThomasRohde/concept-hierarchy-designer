@@ -142,6 +142,38 @@ export default function App() {
   const [nodes, setNodes] = useState<NodeData[]>([]);
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   
+  // Create a ref for the tree container to measure its width
+  const treeContainerRef = React.useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(1000);
+  const [containerHeight, setContainerHeight] = useState(500);
+  
+  // Update container dimensions when window resizes
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (treeContainerRef.current) {
+        setContainerWidth(treeContainerRef.current.offsetWidth);
+        setContainerHeight(treeContainerRef.current.offsetHeight);
+      }
+    };
+    
+    // Initial measurement
+    updateDimensions();
+    
+    // Add resize listener
+    window.addEventListener('resize', updateDimensions);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
+
+  // Re-measure container when content changes
+  useEffect(() => {
+    if (treeContainerRef.current) {
+      setContainerWidth(treeContainerRef.current.offsetWidth);
+      setContainerHeight(treeContainerRef.current.offsetHeight);
+    }
+  }, [nodes.length, collapsed.size]);
+
   const [isAddChildModalOpen, setIsAddChildModalOpen] = useState(false);
   const [addingChildToParentNode, setAddingChildToParentNode] = useState<NodeData | null>(null);
   
@@ -404,9 +436,9 @@ export default function App() {
   };
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="min-h-screen py-8 px-4 flex flex-col items-center bg-gray-100 text-gray-900">
+      <div className="min-h-screen py-8 px-4 flex flex-col items-center bg-gray-100 text-gray-900 h-screen">
         <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
-        <Card className="w-full max-w-5xl shadow-2xl">
+        <Card className="w-full max-w-5xl shadow-2xl flex flex-col flex-grow">
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle className="text-2xl">Concept Hierarchy Designer</CardTitle>              <div className="flex items-center space-x-2">
@@ -421,17 +453,18 @@ export default function App() {
                 <LoadTreeButton onLoad={handleLoadTree} disabled={isLoading} />
               </div>
             </div>
-          </CardHeader>          <CardContent className="p-2 overflow-hidden">
+          </CardHeader>
+          <CardContent className="p-2 overflow-hidden flex-grow flex flex-col">
             {isInitializing ? (
-              <div className="flex justify-center items-center h-96">
+              <div className="flex justify-center items-center flex-grow">
                 <LoadingSpinner size={50} text="Initializing..." />
               </div>
             ) : isLoading ? (
-              <div className="flex justify-center items-center h-96">
+              <div className="flex justify-center items-center flex-grow">
                 <LoadingSpinner size={50} text="Loading data..." />
               </div>
             ) : (
-              <div className="p-2 space-y-0.5 h-[600px]">
+              <div className="p-2 space-y-0.5 flex flex-col flex-grow">
                 <div className="mb-2">
                   <TreeControls 
                     onExpandAll={handleExpandAll} 
@@ -439,18 +472,20 @@ export default function App() {
                     disabled={isLoading || isInitializing}
                   />
                 </div>
-                <AnimatePresence>{nodes.length > 100 ? (
-                    <VirtualizedTree 
-                      nodes={nodes}
-                      collapsed={collapsed}
-                      nodeRowProps={nodeRowProps}
-                      height={600}
-                      width={1000} // or using a ref to get actual width
-                    />
-                  ) : (
-                    renderTreeRecursive(nodes, null, 0, collapsed, nodeRowProps, nodeMap)
-                  )}
-                </AnimatePresence>
+                <div className="flex-grow overflow-y-auto overflow-x-hidden w-full" ref={treeContainerRef}>
+                  <AnimatePresence>{nodes.length > 100 ? (
+                      <VirtualizedTree 
+                        nodes={nodes}
+                        collapsed={collapsed}
+                        nodeRowProps={nodeRowProps}
+                        height={containerHeight || 500}
+                        width={containerWidth || 1000} // Use measured container dimensions
+                      />
+                    ) : (
+                      renderTreeRecursive(nodes, null, 0, collapsed, nodeRowProps, nodeMap)
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
             )}
           </CardContent>
