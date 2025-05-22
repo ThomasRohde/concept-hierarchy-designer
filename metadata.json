@@ -1,0 +1,7 @@
+{
+  "name": "Concept Hierarchy Designer",
+  "description": "A web application to design and manage concept hierarchies with drag-and-drop functionality, copy-paste, and dynamic node creation.",
+  "requestFramePermissions": [
+    "clipboard-read"
+  ]
+}
