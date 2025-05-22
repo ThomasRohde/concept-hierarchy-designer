@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Tooltip } from 'react-tooltip';
 import remarkGfm from 'remark-gfm';
-// The CSS is likely imported globally or through a different mechanism
+import './MarkdownTooltip.css';
 
 interface MarkdownTooltipProps {
   content: string;
@@ -46,7 +46,7 @@ export const MarkdownTooltip: React.FC<MarkdownTooltipProps> = ({
         {children}
       </div>      <Tooltip 
         id={tooltipId}
-        className={`max-w-md bg-white text-gray-800 shadow-lg p-4 rounded-lg border border-gray-200 z-50 ${className || ''}`}
+        className={`max-w-md text-gray-800 markdown-tooltip-container z-50 ${className || ''}`}
         style={{
           opacity: 1
         }}
