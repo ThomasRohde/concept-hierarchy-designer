@@ -84,7 +84,7 @@ const NodeRow: React.FC<NodeRowProps> = ({
       }}
       initial={{ opacity: 0, y: -4 }}
       animate={{ opacity: 1, y: 0 }}      exit={{ opacity: 0, y: 4 }}
-      className={`group flex items-center justify-between h-8 rounded-lg hover:bg-gray-200/80 transition-colors duration-150 ${
+      className={`group flex items-center justify-between h-10 sm:h-8 rounded-lg hover:bg-gray-200/80 transition-colors duration-150 ${
         isDragging ? "shadow-lg dragging" : "shadow-sm"
       } ${
         isDropTarget ? "drop-target-active" : "bg-white"
@@ -102,7 +102,7 @@ const NodeRow: React.FC<NodeRowProps> = ({
           <Button
             variant="ghost"
             size="icon"
-            className={`p-1 text-gray-500 hover:text-gray-700 ${isDragging ? 'opacity-0' : ''}`}
+            className={`p-1.5 sm:p-1 text-gray-500 hover:text-gray-700 ${isDragging ? 'opacity-0' : ''}`}
             onClick={(e) => {
               e.stopPropagation();
               toggleCollapse(node.id);
@@ -111,13 +111,13 @@ const NodeRow: React.FC<NodeRowProps> = ({
             tabIndex={isDragging ? -1 : 0}
           >            
             {isCollapsed ? (
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-5 h-5 sm:w-4 sm:h-4" />
             ) : (
-              <ChevronDown className="w-4 h-4" />
+              <ChevronDown className="w-5 h-5 sm:w-4 sm:h-4" />
             )}
           </Button>
         ) : (
-          <span className="w-4 h-4 inline-block ml-1" />
+          <span className="inline-block w-8 sm:w-6 h-5 sm:h-4" /> // Placeholder to match button's outer size
         )}
         
         {/* Only render tooltip when not dragging */}
@@ -130,57 +130,57 @@ const NodeRow: React.FC<NodeRowProps> = ({
         <Button
           variant="ghost"
           size="icon"
-          className="p-1 text-gray-500 hover:text-purple-500"
+          className="p-1.5 sm:p-1 text-gray-500 hover:text-purple-500"
           onClick={handleEdit}
           aria-label="Edit Node"
           title="Edit Node"
         >
-          <FileEdit className="w-4 h-4" />
+          <FileEdit className="w-5 h-5 sm:w-4 sm:h-4" />
         </Button>        <Button
           variant="ghost"
           size="icon"
-          className="p-1 text-gray-500 hover:text-blue-500"
+          className="p-1.5 sm:p-1 text-gray-500 hover:text-blue-500"
           onClick={(e) => { e.stopPropagation(); onMagicWand(node); }}
           aria-label="Magic Wand"
           title="Magic Wand (AI)"
         >
-          <Wand2 className="w-4 h-4" />
+          <Wand2 className="w-5 h-5 sm:w-4 sm:h-4" />
         </Button>        <Button
           variant="ghost"
           size="icon"
-          className="p-1 text-gray-500 hover:text-green-500"
+          className="p-1.5 sm:p-1 text-gray-500 hover:text-green-500"
           onClick={(e) => { e.stopPropagation(); onCopyToClipboard(node); }}
           aria-label="Copy to Clipboard"
           title="Copy to Clipboard"
         >
-          <Copy className="w-4 h-4" />
+          <Copy className="w-5 h-5 sm:w-4 sm:h-4" />
         </Button>        <Button
           variant="ghost"
           size="icon"
-          className="p-1 text-gray-500 hover:text-yellow-500"
+          className="p-1.5 sm:p-1 text-gray-500 hover:text-yellow-500"
           onClick={(e) => { e.stopPropagation(); onPasteAsChild(node); }}
           aria-label="Paste as Child"
           title="Paste as Child"
         >
-          <ClipboardPaste className="w-4 h-4" />
+          <ClipboardPaste className="w-5 h-5 sm:w-4 sm:h-4" />
         </Button>        <Button
           variant="ghost"
           size="icon"
-          className="p-1 text-gray-500 hover:text-indigo-500"
+          className="p-1.5 sm:p-1 text-gray-500 hover:text-indigo-500"
           onClick={(e) => { e.stopPropagation(); onAddNewChild(node); }}
           aria-label="Add New Child"
           title="Add New Child"
         >
-          <PlusSquare className="w-4 h-4" />
+          <PlusSquare className="w-5 h-5 sm:w-4 sm:h-4" />
         </Button>         <Button
           variant="ghost"
           size="icon"
-          className="p-1 text-gray-500 hover:text-red-500"
+          className="p-1.5 sm:p-1 text-gray-500 hover:text-red-500"
           onClick={handleDelete}
           aria-label="Delete Node"
           title="Delete Node"
         >
-          <Trash2 className="w-4 h-4" />
+          <Trash2 className="w-5 h-5 sm:w-4 sm:h-4" />
         </Button>
       </div>
     </motion.div>

@@ -367,8 +367,8 @@ const MainContent: React.FC = () => {
 
   return (
     <>
-      <div className="flex justify-end items-center px-4 mb-2">
-        <div className="flex items-center space-x-2">
+      <div className="flex justify-end items-center px-2 sm:px-4 mb-2">
+        <div className="flex flex-wrap justify-end gap-2">
           <NewTreeButton onClick={handleOpenNewTreeModal} disabled={isLoading} />
           <SaveTreeButton 
             onSave={(fileName) => {
