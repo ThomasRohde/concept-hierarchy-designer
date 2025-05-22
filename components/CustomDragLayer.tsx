@@ -11,20 +11,8 @@ export const CustomDragLayer = () => {
   if (!isDragging || !currentOffset) {
     return null;
   }
-
-  return (
-    <div
-      style={{
-        position: 'fixed',
-        pointerEvents: 'none',
-        zIndex: 100,
-        left: currentOffset.x,
-        top: currentOffset.y,
-      }}
-    >
-      <div className="custom-drag-indicator"></div>
-    </div>
-  );
+  // Return null instead of the drag indicator
+  return null;
 };
 
 export default CustomDragLayer;
