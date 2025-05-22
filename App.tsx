@@ -12,6 +12,7 @@ import NewTreeButton from './components/NewTreeButton';
 import NewTreeModal from './components/NewTreeModal';
 import NodeRow, { NodeRowProps } from './components/NodeRow';
 import SaveTreeButton from './components/SaveTreeButton';
+import TreeControls from './components/TreeControls';
 import { Card, CardContent, CardHeader, CardTitle } from './components/ui/Card';
 import VirtualizedTree from './components/VirtualizedTree';
 import { useClipboardActions } from './hooks/useClipboardActions';
@@ -201,7 +202,7 @@ export default function App() {
     if (isDescendant(dragId, dropTargetId)) {
       toast.error("Cannot move a node to its own descendant");
       return;
-    }
+    };
     
     // Update the parent of the dragged node
     setNodes(currentNodes => {
@@ -363,6 +364,23 @@ export default function App() {
     handleCloseEditNodeModal();
   }, [handleCloseEditNodeModal]);
 
+  // Expand and collapse all handlers
+  const handleExpandAll = useCallback(() => {
+    setCollapsed(new Set());
+  }, []);
+
+  const handleCollapseAll = useCallback(() => {
+    // Create a set with all node IDs except the root node
+    const allNodeIds = new Set<string>();
+    nodes.forEach(node => {
+      // Only add non-root nodes
+      if (node.parent !== null) {
+        allNodeIds.add(node.id);
+      }
+    });
+    setCollapsed(allNodeIds);
+  }, [nodes]);
+
   // Function to handle clipboard operations
   const handleCopyToClipboard = useCallback((node: NodeData) => {
     copyToClipboard(node, nodes);
@@ -385,8 +403,7 @@ export default function App() {
         <Card className="w-full max-w-5xl shadow-2xl">
           <CardHeader>
             <div className="flex justify-between items-center">
-              <CardTitle className="text-2xl">Concept Hierarchy Designer</CardTitle>
-              <div className="flex items-center space-x-2">
+              <CardTitle className="text-2xl">Concept Hierarchy Designer</CardTitle>              <div className="flex items-center space-x-2">
                 <NewTreeButton onClick={handleOpenNewTreeModal} disabled={isLoading} />
                 <SaveTreeButton 
                   onSave={(fileName) => {
@@ -398,16 +415,25 @@ export default function App() {
                 <LoadTreeButton onLoad={handleLoadTree} disabled={isLoading} />
               </div>
             </div>
-          </CardHeader>
-          <CardContent className="p-2 overflow-hidden">            {isInitializing ? (
+          </CardHeader>          <CardContent className="p-2 overflow-hidden">
+            {isInitializing ? (
               <div className="flex justify-center items-center h-96">
                 <LoadingSpinner size={50} text="Initializing..." />
               </div>
             ) : isLoading ? (
               <div className="flex justify-center items-center h-96">
                 <LoadingSpinner size={50} text="Loading data..." />
-              </div>            ) : (<div className="p-2 space-y-0.5 h-[600px]"> 
-                <AnimatePresence>                  {nodes.length > 100 ? (
+              </div>
+            ) : (
+              <div className="p-2 space-y-0.5 h-[600px]">
+                <div className="mb-2">
+                  <TreeControls 
+                    onExpandAll={handleExpandAll} 
+                    onCollapseAll={handleCollapseAll} 
+                    disabled={isLoading || isInitializing}
+                  />
+                </div>
+                <AnimatePresence>{nodes.length > 100 ? (
                     <VirtualizedTree 
                       nodes={nodes}
                       collapsed={collapsed}
