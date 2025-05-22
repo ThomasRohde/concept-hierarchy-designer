@@ -369,34 +369,13 @@ export default function App() {
         return node;
       });
     });
-    handleCloseEditNodeModal();
-  }, [handleCloseEditNodeModal]);
-    // Expand and collapse all handlers
+    handleCloseEditNodeModal();  }, [handleCloseEditNodeModal]);
+  
+  // Expand and collapse all handlers
   const handleExpandAll = useCallback(() => {
-    // Create a new set where only nodes that have grandchildren are collapsed
-    const nodesWithGrandchildren = new Set<string>();
-    
-    // First, identify all nodes with children
-    const nodesWithChildren = nodes
-      .filter(node => nodes.some(n => n.parent === node.id))
-      .map(node => node.id);
-      
-    // For each node with children, check if any of its children also have children
-    nodesWithChildren.forEach(nodeId => {
-      const childrenIds = nodes
-        .filter(node => node.parent === nodeId)
-        .map(child => child.id);
-        
-      // If any child has children, add those children to the collapsed set
-      childrenIds.forEach(childId => {
-        if (nodes.some(n => n.parent === childId)) {
-          nodesWithGrandchildren.add(childId);
-        }
-      });
-    });
-    
-    setCollapsed(nodesWithGrandchildren);
-  }, [nodes]);
+    // To expand all levels, we simply clear the collapsed set completely
+    setCollapsed(new Set());
+  }, []);
 
   const handleCollapseAll = useCallback(() => {
     // Get the IDs of all nodes that have children
