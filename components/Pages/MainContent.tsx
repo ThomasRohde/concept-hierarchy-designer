@@ -14,79 +14,12 @@ import TreeControls from '../TreeControls';
 import VirtualizedTree from '../VirtualizedTree';
 import { useClipboardActions } from '../../hooks/useClipboardActions';
 import { useMagicWand } from '../../hooks/useMagicWand';
+import { useTreeContext } from '../../context/TreeContext';
 import { NodeData } from '../../types';
 import { saveTreeAsJson, validateNodeData } from '../../utils/exportUtils';
 import { genId } from '../../utils/treeUtils';
 
-// Create initial data in the flat structure
-const createInitialData = (): NodeData[] => {
-  const rootId = genId();
-  const quantum = genId();
-  const theories = genId();
-  const applications = genId();
-  const wave = genId();
-  const superposition = genId();
-  const mechanics = genId();
-  const string = genId();
-  const relativity = genId();
-
-  return [
-    {
-      id: rootId,
-      name: "Root Concept",
-      description: "The main starting point of the hierarchy.",
-      parent: null
-    },
-    {
-      id: quantum,
-      name: "Introduction to Quantum Physics",
-      description: "Fundamental concepts of quantum mechanics.",
-      parent: rootId
-    },
-    {
-      id: theories,
-      name: "Key Theories",
-      description: "Major theories underpinning the field.",
-      parent: rootId
-    },
-    {
-      id: applications,
-      name: "Applications",
-      description: "Practical uses of these concepts.",
-      parent: rootId
-    },
-    {
-      id: wave,
-      name: "Wave-Particle Duality",
-      description: "Exhibiting both wave and particle properties.",
-      parent: quantum
-    },
-    {
-      id: superposition,
-      name: "Quantum Superposition",
-      description: "Ability to be in multiple states at once.",
-      parent: quantum
-    },
-    {
-      id: mechanics,
-      name: "Quantum Mechanics",
-      description: "Describes physical phenomena at nanoscopic scales.",
-      parent: theories
-    },
-    {
-      id: string,
-      name: "String Theory (Overview)",
-      description: "A theoretical framework where point-like particles are replaced by one-dimensional strings.",
-      parent: theories
-    },
-    {
-      id: relativity,
-      name: "General Relativity (Brief)",
-      description: "Einstein's theory of gravitation.",
-      parent: theories
-    }
-  ];
-};
+// Function to render nodes recursively in the flat structure
 
 // Function to render nodes recursively in the flat structure
 const renderTreeRecursive = (
@@ -134,10 +67,15 @@ const renderTreeRecursive = (
 };
 
 const MainContent: React.FC = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isInitializing, setIsInitializing] = useState<boolean>(true);
-  const [nodes, setNodes] = useState<NodeData[]>([]);
-  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
+  const { 
+    nodes, 
+    setNodes, 
+    collapsed, 
+    setCollapsed,
+    isLoading,
+    setIsLoading,
+    isInitializing
+  } = useTreeContext();
   
   // Create a ref for the tree container to measure its width
   const treeContainerRef = React.useRef<HTMLDivElement>(null);
@@ -174,18 +112,7 @@ const MainContent: React.FC = () => {
   const [isAddChildModalOpen, setIsAddChildModalOpen] = useState(false);
   const [addingChildToParentNode, setAddingChildToParentNode] = useState<NodeData | null>(null);
   
-  // Initialize app with data
-  useEffect(() => {
-    const initializeApp = async () => {
-      setIsInitializing(true);
-      // Simulate loading delay (remove in production if not needed)
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setNodes(createInitialData());
-      setIsInitializing(false);
-    };
-    
-    initializeApp();
-  }, []);
+  // No need to initialize data here anymore, it's handled by the TreeContext
 
   const [isNewTreeModalOpen, setIsNewTreeModalOpen] = useState(false);
 

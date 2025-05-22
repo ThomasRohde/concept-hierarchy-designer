@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import Layout from '../components/Layout/Layout';
 import AboutPage from '../components/Pages/AboutPage';
 import HomePage from '../components/Pages/HomePage';
+import { TreeProvider } from '../context/TreeContext';
 
 // Error boundary component for handling route errors
 const ErrorBoundary = () => {
@@ -48,7 +49,11 @@ const router = createBrowserRouter([
 });
 
 const AppRouter: React.FC = () => {
-  return <RouterProvider router={router} />;
+  return (
+    <TreeProvider>
+      <RouterProvider router={router} />
+    </TreeProvider>
+  );
 };
 
 export default AppRouter;
