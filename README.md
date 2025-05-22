@@ -34,20 +34,13 @@ A powerful interactive tool for creating, organizing, and visualizing hierarchic
    npm install
    ```
 
-3. **Set up environment variables**
-   
-   Create a `.env.local` file in the root directory with your Gemini API key:
-   ```
-   GEMINI_API_KEY=your_gemini_api_key_here
-   ```
-
-4. **Start the development server**
+3. **Start the development server**
    ```bash
    npm run dev
    ```
 
-5. **Open your browser**
-   
+4. **Open your browser**
+
    Navigate to http://localhost:5173 to view the app.
 
 ## 🛠️ Built With
