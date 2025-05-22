@@ -71,107 +71,115 @@ const NodeRow: React.FC<NodeRowProps> = ({
       }}
       initial={{ opacity: 0, y: -4 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 4 }}
-      className={`group flex items-center justify-between h-12 rounded-lg hover:bg-gray-200/80 transition-colors duration-150 ${
+      exit={{ opacity: 0, y: 4 }}      className={`group flex items-center justify-between h-16 rounded-lg hover:bg-gray-200/80 transition-colors duration-150 ${
         isDragging ? "opacity-50 shadow-lg" : "shadow-sm"
       } bg-white mb-1 mx-2`}
-      style={{ paddingRight: '1rem' }} 
+      style={{ paddingRight: '1.5rem' }}
     >
       {/* Left side – expand/collapse + label */}
       <div
-        className="flex items-center space-x-2 flex-grow overflow-hidden"
+        className="flex items-center space-x-3 flex-grow overflow-hidden"
         style={{ paddingLeft: `${depth * 1.5 + 0.5}rem` }} 
       >
         {hasChildren ? (
           <Button
             variant="ghost"
             size="icon"
-            className="p-1 text-gray-500 hover:text-gray-700"
+            className="p-2 text-gray-500 hover:text-gray-700"
             onClick={(e) => {
               e.stopPropagation();
               toggleCollapse(node.id);
             }}
             aria-label={isCollapsed ? "Expand" : "Collapse"}
           >
-            {isCollapsed ? (
-              <ChevronRight className="w-4 h-4" />
+            {isCollapsed ? (          <ChevronRight className="w-5 h-5" />
             ) : (
-              <ChevronDown className="w-4 h-4" />
+              <ChevronDown className="w-5 h-5" />
             )}
           </Button>
         ) : (
-          <span className="w-4 h-4 inline-block ml-1" /> 
+          <span className="w-5 h-5 inline-block ml-1" /> 
         )}
-        <span className="font-medium text-gray-800 select-none truncate" title={node.name}>
+        <span className="font-medium text-gray-800 text-base select-none truncate" title={node.name}>
           {node.name}
         </span>
-      </div>
-
-      {/* Right side – action icons */}
-      <div className="flex items-center space-x-0.5 ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+      </div>      {/* Right side – action icons */}
+      <div className="flex items-center space-x-2 ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-200">
         <Button
           variant="ghost"
           size="icon"
-          className="p-1.5 text-gray-500 hover:text-purple-500"
+          className="p-2 text-gray-500 hover:text-purple-500"
           onClick={handleEdit}
           aria-label="Edit Node"
           title="Edit Node"
         >
-          <FileEdit className="w-4 h-4" />
+          <FileEdit className="w-5 h-5" />
         </Button>
         <Button
           variant="ghost"
           size="icon"
-          className="p-1.5 text-gray-500 hover:text-blue-500"
+          className="p-2 text-gray-500 hover:text-blue-500"
           onClick={(e) => { e.stopPropagation(); onMagicWand(node); }}
           aria-label="Magic Wand"
           title="Magic Wand (AI)"
         >
-          <Wand2 className="w-4 h-4" />
+          <Wand2 className="w-5 h-5" />
         </Button>
         <Button
           variant="ghost"
           size="icon"
-          className="p-1.5 text-gray-500 hover:text-green-500"
+          className="p-2 text-gray-500 hover:text-green-500"
           onClick={(e) => { e.stopPropagation(); onCopyToClipboard(node); }}
           aria-label="Copy to Clipboard"
           title="Copy to Clipboard"
         >
-          <Copy className="w-4 h-4" />
+          <Copy className="w-5 h-5" />
         </Button>
         <Button
           variant="ghost"
           size="icon"
-          className="p-1.5 text-gray-500 hover:text-yellow-500"
+          className="p-2 text-gray-500 hover:text-yellow-500"
           onClick={(e) => { e.stopPropagation(); onPasteAsChild(node); }}
           aria-label="Paste as Child"
           title="Paste as Child"
         >
-          <ClipboardPaste className="w-4 h-4" />
+          <ClipboardPaste className="w-5 h-5" />
         </Button>
         <Button
           variant="ghost"
           size="icon"
-          className="p-1.5 text-gray-500 hover:text-indigo-500"
+          className="p-2 text-gray-500 hover:text-indigo-500"
           onClick={(e) => { e.stopPropagation(); onAddNewChild(node); }}
           aria-label="Add New Child"
           title="Add New Child"
         >
-          <PlusSquare className="w-4 h-4" />
+          <PlusSquare className="w-5 h-5" />
         </Button>
          <Button
           variant="ghost"
           size="icon"
-          className="p-1.5 text-gray-500 hover:text-red-500"
+          className="p-2 text-gray-500 hover:text-red-500"
           onClick={handleDelete}
           aria-label="Delete Node"
           title="Delete Node"
         >
-          <Trash2 className="w-4 h-4" />
+          <Trash2 className="w-5 h-5" />
         </Button>
       </div>
     </motion.div>
   );
 };
 
-export default NodeRow;
+// at the end of the file
+export default React.memo(NodeRow, (prevProps, nextProps) => {
+  // Custom comparison for the React.memo
+  // Return true if props are equal (component should not update)
+  return (
+    prevProps.node.id === nextProps.node.id &&
+    prevProps.node.name === nextProps.node.name &&
+    prevProps.node.description === nextProps.node.description &&
+    prevProps.depth === nextProps.depth &&
+    prevProps.isCollapsed === nextProps.isCollapsed &&
+    prevProps.hasChildren === nextProps.hasChildren
+  );
+});

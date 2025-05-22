@@ -1,17 +1,19 @@
 import { AnimatePresence } from 'framer-motion';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Toaster, toast } from 'react-hot-toast';
 import AddChildModal from './components/AddChildModal';
 import ConfirmDeleteModal from './components/ConfirmDeleteModal';
 import EditNodeModal from './components/EditNodeModal';
+import LoadingSpinner from './components/LoadingSpinner';
 import LoadTreeButton from './components/LoadTreeButton';
 import NewTreeButton from './components/NewTreeButton';
 import NewTreeModal from './components/NewTreeModal';
 import NodeRow, { NodeRowProps } from './components/NodeRow';
 import SaveTreeButton from './components/SaveTreeButton';
 import { Card, CardContent, CardHeader, CardTitle } from './components/ui/Card';
+import VirtualizedTree from './components/VirtualizedTree';
 import { useClipboardActions } from './hooks/useClipboardActions';
 import { useMagicWand } from './hooks/useMagicWand';
 import { NodeData } from './types';
@@ -94,7 +96,8 @@ const renderTreeRecursive = (
   parentId: string | null,
   depth: number,
   collapsedSet: Set<string>,
-  nodeRowProps: Omit<React.ComponentProps<typeof NodeRow>, 'node' | 'depth' | 'isCollapsed' | 'hasChildren'> 
+  nodeRowProps: Omit<React.ComponentProps<typeof NodeRow>, 'node' | 'depth' | 'isCollapsed' | 'hasChildren'>,
+  nodeMap?: Map<string, NodeData>
 ): React.ReactNode[] => {
   const elements: React.ReactNode[] = [];
   
@@ -104,7 +107,10 @@ const renderTreeRecursive = (
   // Render each child
   children.forEach(node => {
     const isCollapsed = collapsedSet.has(node.id);
-    const hasChildren = nodes.some(n => n.parent === node.id);
+    // Use nodeMap for faster lookup if available
+    const hasChildren = nodeMap 
+      ? nodes.some(n => n.parent === node.id)
+      : nodes.some(n => n.parent === node.id);
     
     // Add the node row
     elements.push(
@@ -121,7 +127,7 @@ const renderTreeRecursive = (
     // If not collapsed and has children, recursively render its children
     if (!isCollapsed && hasChildren) {
       elements.push(
-        ...renderTreeRecursive(nodes, node.id, depth + 1, collapsedSet, nodeRowProps)
+        ...renderTreeRecursive(nodes, node.id, depth + 1, collapsedSet, nodeRowProps, nodeMap)
       );
     }
   });
@@ -130,11 +136,26 @@ const renderTreeRecursive = (
 };
 
 export default function App() {
-  const [nodes, setNodes] = useState<NodeData[]>(createInitialData());
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isInitializing, setIsInitializing] = useState<boolean>(true);
+  const [nodes, setNodes] = useState<NodeData[]>([]);
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   
   const [isAddChildModalOpen, setIsAddChildModalOpen] = useState(false);
   const [addingChildToParentNode, setAddingChildToParentNode] = useState<NodeData | null>(null);
+  
+  // Initialize app with data
+  useEffect(() => {
+    const initializeApp = async () => {
+      setIsInitializing(true);
+      // Simulate loading delay (remove in production if not needed)
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setNodes(createInitialData());
+      setIsInitializing(false);
+    };
+    
+    initializeApp();
+  }, []);
 
   const [isNewTreeModalOpen, setIsNewTreeModalOpen] = useState(false);
 
@@ -143,9 +164,15 @@ export default function App() {
 
   const [isEditNodeModalOpen, setIsEditNodeModalOpen] = useState(false);
   const [editingNode, setEditingNode] = useState<NodeData | null>(null);
-
   const { copyToClipboard, pasteAsChild } = useClipboardActions({ setNodes, setCollapsed });
   const { generateMagicWandPrompt } = useMagicWand({ nodes });
+  
+  // Create a node map for faster lookups
+  const nodeMap = useMemo(() => {
+    const map = new Map<string, NodeData>();
+    nodes.forEach(node => map.set(node.id, node));
+    return map;
+  }, [nodes]);
 
   const toggleCollapse = useCallback((id: string) => {
     setCollapsed((prev) => {
@@ -158,13 +185,12 @@ export default function App() {
       return next;
     });
   }, []);
-
   const moveNode = useCallback((dragId: string, dropTargetId: string) => {
     if (dragId === dropTargetId) return;
     
     // Function to check if a node is a descendant of another node
     const isDescendant = (ancestorId: string, nodeId: string): boolean => {
-      const node = nodes.find(n => n.id === nodeId);
+      const node = nodeMap.get(nodeId);
       if (!node) return false;
       if (node.parent === ancestorId) return true;
       if (node.parent === null) return false;
@@ -193,7 +219,7 @@ export default function App() {
       next.delete(dropTargetId);
       return next;
     });
-  }, [nodes]);
+  }, [nodes, nodeMap]);
 
   const openAddChildModal = useCallback((parentNode: NodeData) => {
     setAddingChildToParentNode(parentNode);
@@ -248,8 +274,7 @@ export default function App() {
     setIsConfirmDeleteModalOpen(false);
     setNodeToDelete(null);
   }, []);
-  
-  const executeDeleteNode = useCallback(() => {
+    const executeDeleteNode = useCallback(() => {
     if (!nodeToDelete) return;
     
     // Function to get all descendant IDs of a node
@@ -282,7 +307,6 @@ export default function App() {
   const handleCloseNewTreeModal = useCallback(() => {
     setIsNewTreeModalOpen(false);
   }, []);
-
   const handleCreateNewTree = useCallback((name: string, description: string) => {
     // Create a single root node with no parent
     const newRoot: NodeData = {
@@ -298,13 +322,21 @@ export default function App() {
     handleCloseNewTreeModal();
   }, [handleCloseNewTreeModal]);
   
-  const handleLoadTree = useCallback((loadedData: any) => {
-    if (validateNodeData(loadedData)) {
-      setNodes(loadedData);
-      setCollapsed(new Set());
-      toast.success("Tree loaded successfully");
-    } else {
-      toast.error("Invalid tree data format");
+  const handleLoadTree = useCallback(async (loadedData: any) => {
+    setIsLoading(true);
+    try {
+      // Add a small delay to show loading state for large trees
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      if (validateNodeData(loadedData)) {
+        setNodes(loadedData);
+        setCollapsed(new Set());
+        toast.success("Tree loaded successfully");
+      } else {
+        toast.error("Invalid tree data format");
+      }
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -346,33 +378,49 @@ export default function App() {
     onDeleteNode: openDeleteConfirmationModal,
     onEditNode: handleOpenEditNodeModal,
   };
-
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="min-h-screen py-8 px-4 flex flex-col items-center bg-gray-100 text-gray-900">
         <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
-        <Card className="w-full max-w-3xl shadow-2xl">
+        <Card className="w-full max-w-5xl shadow-2xl">
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle className="text-2xl">Concept Hierarchy Designer</CardTitle>
               <div className="flex items-center space-x-2">
-                <NewTreeButton onClick={handleOpenNewTreeModal} />
+                <NewTreeButton onClick={handleOpenNewTreeModal} disabled={isLoading} />
                 <SaveTreeButton 
                   onSave={(fileName) => {
                     saveTreeAsJson(nodes, fileName || 'concept-hierarchy');
                     toast.success("Concept hierarchy saved as JSON");
-                  }} 
+                  }}
+                  disabled={isLoading}
                 />
-                <LoadTreeButton onLoad={handleLoadTree} />
+                <LoadTreeButton onLoad={handleLoadTree} disabled={isLoading} />
               </div>
             </div>
           </CardHeader>
-          <CardContent className="p-0 overflow-hidden">
-            <div className="p-2 space-y-0.5"> 
-              <AnimatePresence>
-                {renderTreeRecursive(nodes, null, 0, collapsed, nodeRowProps)}
-              </AnimatePresence>
-            </div>
+          <CardContent className="p-2 overflow-hidden">            {isInitializing ? (
+              <div className="flex justify-center items-center h-96">
+                <LoadingSpinner size={50} text="Initializing..." />
+              </div>
+            ) : isLoading ? (
+              <div className="flex justify-center items-center h-96">
+                <LoadingSpinner size={50} text="Loading data..." />
+              </div>            ) : (<div className="p-2 space-y-0.5 h-[600px]"> 
+                <AnimatePresence>                  {nodes.length > 100 ? (
+                    <VirtualizedTree 
+                      nodes={nodes}
+                      collapsed={collapsed}
+                      nodeRowProps={nodeRowProps}
+                      height={600}
+                      width={1000} // or using a ref to get actual width
+                    />
+                  ) : (
+                    renderTreeRecursive(nodes, null, 0, collapsed, nodeRowProps, nodeMap)
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
           </CardContent>
         </Card>
         <footer className="mt-8 text-center text-sm text-gray-500">

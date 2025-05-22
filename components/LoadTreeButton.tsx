@@ -1,15 +1,17 @@
+import { Upload } from 'lucide-react';
 import React, { useRef } from 'react';
 import { Button } from './ui/Button';
-import { Upload } from 'lucide-react';
 
 interface LoadTreeButtonProps {
   onLoad: (treeData: any) => void;
+  disabled?: boolean;
 }
 
-export default function LoadTreeButton({ onLoad }: LoadTreeButtonProps) {
+export default function LoadTreeButton({ onLoad, disabled }: LoadTreeButtonProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = () => {
+    if (disabled) return;
     fileInputRef.current?.click();
   };
 
@@ -36,13 +38,14 @@ export default function LoadTreeButton({ onLoad }: LoadTreeButtonProps) {
   return (
     <>
       <Button
+        variant="outline" 
         onClick={handleClick}
-        title="Load Tree from JSON"
-        variant="secondary"
-        size="sm"
+        className="flex items-center space-x-2 ml-2"
+        title="Load concept hierarchy from JSON file"
+        disabled={disabled}
       >
-        <Upload size={16} />
-        <span className="ml-1">Load</span>
+        <Upload className="w-4 h-4" />
+        <span>Load JSON</span>
       </Button>
       <input
         type="file"
@@ -50,6 +53,7 @@ export default function LoadTreeButton({ onLoad }: LoadTreeButtonProps) {
         onChange={handleFileChange}
         accept=".json"
         className="hidden"
+        aria-label="Upload JSON file"
       />
     </>
   );

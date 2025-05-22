@@ -16,12 +16,14 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^19.1.0",
-    "react-hot-toast": "^2.5.2"
+    "react-hot-toast": "^2.5.2",
+    "react-window": "^1.8.11"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
     "@types/react": "^19.1.5",
     "@types/react-dom": "^19.1.5",
+    "@types/react-window": "^1.8.8",
     "@vitejs/plugin-react": "^4.4.1",
     "gh-pages": "^6.3.0",
     "typescript": "~5.7.2",
