@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { AnimatePresence } from 'framer-motion';
@@ -8,10 +8,12 @@ import NodeRow, { NodeRowProps } from './components/NodeRow';
 import AddChildModal from './components/AddChildModal';
 import NewTreeModal from './components/NewTreeModal';
 import NewTreeButton from './components/NewTreeButton';
+import SaveTreeButton from './components/SaveTreeButton';
 import ConfirmDeleteModal from './components/ConfirmDeleteModal';
-import EditNodeModal from './components/EditNodeModal'; // Import EditNodeModal
+import EditNodeModal from './components/EditNodeModal';
 import { NodeData } from './types';
-import { genId, findNode, walkTree } from './utils/treeUtils'; // Added walkTree for editing
+import { genId, findNode } from './utils/treeUtils';
+import { saveTreeAsJson } from './utils/exportUtils';
 import { useClipboardActions } from './hooks/useClipboardActions';
 import { useMagicWand } from './hooks/useMagicWand';
 
@@ -72,7 +74,7 @@ const renderTreeRecursive = (
 };
 
 
-export default function App(): JSX.Element {
+export default function App() {
   const [tree, setTree] = useState<NodeData>(initialTreeData);
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   
@@ -289,7 +291,15 @@ export default function App(): JSX.Element {
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle className="text-2xl">Concept Hierarchy Designer</CardTitle>
-              <NewTreeButton onClick={handleOpenNewTreeModal} />
+              <div className="flex items-center space-x-2">
+                <NewTreeButton onClick={handleOpenNewTreeModal} />
+                <SaveTreeButton 
+                  onSave={(fileName) => {
+                    saveTreeAsJson(tree, fileName || 'concept-hierarchy');
+                    toast.success("Concept hierarchy saved as JSON");
+                  }} 
+                />
+              </div>
             </div>
           </CardHeader>
           <CardContent className="p-0 overflow-hidden">
