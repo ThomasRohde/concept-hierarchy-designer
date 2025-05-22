@@ -5,6 +5,7 @@ import { DragSourceMonitor, useDrag, useDrop } from 'react-dnd';
 import { DND_ITEM_TYPE } from '../constants';
 import { NodeData } from '../types';
 import { Button } from './ui/Button';
+import { MarkdownTooltip } from './ui/MarkdownTooltip';
 
 export interface NodeRowProps {
   node: NodeData;
@@ -95,10 +96,11 @@ const NodeRow: React.FC<NodeRowProps> = ({
               <ChevronDown className="w-4 h-4" />
             )}
           </Button>        ) : (
-          <span className="w-4 h-4 inline-block ml-1" /> 
-        )}<span className="font-medium text-gray-800 text-sm select-none truncate" title={node.description}>
-          {node.name}
-        </span>
+          <span className="w-4 h-4 inline-block ml-1" />        )}<MarkdownTooltip content={node.description || ''}>
+          <span className="font-medium text-gray-800 text-sm select-none truncate">
+            {node.name}
+          </span>
+        </MarkdownTooltip>
       </div>      {/* Right side – action icons */}
       <div className="flex items-center space-x-2 ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-200">        <Button
           variant="ghost"
