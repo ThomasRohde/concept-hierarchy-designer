@@ -1,14 +1,90 @@
-# Run and deploy your AI Studio app
+# 🌳 Concept Hierarchy Designer
 
-This contains everything you need to run your app locally.
+A powerful interactive tool for creating, organizing, and visualizing hierarchical concept maps using AI assistance.
 
-## Run Locally
+![Concept Hierarchy Designer](https://via.placeholder.com/800x400?text=Concept+Hierarchy+Designer) <!-- Consider replacing this with an actual screenshot of your app -->
 
-**Prerequisites:**  Node.js
+## ✨ Features
 
+- 📋 Create and manage hierarchical concept trees
+- 🔄 Drag and drop nodes to reorganize your hierarchy
+- ✏️ Edit node labels and descriptions
+- 🧠 AI-powered "Magic Wand" feature to generate child concepts using Gemini API
+- 📋 Copy/cut/paste functionality for nodes and branches
+- 🌈 Modern, responsive UI with animations
+- 💾 Local storage persistence for your concept trees
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## 🚀 Getting Started
+
+### Prerequisites
+
+- 📦 [Node.js](https://nodejs.org/) (v16.x or later)
+- 🔑 [Gemini API key](https://ai.google.dev/) for the Magic Wand feature
+
+### 🔧 Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/concept-hierarchy-designer.git
+   cd concept-hierarchy-designer
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   
+   Create a `.env.local` file in the root directory with your Gemini API key:
+   ```
+   GEMINI_API_KEY=your_gemini_api_key_here
+   ```
+
+4. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open your browser**
+   
+   Navigate to http://localhost:5173 to view the app.
+
+## 🛠️ Built With
+
+- [React](https://react.dev/) - UI library
+- [TypeScript](https://www.typescriptlang.org/) - Type-safe JavaScript
+- [Vite](https://vitejs.dev/) - Fast development server and bundler
+- [React DnD](https://react-dnd.github.io/react-dnd/) - Drag and drop for React
+- [Framer Motion](https://www.framer.com/motion/) - Animation library
+- [React Hot Toast](https://react-hot-toast.com/) - Toast notifications
+
+## 📖 How to Use
+
+1. **Create a new concept tree** - Use the "New Tree" button
+2. **Add child concepts** - Click the "+" button on any node
+3. **Reorganize** - Drag and drop nodes to restructure your hierarchy
+4. **Use Magic Wand** - Generate AI-suggested child concepts for any node
+5. **Edit nodes** - Modify labels and descriptions by clicking the edit icon
+
+## 🧪 Building for Production
+
+To create a production build:
+
+```bash
+npm run build
+```
+
+Preview the production build locally:
+
+```bash
+npm run preview
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to open issues or submit pull requests.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
