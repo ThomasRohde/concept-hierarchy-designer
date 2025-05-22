@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { toast } from 'react-hot-toast';
 import { NodeData } from '../types';
 import { genId, findNode } from '../utils/treeUtils';
 
@@ -15,10 +16,10 @@ export const useClipboardActions = ({ setTree, setCollapsed }: UseClipboardActio
       const cleanNodeToCopy = JSON.parse(JSON.stringify(nodeToCopy));
       const nodeJson = JSON.stringify(cleanNodeToCopy, null, 2);
       await navigator.clipboard.writeText(nodeJson);
-      alert(`"${nodeToCopy.label}" and its children copied to clipboard!`);
+      toast.success(`"${nodeToCopy.label}" and its children copied to clipboard!`);
     } catch (err) {
       console.error("Failed to copy to clipboard:", err);
-      alert("Failed to copy to clipboard. Make sure you've granted clipboard permissions and are using HTTPS/localhost. See console for details.");
+      toast.error("Failed to copy to clipboard. Make sure you've granted clipboard permissions and are using HTTPS/localhost. See console for details.");
     }
   }, []);
 
@@ -26,7 +27,7 @@ export const useClipboardActions = ({ setTree, setCollapsed }: UseClipboardActio
     try {
       const text = await navigator.clipboard.readText();
       if (!text) {
-        alert("Clipboard is empty or permission to read clipboard was denied.");
+        toast.error("Clipboard is empty or permission to read clipboard was denied.");
         return;
       }
 
@@ -35,7 +36,7 @@ export const useClipboardActions = ({ setTree, setCollapsed }: UseClipboardActio
         parsedData = JSON.parse(text);
       } catch (parseError) {
         console.error("Failed to parse clipboard content:", parseError);
-        alert("Failed to paste: Invalid JSON format in clipboard. See console for details.");
+        toast.error("Failed to paste: Invalid JSON format in clipboard. See console for details.");
         return;
       }
       
@@ -60,7 +61,7 @@ export const useClipboardActions = ({ setTree, setCollapsed }: UseClipboardActio
       if (Array.isArray(parsedData)) {
           nodesToPaste = parsedData.map(validateAndPrepareNode).filter(Boolean) as NodeData[];
           if (nodesToPaste.length !== parsedData.length && parsedData.length > 0) {
-             alert("Some items in the pasted array were not valid nodes or had missing required fields and were ignored.");
+             toast("Some items in the pasted array were not valid nodes or had missing required fields and were ignored.", { icon: '⚠️' });
           }
       } else {
           const singleNode = validateAndPrepareNode(parsedData);
@@ -70,7 +71,7 @@ export const useClipboardActions = ({ setTree, setCollapsed }: UseClipboardActio
       }
       
       if (nodesToPaste.length === 0) {
-          alert("Pasted data is not a valid node or array of nodes, or contains no valid nodes after processing (e.g., missing 'label').");
+          toast.error("Pasted data is not a valid node or array of nodes, or contains no valid nodes after processing (e.g., missing 'label').");
           return;
       }
 
@@ -87,7 +88,7 @@ export const useClipboardActions = ({ setTree, setCollapsed }: UseClipboardActio
         } else {
             // This case should ideally not happen if targetParentNode.id is always valid
             console.error("Paste target parent node not found in the tree:", targetParentNode.id);
-            alert("Error: Could not find the target parent node to paste under. The tree might have changed unexpectedly.");
+            toast.error("Error: Could not find the target parent node to paste under. The tree might have changed unexpectedly.");
             return currentTree; // Return original tree if parent not found
         }
         return newTree;
@@ -99,15 +100,15 @@ export const useClipboardActions = ({ setTree, setCollapsed }: UseClipboardActio
         next.delete(targetParentNode.id); 
         return next;
       });
-      alert("Content pasted successfully as child/children!");
+      toast.success("Content pasted successfully as child/children!");
 
     } catch (err) {
       console.error("Failed to paste from clipboard:", err);
       // Check for Permissions Policy error specifically
       if (err instanceof DOMException && err.name === 'NotAllowedError') {
-        alert("Failed to paste: Clipboard access was denied. This usually happens if the page is not served over HTTPS or from localhost, or if you haven't interacted with the page recently. Please ensure the page has focus and try again. Check the console for more details.");
+        toast.error("Failed to paste: Clipboard access was denied. This usually happens if the page is not served over HTTPS or from localhost, or if you haven't interacted with the page recently. Please ensure the page has focus and try again. Check the console for more details.");
       } else {
-        alert("Failed to paste from clipboard. Check permissions (HTTPS/localhost) or see console for details.");
+        toast.error("Failed to paste from clipboard. Check permissions (HTTPS/localhost) or see console for details.");
       }
     }
   }, [setTree, setCollapsed]);

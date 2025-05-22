@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { toast } from 'react-hot-toast';
 import { NodeData } from '../types';
 import { findNode } from '../utils/treeUtils';
 
@@ -93,17 +94,17 @@ If the "Current Node" is "Renewable Energy Technologies", a possible response co
 - **Strict JSON:** Do NOT include any introductory text, concluding remarks, apologies, or any markdown formatting (like \`\`\`json ... \`\`\`) outside of the single, raw JSON array in your response.
 - **Focus:** Concentrate on the "Current Node" ("${selectedNode.label}") and its provided context to generate meaningful children.
 
-Provide your JSON response below:
+Provide your JSON response below in a markdown code block, without any additional text or formatting. Ensure the JSON is valid and well-structured.:
 `;
 
     const fullPrompt = markdownContext + aiPromptInstructions;
 
     try {
       await navigator.clipboard.writeText(fullPrompt);
-      alert(`AI prompt for "${selectedNode.label}" copied to clipboard! Paste it into your preferred AI chatbot to generate children concepts.`);
+      toast.success(`AI prompt for "${selectedNode.label}" copied to clipboard! Paste it into your preferred AI chatbot to generate children concepts.`);
     } catch (err) {
       console.error("Failed to copy AI prompt to clipboard:", err);
-      alert("Failed to copy AI prompt. Check permissions (HTTPS/localhost) or see console for details.");
+      toast.error("Failed to copy AI prompt. Check permissions (HTTPS/localhost) or see console for details.");
     }
   }, [tree]); // Dependency on tree to get current context
 

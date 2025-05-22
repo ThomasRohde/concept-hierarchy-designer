@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { AnimatePresence } from 'framer-motion';
+import { Toaster, toast } from 'react-hot-toast';
 import { Card, CardContent, CardHeader, CardTitle } from './components/ui/Card';
 import NodeRow, { NodeRowProps } from './components/NodeRow';
 import AddChildModal from './components/AddChildModal';
@@ -182,7 +183,7 @@ export default function App(): JSX.Element {
 
   const openDeleteConfirmationModal = useCallback((nodeId: string) => {
     if (tree.id === nodeId) {
-      alert("Cannot delete the root node.");
+      toast.error("Cannot delete the root node.");
       return;
     }
     const nodeInfo = findNode(tree, nodeId);
@@ -283,6 +284,7 @@ export default function App(): JSX.Element {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="min-h-screen py-8 px-4 flex flex-col items-center bg-gray-100 text-gray-900">
+        <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
         <Card className="w-full max-w-3xl shadow-2xl">
           <CardHeader>
             <div className="flex justify-between items-center">

@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-hot-toast';
 import { Modal } from './ui/Modal';
 import { Input } from './ui/Input';
 import { Textarea } from './ui/Textarea';
@@ -25,7 +26,7 @@ const AddChildModal: React.FC<AddChildModalProps> = ({ isOpen, onClose, onSave, 
 
   const handleSave = () => {
     if (name.trim() === '') {
-      alert('Node name cannot be empty.');
+      toast.error('Node name cannot be empty.');
       return;
     }
     onSave(name, description);

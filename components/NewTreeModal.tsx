@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-hot-toast';
 import { Modal } from './ui/Modal';
 import { Input } from './ui/Input';
 import { Textarea } from './ui/Textarea';
@@ -24,7 +25,7 @@ const NewTreeModal: React.FC<NewTreeModalProps> = ({ isOpen, onClose, onSave }) 
 
   const handleSave = () => {
     if (name.trim() === '') {
-      alert('Root node name cannot be empty.');
+      toast.error('Root node name cannot be empty.');
       return;
     }
     onSave(name, description);
