@@ -389,8 +389,7 @@ const MainContent: React.FC = () => {
         <div className="flex justify-center items-center flex-grow">
           <LoadingSpinner size={50} text="Loading data..." />
         </div>
-      ) : (
-        <div className="p-2 space-y-0.5 flex flex-col flex-grow">
+      ) : (        <div className="p-2 space-y-0.5 flex flex-col flex-grow overflow-hidden">
           <div className="mb-2">
             <TreeControls 
               onExpandAll={handleExpandAll} 
@@ -398,7 +397,7 @@ const MainContent: React.FC = () => {
               disabled={isLoading || isInitializing}
             />
           </div>
-          <div className="flex-grow overflow-y-auto overflow-x-hidden w-full" ref={treeContainerRef}>
+          <div className="flex-grow overflow-y-auto overflow-x-auto w-full min-w-0" ref={treeContainerRef}>
             <AnimatePresence>
               {nodes.length > 100 ? (
                 <VirtualizedTree 

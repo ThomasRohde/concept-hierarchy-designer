@@ -76,8 +76,7 @@ const NodeRow: React.FC<NodeRowProps> = ({
     onEditNode(node);
   };
 
-  return (
-    <motion.div
+  return (    <motion.div
       ref={(el) => { 
         drag(el);
         drop(el);
@@ -88,21 +87,20 @@ const NodeRow: React.FC<NodeRowProps> = ({
         isDragging ? "shadow-lg dragging" : "shadow-sm"
       } ${
         isDropTarget ? "drop-target-active" : "bg-white"
-      } mb-1 mx-2`}
+      } mb-1 mx-1 sm:mx-2`}
       style={{ 
-        paddingRight: '1.5rem',
+        paddingRight: '0.5rem',
         cursor: isDragging ? 'grabbing' : 'grab'
       }}
-    >      {/* Left side – expand/collapse + label */}
-      <div
-        className="flex items-center space-x-3 flex-grow overflow-hidden node-content"
-        style={{ paddingLeft: `${depth * 1.5 + 0.5}rem` }} 
+    >{/* Left side – expand/collapse + label */}      <div
+        className="flex items-center space-x-2 sm:space-x-3 flex-grow overflow-hidden node-content min-w-0"
+        style={{ paddingLeft: `${depth * 1.2 + 0.5}rem` }} 
       >
         {hasChildren ? (
           <Button
             variant="ghost"
             size="icon"
-            className={`p-1.5 sm:p-1 text-gray-500 hover:text-gray-700 ${isDragging ? 'opacity-0' : ''}`}
+            className={`p-0.5 sm:p-1 text-gray-500 hover:text-gray-700 ${isDragging ? 'opacity-0' : ''}`}
             onClick={(e) => {
               e.stopPropagation();
               toggleCollapse(node.id);
@@ -111,9 +109,9 @@ const NodeRow: React.FC<NodeRowProps> = ({
             tabIndex={isDragging ? -1 : 0}
           >            
             {isCollapsed ? (
-              <ChevronRight className="w-5 h-5 sm:w-4 sm:h-4" />
+              <ChevronRight className="w-4 h-4" />
             ) : (
-              <ChevronDown className="w-5 h-5 sm:w-4 sm:h-4" />
+              <ChevronDown className="w-4 h-4" />
             )}
           </Button>
         ) : (
@@ -121,66 +119,64 @@ const NodeRow: React.FC<NodeRowProps> = ({
         )}
         
         {/* Only render tooltip when not dragging */}
-        <MarkdownTooltip content={node.description || ''}>
-          <span className={`font-medium text-gray-800 text-sm select-none truncate ${isDragging ? 'opacity-0' : ''}`}>
+        <MarkdownTooltip content={node.description || ''}>          <span className={`font-medium text-gray-800 text-sm select-none truncate max-w-[60vw] sm:max-w-[30rem] block ${isDragging ? 'opacity-0' : ''}`}>
             {node.name}
           </span>
         </MarkdownTooltip>      </div>      {/* Right side – action icons */}
-      <div className={`flex items-center space-x-2 ml-auto ${isDragging ? 'opacity-0' : 'opacity-0 group-hover:opacity-100'} transition-opacity duration-200 node-content`}>
-        <Button
+      <div className={`flex items-center space-x-1 sm:space-x-2 ml-auto flex-shrink-0 ${isDragging ? 'opacity-0' : 'opacity-100 sm:opacity-0 sm:group-hover:opacity-100'} transition-opacity duration-200 node-content`}>        <Button
           variant="ghost"
           size="icon"
-          className="p-1.5 sm:p-1 text-gray-500 hover:text-purple-500"
+          className="p-0.5 sm:p-1 text-gray-500 hover:text-purple-500"
           onClick={handleEdit}
           aria-label="Edit Node"
           title="Edit Node"
         >
-          <FileEdit className="w-5 h-5 sm:w-4 sm:h-4" />
+          <FileEdit className="w-4 h-4" />
         </Button>        <Button
           variant="ghost"
           size="icon"
-          className="p-1.5 sm:p-1 text-gray-500 hover:text-blue-500"
+          className="p-0.5 sm:p-1 text-gray-500 hover:text-blue-500"
           onClick={(e) => { e.stopPropagation(); onMagicWand(node); }}
           aria-label="Magic Wand"
           title="Magic Wand (AI)"
         >
-          <Wand2 className="w-5 h-5 sm:w-4 sm:h-4" />
+          <Wand2 className="w-4 h-4" />
         </Button>        <Button
           variant="ghost"
           size="icon"
-          className="p-1.5 sm:p-1 text-gray-500 hover:text-green-500"
+          className="p-0.5 sm:p-1 text-gray-500 hover:text-green-500"
           onClick={(e) => { e.stopPropagation(); onCopyToClipboard(node); }}
           aria-label="Copy to Clipboard"
           title="Copy to Clipboard"
         >
-          <Copy className="w-5 h-5 sm:w-4 sm:h-4" />
+          <Copy className="w-4 h-4" />
         </Button>        <Button
           variant="ghost"
           size="icon"
-          className="p-1.5 sm:p-1 text-gray-500 hover:text-yellow-500"
+          className="p-0.5 sm:p-1 text-gray-500 hover:text-yellow-500"
           onClick={(e) => { e.stopPropagation(); onPasteAsChild(node); }}
           aria-label="Paste as Child"
           title="Paste as Child"
         >
-          <ClipboardPaste className="w-5 h-5 sm:w-4 sm:h-4" />
+          <ClipboardPaste className="w-4 h-4" />
         </Button>        <Button
           variant="ghost"
           size="icon"
-          className="p-1.5 sm:p-1 text-gray-500 hover:text-indigo-500"
+          className="p-0.5 sm:p-1 text-gray-500 hover:text-indigo-500"
           onClick={(e) => { e.stopPropagation(); onAddNewChild(node); }}
           aria-label="Add New Child"
           title="Add New Child"
         >
-          <PlusSquare className="w-5 h-5 sm:w-4 sm:h-4" />
+          <PlusSquare className="w-4 h-4" />
         </Button>         <Button
           variant="ghost"
           size="icon"
-          className="p-1.5 sm:p-1 text-gray-500 hover:text-red-500"
+          className="p-0.5 sm:p-1 text-gray-500 hover:text-red-500"
           onClick={handleDelete}
           aria-label="Delete Node"
           title="Delete Node"
         >
-          <Trash2 className="w-5 h-5 sm:w-4 sm:h-4" />
+          <Trash2 className="w-4 h-4" />
         </Button>
       </div>
     </motion.div>
