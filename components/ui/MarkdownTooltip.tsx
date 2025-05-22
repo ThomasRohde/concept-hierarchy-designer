@@ -45,7 +45,7 @@ export const MarkdownTooltip: React.FC<MarkdownTooltipProps> = ({
         {children}
       </div>      <Tooltip 
         id={tooltipId}
-        className={`max-w-md markdown-tooltip-container z-50 ${className || ''}`}
+        className={`max-w-2xl markdown-tooltip-container z-50 ${className || ''}`}
         style={{
           backgroundColor: 'white',
           color: '#333',
