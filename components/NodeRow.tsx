@@ -19,7 +19,7 @@ export interface NodeRowProps {
   onAddNewChild: (parentNode: NodeData) => void;
   onCopyToClipboard: (nodeToCopy: NodeData) => void;
   onPasteAsChild: (targetParentNode: NodeData) => void;
-  onMagicWand: (node: NodeData) => void;
+  onMagicWand: (node: NodeData, customGuidelines?: string) => void;
   onDeleteNode: (nodeId: string) => void;
   onEditNode: (node: NodeData) => void;
 }
@@ -145,7 +145,7 @@ const NodeRow: React.FC<NodeRowProps> = ({
           title="Magic Wand (AI)"
         >
           <Wand2 className="w-4 h-4" />
-        </Button>        <Button
+        </Button><Button
           variant="ghost"
           size="icon"
           className="p-1 text-gray-500 hover:text-green-500"

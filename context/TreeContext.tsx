@@ -8,8 +8,7 @@ interface TreeContextType {
   collapsed: Set<string>;
   setCollapsed: React.Dispatch<React.SetStateAction<Set<string>>>;
   isLoading: boolean;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  isInitializing: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;  isInitializing: boolean;
   setIsInitializing: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -36,10 +35,8 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       initializeApp();
     }
   }, [nodes.length]);
-
   return (
-    <TreeContext.Provider
-      value={{
+    <TreeContext.Provider      value={{
         nodes,
         setNodes,
         collapsed,

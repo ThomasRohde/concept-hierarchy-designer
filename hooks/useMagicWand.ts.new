@@ -26,16 +26,12 @@ interface UseMagicWandResult {
   updateGuidelines: (newGuidelines: string) => void;
 }
 
-export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult => {  // Initialize with saved guidelines or default
+export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult => {
+  // Initialize with saved guidelines or default
   const [guidelines, setGuidelines] = useState<string>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      console.log('Loading guidelines from localStorage:', saved);
-      if (!saved) {
-        console.log('No saved guidelines found, using default');
-        return DEFAULT_GENERATION_GUIDELINES;
-      }
-      return saved;
+      return saved || DEFAULT_GENERATION_GUIDELINES;
     } catch (error) {
       console.error("Error loading guidelines from localStorage:", error);
       return DEFAULT_GENERATION_GUIDELINES;
@@ -55,11 +51,9 @@ export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult =
       console.error("Error saving guidelines to localStorage:", error);
     }
   }, []);
+
   // Function to generate the prompt with customizable generation guidelines
   const generateMagicWandPrompt = useCallback(async (selectedNode: NodeData) => {
-    // Load the current guidelines directly from localStorage to ensure we have the latest
-    const currentGuidelines = localStorage.getItem(STORAGE_KEY) || guidelines;
-
     // Part 1: Context section (fixed)
     let markdownContext = "# Context for Generating New Concepts\n\n";
 
@@ -92,7 +86,7 @@ export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult =
       markdownContext += "## Sibling Nodes\n- This is the root node, it has no siblings.\n\n";
     }
 
-    // Part 2: AI Task Header (fixed)
+    // Part 2: AI Task Header and Context Overview (fixed)
     const promptHeader = `---
 # AI Task: Generate Child Concepts
 
@@ -104,8 +98,6 @@ You are an expert in conceptual hierarchy and knowledge organization. Your task 
 - **Sibling Nodes:** Other children of the "Parent Node." Avoid generating child concepts that are too similar to these existing siblings.
 
 **Generation Guidelines:**
-${currentGuidelines}
-
 `;
 
     // Part 4: Output Format Instructions (fixed)
@@ -141,8 +133,10 @@ If the "Current Node" is "Renewable Energy Technologies", a possible response co
 - **Focus:** Concentrate on the "Current Node" ("${selectedNode.name}") and its provided context to generate meaningful children.
 
 Provide your JSON response below in a markdown code block, without any additional text or formatting. Ensure the JSON is valid and well-structured.:
-`;    // Combine all parts to create the full prompt
-    const fullPrompt = markdownContext + promptHeader + outputFormatInstructions;
+`;
+
+    // Combine all parts to create the full prompt
+    const fullPrompt = markdownContext + promptHeader + guidelines + outputFormatInstructions;
 
     try {
       await navigator.clipboard.writeText(fullPrompt);
@@ -151,7 +145,7 @@ Provide your JSON response below in a markdown code block, without any additiona
       console.error("Failed to copy AI prompt to clipboard:", err);
       toast.error("Failed to copy AI prompt. Check permissions (HTTPS/localhost) or see console for details.");
     }
-  }, [nodes, guidelines]); // Make sure guidelines is in the dependency array
+  }, [nodes, guidelines]);
 
   return {
     generateMagicWandPrompt,

@@ -6,6 +6,7 @@ import ConfirmDeleteModal from '../ConfirmDeleteModal';
 import EditNodeModal from '../EditNodeModal';
 import LoadingSpinner from '../LoadingSpinner';
 import LoadTreeButton from '../LoadTreeButton';
+import MagicWandSettingsModal from '../MagicWandSettingsModal';
 import NewTreeButton from '../NewTreeButton';
 import NewTreeModal from '../NewTreeModal';
 import NodeRow from '../NodeRow';
@@ -66,15 +67,13 @@ const renderTreeRecursive = (
   return elements;
 };
 
-const MainContent: React.FC = () => {
-  const { 
+const MainContent: React.FC = () => {  const { 
     nodes, 
     setNodes, 
     collapsed, 
     setCollapsed,
     isLoading,
-    setIsLoading,
-    isInitializing
+    setIsLoading,    isInitializing
   } = useTreeContext();
   
   // Create a ref for the tree container to measure its width
@@ -121,8 +120,27 @@ const MainContent: React.FC = () => {
 
   const [isEditNodeModalOpen, setIsEditNodeModalOpen] = useState(false);
   const [editingNode, setEditingNode] = useState<NodeData | null>(null);
+  
+  // Magic wand settings modal
+  const [isMagicWandSettingsOpen, setIsMagicWandSettingsOpen] = useState(false);
+  const handleOpenMagicWandSettings = useCallback(() => {
+    setIsMagicWandSettingsOpen(true);
+  }, []);
+
+  const handleCloseMagicWandSettings = useCallback(() => {
+    setIsMagicWandSettingsOpen(false);
+  }, []);
+
   const { copyToClipboard, pasteAsChild } = useClipboardActions({ setNodes, setCollapsed });
-  const { generateMagicWandPrompt } = useMagicWand({ nodes });
+  const { generateMagicWandPrompt, currentGuidelines, updateGuidelines } = useMagicWand({ nodes });
+  
+  const handleSaveMagicWandSettings = useCallback((guidelines: string) => {
+    updateGuidelines(guidelines);
+  }, [updateGuidelines]);
+
+  const handleResetMagicWandSettings = useCallback(() => {
+    updateGuidelines('');
+  }, [updateGuidelines]);
   
   // Create a node map for faster lookups
   const nodeMap = useMemo(() => {
@@ -357,8 +375,7 @@ const MainContent: React.FC = () => {
   const nodeRowProps: Omit<React.ComponentProps<typeof NodeRow>, 'node' | 'depth' | 'isCollapsed' | 'hasChildren'> = {
     toggleCollapse,
     moveNode,
-    onAddNewChild: openAddChildModal, 
-    onCopyToClipboard: handleCopyToClipboard, 
+    onAddNewChild: openAddChildModal,    onCopyToClipboard: handleCopyToClipboard, 
     onPasteAsChild: pasteAsChild,     
     onMagicWand: generateMagicWandPrompt,           
     onDeleteNode: openDeleteConfirmationModal,
@@ -391,10 +408,10 @@ const MainContent: React.FC = () => {
         </div>
       ) : (
         <div className="p-2 space-y-0.5 flex flex-col flex-grow">
-          <div className="mb-2">
-            <TreeControls 
+          <div className="mb-2">            <TreeControls 
               onExpandAll={handleExpandAll} 
-              onCollapseAll={handleCollapseAll} 
+              onCollapseAll={handleCollapseAll}
+              onOpenMagicWandSettings={handleOpenMagicWandSettings}
               disabled={isLoading || isInitializing}
             />
           </div>
@@ -433,12 +450,17 @@ const MainContent: React.FC = () => {
         onClose={handleCloseConfirmDeleteModal}
         onConfirm={executeDeleteNode}
         nodeName={nodeToDelete?.name}
-      />
-      <EditNodeModal 
+      />      <EditNodeModal 
         isOpen={isEditNodeModalOpen}
         onClose={handleCloseEditNodeModal}
         onSave={handleSaveEditedNode}
         nodeToEdit={editingNode}
+      />      <MagicWandSettingsModal
+        isOpen={isMagicWandSettingsOpen}
+        onClose={handleCloseMagicWandSettings}
+        currentGuidelines={currentGuidelines}
+        onSave={handleSaveMagicWandSettings}
+        onReset={handleResetMagicWandSettings}
       />
     </>
   );
