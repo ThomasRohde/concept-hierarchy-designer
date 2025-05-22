@@ -96,7 +96,7 @@ const NodeRow: React.FC<NodeRowProps> = ({
             )}
           </Button>        ) : (
           <span className="w-4 h-4 inline-block ml-1" /> 
-        )}<span className="font-medium text-gray-800 text-sm select-none truncate" title={node.name}>
+        )}<span className="font-medium text-gray-800 text-sm select-none truncate" title={node.description}>
           {node.name}
         </span>
       </div>      {/* Right side – action icons */}
