@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convert SVG to PNG</title>
+</head>
+<body>
+  <img src="favicon.svg" id="svg" style="display:none">
+  <canvas id="canvas" width="32" height="32" style="display:none"></canvas>
+  
+  <script>
+    window.onload = function() {
+      const img = document.getElementById('svg');
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      img.onload = function() {
+        ctx.drawImage(img, 0, 0, 32, 32);
+        
+        // Display the PNG for download
+        const pngImg = document.createElement('img');
+        pngImg.src = canvas.toDataURL('image/png');
+        document.body.appendChild(pngImg);
+        
+        // Add download links
+        const sizes = [16, 32, 180, 192, 512];
+        sizes.forEach(size => {
+          const tempCanvas = document.createElement('canvas');
+          tempCanvas.width = size;
+          tempCanvas.height = size;
+          const tempCtx = tempCanvas.getContext('2d');
+          tempCtx.drawImage(img, 0, 0, size, size);
+          
+          const link = document.createElement('a');
+          link.download = size === 16 ? 'favicon-16x16.png' : 
+                          size === 32 ? 'favicon-32x32.png' : 
+                          size === 180 ? 'apple-touch-icon.png' : 
+                          `android-chrome-${size}x${size}.png`;
+          link.href = tempCanvas.toDataURL('image/png');
+          link.textContent = `Download ${link.download}`;
+          link.style.display = 'block';
+          link.style.margin = '10px';
+          document.body.appendChild(link);
+        });
+
+        // Add ICO download
+        const icoCanvas = document.createElement('canvas');
+        icoCanvas.width = 16;
+        icoCanvas.height = 16;
+        const icoCtx = icoCanvas.getContext('2d');
+        icoCtx.drawImage(img, 0, 0, 16, 16);
+        
+        const icoLink = document.createElement('a');
+        icoLink.download = 'favicon.ico';
+        icoLink.href = icoCanvas.toDataURL('image/png');
+        icoLink.textContent = 'Download favicon.ico (Note: This is actually a PNG, rename to .ico)';
+        icoLink.style.display = 'block';
+        icoLink.style.margin = '10px';
+        document.body.appendChild(icoLink);
+      };
+    };
+  </script>
+</body>
+</html>

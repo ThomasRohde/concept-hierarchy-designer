@@ -12,7 +12,7 @@ const ErrorBoundary = () => {
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full text-center">
         <h1 className="text-2xl font-bold text-red-600 mb-4">Page Not Found</h1>
         <p className="text-gray-700 mb-6">The page you're looking for doesn't exist or has been moved.</p>        <button
-          onClick={() => window.location.href = '/concept-hierarchy-designer/'}
+          onClick={() => window.location.href = window.location.hostname === 'localhost' ? '/' : '/concept-hierarchy-designer/'}
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
         >
           Return to Home
@@ -45,7 +45,8 @@ const router = createBrowserRouter([
   }
 ], {
   // This ensures all routes start with the base path defined in vite.config.ts
-  basename: '/concept-hierarchy-designer'
+  // Use conditional basename based on the environment
+  basename: import.meta.env.DEV ? '/' : '/concept-hierarchy-designer'
 });
 
 const AppRouter: React.FC = () => {
