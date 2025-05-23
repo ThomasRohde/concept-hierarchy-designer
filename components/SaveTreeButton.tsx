@@ -17,7 +17,7 @@ const SaveTreeButton: React.FC<SaveTreeButtonProps> = ({ onSave, disabled }) => 
       disabled={disabled}
     >
       <Save className="w-4 h-4" />
-      <span>Save as JSON</span>
+      <span className="hidden sm:inline">Save as JSON</span>
     </Button>
   );
 };

@@ -3,9 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 
 const AboutPage: React.FC = () => {
   return (
-    <CardContent className="p-6 flex-grow overflow-auto">
+    <CardContent className="p-4 sm:p-6 flex-grow overflow-auto">
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">About Concept Hierarchy Designer</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6">About Concept Hierarchy Designer</h1>
         
         <section className="mb-8">
           <h2 className="text-xl font-semibold mb-3">Purpose</h2>
@@ -18,7 +18,7 @@ const AboutPage: React.FC = () => {
         
         <section className="mb-8">
           <h2 className="text-xl font-semibold mb-3">Features</h2>
-          <ul className="list-disc pl-5 space-y-2">
+          <ul className="list-disc pl-4 sm:pl-5 space-y-2">
             <li>Drag and drop interface for intuitive organization</li>
             <li>Unlimited depth for complex hierarchies</li>
             <li>Smart clipboard with copy/paste functionality</li>
@@ -34,7 +34,7 @@ const AboutPage: React.FC = () => {
           <p className="text-gray-700 mb-4">
             Built with modern web technologies including:
           </p>
-          <ul className="list-disc pl-5 space-y-2">
+          <ul className="list-disc pl-4 sm:pl-5 space-y-2">
             <li>React for component-based UI</li>
             <li>TypeScript for type safety</li>
             <li>Framer Motion for smooth animations</li>

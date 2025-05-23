@@ -10,14 +10,14 @@ import CustomDragLayer from '../CustomDragLayer';
 const Layout: React.FC = () => {
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="min-h-screen py-8 px-4 flex flex-col items-center bg-gray-100 text-gray-900 h-screen">
+      <div className="min-h-screen p-4 sm:py-8 sm:px-4 flex flex-col items-center bg-gray-100 text-gray-900 h-screen">
         <CustomDragLayer />
         <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
         <Card className="w-full max-w-5xl shadow-2xl flex flex-col flex-grow">
           <CardHeader>
             <div className="flex items-center">
               <BurgerMenu className="mr-2" />
-              <div className="text-2xl font-bold text-center flex-grow">Concept Hierarchy Designer</div>
+              <div className="text-xl sm:text-2xl font-bold text-center flex-grow">Concept Hierarchy Designer</div>
               <div className="w-8">
                 {/* Empty div to balance the burger menu */}
               </div>
@@ -28,7 +28,7 @@ const Layout: React.FC = () => {
           <Outlet />
         </Card>
         
-        <footer className="mt-8 text-center text-sm text-gray-500">
+        <footer className="mt-4 sm:mt-8 text-center text-xs sm:text-sm text-gray-500">
           <p>Drag & drop to re-organize. Hover over nodes for actions.</p>
           <p>Powered by React, Tailwind CSS, Framer Motion. Clipboard actions use system clipboard.</p>
           <p>&copy; 2025 Thomas Klok Rohde. All rights reserved.</p>

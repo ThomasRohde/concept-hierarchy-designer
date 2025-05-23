@@ -384,8 +384,8 @@ const MainContent: React.FC = () => {  const {
 
   return (
     <>
-      <div className="flex justify-end items-center px-4 mb-2">
-        <div className="flex items-center space-x-2">
+      <div className="flex justify-end items-center px-2 sm:px-4 mb-2">
+        <div className="flex flex-wrap justify-end gap-2">
           <NewTreeButton onClick={handleOpenNewTreeModal} disabled={isLoading} />
           <SaveTreeButton 
             onSave={(fileName) => {
@@ -401,21 +401,19 @@ const MainContent: React.FC = () => {  const {
       {isInitializing ? (
         <div className="flex justify-center items-center flex-grow">
           <LoadingSpinner size={50} text="Initializing..." />
-        </div>
-      ) : isLoading ? (
+        </div>      ) : isLoading ? (
         <div className="flex justify-center items-center flex-grow">
           <LoadingSpinner size={50} text="Loading data..." />
         </div>
-      ) : (
-        <div className="p-2 space-y-0.5 flex flex-col flex-grow">
-          <div className="mb-2">            <TreeControls 
+      ) : (        <div className="p-2 space-y-0.5 flex flex-col flex-grow overflow-hidden">
+          <div className="mb-2">
+            <TreeControls 
               onExpandAll={handleExpandAll} 
-              onCollapseAll={handleCollapseAll}
-              onOpenMagicWandSettings={handleOpenMagicWandSettings}
+              onCollapseAll={handleCollapseAll} 
               disabled={isLoading || isInitializing}
             />
           </div>
-          <div className="flex-grow overflow-y-auto overflow-x-hidden w-full" ref={treeContainerRef}>
+          <div className="flex-grow overflow-y-auto overflow-x-auto w-full min-w-0" ref={treeContainerRef}>
             <AnimatePresence>
               {nodes.length > 100 ? (
                 <VirtualizedTree 

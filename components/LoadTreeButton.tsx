@@ -45,7 +45,7 @@ export default function LoadTreeButton({ onLoad, disabled }: LoadTreeButtonProps
         disabled={disabled}
       >
         <Upload className="w-4 h-4" />
-        <span>Load JSON</span>
+        <span className="hidden sm:inline">Load JSON</span>
       </Button>
       <input
         type="file"

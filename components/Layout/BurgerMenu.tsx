@@ -54,7 +54,7 @@ const BurgerMenu: React.FC<BurgerMenuProps> = ({ className = '' }) => {
         variant="ghost"
         size="icon"
         onClick={toggleMenu}
-        className={`relative z-50 p-1 text-gray-800 hover:text-gray-600 hover:bg-gray-100 ${className}`}
+        className={`relative z-50 p-2 text-gray-800 hover:text-gray-600 hover:bg-gray-100 ${className}`}
         aria-label={isOpen ? 'Close menu' : 'Open menu'}
       >
         {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -69,18 +69,18 @@ const BurgerMenu: React.FC<BurgerMenuProps> = ({ className = '' }) => {
 
       {/* Slide-out menu */}
       <motion.div 
-        className="fixed top-0 left-0 bottom-0 w-64 bg-white shadow-xl z-50 flex flex-col burger-menu"
+        className="fixed top-0 left-0 bottom-0 w-full max-w-72 sm:w-64 bg-white shadow-xl z-50 flex flex-col burger-menu"
         initial="closed"
         animate={isOpen ? 'open' : 'closed'}
         variants={menuVariants}
       >
-        <div className="p-5 flex justify-between items-center border-b">
+        <div className="p-4 sm:p-5 flex justify-between items-center border-b">
           <h2 className="text-xl font-semibold">Menu</h2>
           <Button
             variant="ghost"
             size="icon"
             onClick={toggleMenu}
-            className="p-1 text-gray-800 hover:text-gray-600"
+            className="p-2 text-gray-800 hover:text-gray-600"
             aria-label="Close menu"
           >
             <X className="h-6 w-6" />

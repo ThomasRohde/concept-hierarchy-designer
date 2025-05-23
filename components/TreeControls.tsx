@@ -42,7 +42,7 @@ const TreeControls: React.FC<TreeControlsProps> = ({  onExpandAll,
           <path d="m18 9-3-3 3-3"/>
           <path d="m17 15 3 3-3 3"/>
         </svg>
-        <span className="text-xs font-medium">Expand</span>
+        <span className="text-xs font-medium hidden sm:inline">Expand</span>
       </Button>
       <Button
         onClick={onCollapseAll}
@@ -71,7 +71,7 @@ const TreeControls: React.FC<TreeControlsProps> = ({  onExpandAll,
           <path d="m7 9-3 3 3 3"/>
           <path d="m17 9 3 3-3 3"/>
         </svg>
-        <span className="text-xs font-medium">Collapse</span>
+        <span className="text-xs font-medium hidden sm:inline">Collapse</span>
       </Button>
       <Button
         onClick={onOpenMagicWandSettings}

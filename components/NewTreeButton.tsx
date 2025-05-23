@@ -17,7 +17,7 @@ const NewTreeButton: React.FC<NewTreeButtonProps> = ({ onClick, disabled }) => {
       disabled={disabled}
     >
       <FilePlus2 className="w-4 h-4" />
-      <span>New Tree</span>
+      <span className="hidden sm:inline">New Tree</span>
     </Button>
   );
 };
