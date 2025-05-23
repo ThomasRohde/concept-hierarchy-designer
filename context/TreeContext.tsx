@@ -27,7 +27,6 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [nodes, setNodes] = useState<NodeData[]>([]);
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());  // Track auto-save debouncing
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
   // Custom setter function that saves to local storage automatically with debouncing
   const handleSetNodes = useCallback((newNodes: React.SetStateAction<NodeData[]>) => {
     setNodes(prev => {
@@ -39,11 +38,12 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
       
       // Only save if there's a meaningful change
-      if (prev.length > 0 && JSON.stringify(prev) !== JSON.stringify(nextNodes)) {
+      if (JSON.stringify(prev) !== JSON.stringify(nextNodes)) {
         // Debounce save operation by 1 second
         saveTimeoutRef.current = setTimeout(() => {
-          saveTreeToLocalStorage(nextNodes);
-          console.log('Concept model auto-saved'); // Keep for debugging if needed
+          console.log('Saving model to localStorage:', { nodeCount: nextNodes.length });
+          const saveResult = saveTreeToLocalStorage(nextNodes);
+          console.log('Save result:', saveResult);
         }, 1000);
       }
       
@@ -58,32 +58,62 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       saveCollapsedNodesToLocalStorage(nextCollapsed);
       return nextCollapsed;
     });
-  }, []);
-  // Initialize app with data
+  }, []);  // Initialize app with data
   useEffect(() => {
     const initializeApp = async () => {
       setIsInitializing(true);
       
       try {
-        // Try loading from local storage first
+        // Try direct access to localStorage first for debugging
+        console.log('localStorage direct check:');
+        try {
+          const rawData = localStorage.getItem('concept-hierarchy-data');
+          console.log('- Raw data exists:', Boolean(rawData));
+          console.log('- Raw data length:', rawData?.length);
+          console.log('- First 50 chars:', rawData?.substring(0, 50));
+        } catch (e) {
+          console.error('Error accessing localStorage directly:', e);
+        }
+        
+        // Try loading from local storage using our utility
+        console.log('Attempting to load data from localStorage...');
         const storedNodes = loadTreeFromLocalStorage();
         const storedCollapsed = loadCollapsedNodesFromLocalStorage();
+        
+        console.log('Loading results:', { 
+          storedNodesFound: Boolean(storedNodes), 
+          storedNodesLength: storedNodes?.length,
+          storedCollapsedSize: storedCollapsed?.size
+        });
         
         // Simulate small loading delay (remove in production if not needed)
         await new Promise(resolve => setTimeout(resolve, 500));
         
         if (storedNodes && storedNodes.length > 0) {
           // Use stored data if available
+          console.log('Using stored data from localStorage');
           setNodes(storedNodes);
           setCollapsed(storedCollapsed);
         } else {
           // Otherwise use initial data
-          setNodes(createInitialData());
+          console.log('No valid stored data found, using initial data');
+          const initialData = createInitialData();
+          setNodes(initialData);
+          // Also save this initial data to storage immediately
+          console.log('Saving initial data to localStorage');
+          saveTreeToLocalStorage(initialData);
         }
       } catch (error) {
         console.error("Error initializing data:", error);
         // Fallback to initial data
-        setNodes(createInitialData());
+        const initialData = createInitialData();
+        setNodes(initialData);
+        // Try to save this initial data to storage
+        try {
+          saveTreeToLocalStorage(initialData);
+        } catch (e) {
+          console.error("Failed to save initial data:", e);
+        }
       } finally {
         setIsInitializing(false);
       }
@@ -92,18 +122,48 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Initialize when component mounts
     initializeApp();
   }, []);
-
-  // Ensure we save data before unmounting
+  // Ensure we save data before unmounting and when window is closed
   useEffect(() => {
+    // Save on component unmount
     return () => {
       // If there's a pending save, clear it and save immediately
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
+        console.log('Saving on unmount:', { nodeCount: nodes.length });
         saveTreeToLocalStorage(nodes);
         saveCollapsedNodesToLocalStorage(collapsed);
       }
     };
-  }, [nodes, collapsed]);return (
+  }, [nodes, collapsed]);
+  
+  // Add beforeunload handler to ensure saving when window/tab is closed
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+        console.log('Saving on window close:', { nodeCount: nodes.length });
+        saveTreeToLocalStorage(nodes);
+        saveCollapsedNodesToLocalStorage(collapsed);
+      }
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [nodes, collapsed]);  // Save the current state when it changes
+  useEffect(() => {
+    if (nodes.length > 0 && !isInitializing && !isLoading) {
+      console.log('Auto-saving due to node state change:', nodes.length, 'nodes');
+      saveTreeToLocalStorage(nodes);
+    }
+  }, [nodes, isInitializing, isLoading]);
+  
+  useEffect(() => {
+    if (!isInitializing && !isLoading) {
+      saveCollapsedNodesToLocalStorage(collapsed);
+    }
+  }, [collapsed, isInitializing, isLoading]);
+
+  return (
     <TreeContext.Provider value={{
         nodes,
         setNodes: handleSetNodes,
