@@ -42,7 +42,7 @@ export const MagicWandSettingsModal: React.FC<MagicWandSettingsModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Magic Wand Settings"
+      title="Prompt"
     >
       <div className="space-y-4">
         <div>

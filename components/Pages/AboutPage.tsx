@@ -44,12 +44,11 @@ const AboutPage: React.FC = () => {
           </ul>
         </section>
         
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold mb-3">Contact</h2>
+        <section className="mb-8">          <h2 className="text-xl font-semibold mb-3">Contact</h2>
           <p className="text-gray-700">
             For questions, bug reports, or feature suggestions, please contact the developer at:<br />
             <a href="mailto:thomas@rohde.name" className="text-blue-600 hover:underline">
-              info@example.com
+              thomas@rohde.name
             </a>
           </p>
         </section>
