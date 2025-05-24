@@ -52,10 +52,9 @@ export const MarkdownTooltip: React.FC<MarkdownTooltipProps> = ({
           zIndex: 9999,
           maxWidth: 'min(90vw, 500px)',
           width: 'max-content'
-        }}
-        opacity={1}
+        }}        opacity={1}
         place="top"
-        delayShow={300}
+        delayShow={50}
         offset={8}
         noArrow={true}
         positionStrategy="fixed"
