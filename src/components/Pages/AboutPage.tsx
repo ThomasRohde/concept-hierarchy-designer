@@ -1,5 +1,6 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
+import { CardContent } from '../ui/Card';
+// import PWAStatus from '../PWAStatus';
 
 const AboutPage: React.FC = () => {
   return (
@@ -26,6 +27,8 @@ const AboutPage: React.FC = () => {
             <li>Import and export in standard JSON format</li>
             <li>Responsive design works on desktop and tablet</li>
             <li>Optimized for performance with virtualized rendering for large hierarchies</li>
+            <li>Progressive Web App (PWA) with offline functionality</li>
+            <li>Installable on mobile and desktop devices</li>
           </ul>
         </section>
         
@@ -41,10 +44,15 @@ const AboutPage: React.FC = () => {
             <li>React DnD for drag and drop functionality</li>
             <li>React Router for navigation</li>
             <li>Tailwind CSS for styling</li>
+            <li>Vite PWA plugin for Progressive Web App features</li>
+            <li>Service Worker for offline functionality and caching</li>
           </ul>
+        </section>        <section className="mb-8">
+          {/* <PWAStatus /> */}
         </section>
         
-        <section className="mb-8">          <h2 className="text-xl font-semibold mb-3">Contact</h2>
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-3">Contact</h2>
           <p className="text-gray-700">
             For questions, bug reports, or feature suggestions, please contact the developer at:<br />
             <a href="mailto:thomas@rohde.name" className="text-blue-600 hover:underline">

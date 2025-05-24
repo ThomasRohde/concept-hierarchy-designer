@@ -1,19 +1,62 @@
 {
   "name": "Concept Hierarchy Designer",
-  "short_name": "Hierarchy",
+  "short_name": "Hierarchy Designer",
+  "description": "A powerful tool for creating and managing concept hierarchies with drag-and-drop functionality",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "theme_color": "#4F46E5",
+  "background_color": "#ffffff",
+  "lang": "en",
+  "categories": ["productivity", "education", "utilities"],
+  "prefer_related_applications": false,
   "icons": [
+    {
+      "src": "/favicon-64x64.png",
+      "sizes": "64x64",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-180x180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "/android-chrome-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/android-chrome-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
-  "theme_color": "#4F46E5",
-  "background_color": "#ffffff",
-  "display": "standalone"
+  "shortcuts": [
+    {
+      "name": "New Hierarchy",
+      "short_name": "New",
+      "description": "Create a new concept hierarchy",
+      "url": "/?action=new",
+      "icons": [
+        {
+          "src": "/favicon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
 }
