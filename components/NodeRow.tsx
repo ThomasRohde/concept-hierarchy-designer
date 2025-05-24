@@ -121,9 +121,8 @@ const NodeRow: React.FC<NodeRowProps> = ({
                             <div className="w-4 h-4" />
                         </div>
                     )}
-                </div>
-                {/* Only render tooltip when not dragging */}
-                <MarkdownTooltip content={node.description || ""}>
+                </div>                {/* Only render tooltip when not dragging */}
+                <MarkdownTooltip content={node.description || ""} isPinnable={true}>
                     {" "}                    <span
                         className={`font-medium text-gray-800 text-sm select-none truncate block ${
                             isDragging ? "opacity-0" : ""
