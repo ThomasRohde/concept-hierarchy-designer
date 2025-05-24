@@ -104,4 +104,7 @@
   color: #333333 !important;
   z-index: 9999 !important;
   position: fixed !important;
+  max-width: min(50vw, 500px) !important;
+  min-width: 200px !important;
+  width: max-content !important;
 }
