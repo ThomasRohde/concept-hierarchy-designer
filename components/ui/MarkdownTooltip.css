@@ -104,7 +104,35 @@
   color: #333333 !important;
   z-index: 9999 !important;
   position: fixed !important;
-  max-width: min(50vw, 500px) !important;
+  max-width: min(90vw, 500px) !important;
   min-width: 200px !important;
   width: max-content !important;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 640px) {
+  .markdown-tooltip-container {
+    max-width: 90vw !important;
+    min-width: 250px !important;
+    padding: 0.5rem !important;
+  }
+  
+  .markdown-content {
+    font-size: 0.8rem !important;
+    line-height: 1.4 !important;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .markdown-tooltip-container {
+    max-width: min(70vw, 450px) !important;
+  }
+}
+
+/* Desktop adjustments */
+@media (min-width: 1025px) {
+  .markdown-tooltip-container {
+    max-width: min(50vw, 500px) !important;
+  }
 }
