@@ -6,15 +6,42 @@ import { getChildren, getParent } from '../utils/treeUtils';
 // LocalStorage key for guidelines
 export const STORAGE_KEY = 'magic-wand-guidelines';
 
-// Default generation guidelines that can be imported and customized
-export const DEFAULT_GENERATION_GUIDELINES = `1.  **Relevance:** Each child concept must be directly and logically related to the "Current Node".
-2.  **Specificity:** Child concepts should be more specific or granular than the "Current Node". They should break it down into smaller parts, types, or aspects.
-3.  **Distinctness:** Ensure the generated child concepts are clearly different from each other and from any existing "Sibling Nodes" (if provided). Avoid redundancy.
-4.  **Coverage:** Aim to provide a comprehensive set of child concepts that cover key aspects of the "Current Node", but avoid overly niche or obscure items unless the context suggests it.
-5.  **Number of Concepts:** Generate between 6 and 12 child concepts.
-6.  **Conciseness:**
-    *   **Label:** Keep the concept label concise and descriptive (typically 1-5 words).
-    *   **Description:** Provide a brief, clear explanation of the concept. If a concept is self-explanatory, a very short description or even an empty string is acceptable, but the "description" property must always exist.`;
+// Enhanced generation guidelines incorporating MECE principles and best practices
+export const DEFAULT_GENERATION_GUIDELINES = `## Core Principles
+
+### 1. **MECE Framework (Mutually Exclusive, Collectively Exhaustive)**
+   - **Mutually Exclusive:** Each child concept must be distinct with no overlaps. A specific instance should clearly belong to only one category.
+   - **Collectively Exhaustive:** Together, all child concepts must cover the entire scope of the parent node. No significant aspect should be left out.
+   - **Test:** Ask "Is every possible instance of the parent covered by exactly one child?"
+
+### 2. **Conceptual Decomposition Patterns**
+Choose the most appropriate breakdown pattern based on the node's nature:
+   - **Type/Category:** Different kinds or varieties
+   - **Component/Part:** Physical or logical components
+   - **Process/Stage:** Sequential steps or phases
+   - **Function/Purpose:** Different uses or objectives
+   - **Attribute/Property:** Key characteristics or dimensions
+   - **Stakeholder/Actor:** Different participants or users
+
+### 3. **Hierarchical Consistency**
+   - All children should be at the same level of abstraction
+   - Avoid mixing high-level concepts with overly specific details
+   - Consider the node's position in the hierarchy
+
+### 4. **Output Specifications**
+   - **Number:** Generate 6-12 concepts (adjust based on complexity)
+   - **Naming:** 1-5 words, consistent grammatical structure
+   - **Descriptions:** 
+     - Clear definition in first sentence
+     - Use **markdown** for emphasis
+     - Include \`code formatting\` for technical terms
+     - 10-50 words typically
+
+### 5. **Quality Checks**
+   - No overlapping categories
+   - Complete coverage of the parent concept
+   - Consistent decomposition pattern
+   - Clear and actionable concepts`;
 
 interface UseMagicWandProps {
   nodes: NodeData[];
@@ -26,7 +53,8 @@ interface UseMagicWandResult {
   updateGuidelines: (newGuidelines: string) => void;
 }
 
-export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult => {  // Initialize with saved guidelines or default
+export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult => {
+  // Initialize with saved guidelines or default
   const [guidelines, setGuidelines] = useState<string>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -55,103 +83,141 @@ export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult =
       console.error("Error saving guidelines to localStorage:", error);
     }
   }, []);
+
   // Function to generate the prompt with customizable generation guidelines
   const generateMagicWandPrompt = useCallback(async (selectedNode: NodeData) => {
     // Load the current guidelines directly from localStorage to ensure we have the latest
     const currentGuidelines = localStorage.getItem(STORAGE_KEY) || guidelines;
 
-    // Part 1: Context section (fixed)
+    // Part 1: Context section with enhanced formatting
     let markdownContext = "# Context for Generating New Concepts\n\n";
 
     // 1. Current Node Context
-    markdownContext += "## Current Node (The node for which to generate children)\n";
-    markdownContext += `- **Name:** ${selectedNode.name}\n`;
-    markdownContext += `- **Description:** ${selectedNode.description || 'N/A'}\n\n`;
+    markdownContext += "## 🎯 Current Node (Generate children for this concept)\n";
+    markdownContext += `**Name:** ${selectedNode.name}\n`;
+    markdownContext += `**Description:** ${selectedNode.description || 'No description provided'}\n\n`;
 
     // 2. Parent Node Context
     const parentNode = getParent(nodes, selectedNode.id);
     if (parentNode) {
-      markdownContext += "## Parent Node\n";
-      markdownContext += `- **Name:** ${parentNode.name}\n`;
-      markdownContext += `- **Description:** ${parentNode.description || 'N/A'}\n\n`;
+      markdownContext += "## 📊 Parent Node (Broader context)\n";
+      markdownContext += `**Name:** ${parentNode.name}\n`;
+      markdownContext += `**Description:** ${parentNode.description || 'No description provided'}\n\n`;
 
       // 3. Sibling Nodes Context
       const siblings = getChildren(nodes, parentNode.id).filter(child => child.id !== selectedNode.id);
       if (siblings.length > 0) {
-        markdownContext += "## Sibling Nodes (Other children of the Parent Node)\n";
+        markdownContext += "## 🔄 Sibling Nodes (Maintain consistency with these)\n";
         siblings.forEach(sibling => {
-          markdownContext += `- **Name:** ${sibling.name}\n`;
-          markdownContext += `  - **Description:** ${sibling.description || 'N/A'}\n`;
+          markdownContext += `- **${sibling.name}**: ${sibling.description || 'No description'}\n`;
         });
         markdownContext += "\n";
       } else {
-        markdownContext += "## Sibling Nodes\n- No other siblings.\n\n";
+        markdownContext += "## 🔄 Sibling Nodes\n*No siblings - this is the first child of its parent.*\n\n";
       }
     } else {
-      markdownContext += "## Parent Node\n- This is the root node, it has no parent.\n\n";
-      markdownContext += "## Sibling Nodes\n- This is the root node, it has no siblings.\n\n";
+      markdownContext += "## 📊 Parent Node\n*This is the root node (no parent).*\n\n";
+      markdownContext += "## 🔄 Sibling Nodes\n*Root node has no siblings.*\n\n";
     }
 
-    // Part 2: AI Task Header (fixed)
+    // Part 2: AI Task Header with enhanced instructions
     const promptHeader = `---
-# AI Task: Generate Child Concepts
+# 🤖 AI Task: Generate Child Concepts Using MECE Principles
 
-You are an expert in conceptual hierarchy and knowledge organization. Your task is to generate a set of **distinct and relevant child concepts** for the provided **"Current Node"**. These child concepts should represent a logical breakdown, components, or specializations of the "Current Node".
+You are an expert in **conceptual hierarchy design** and **knowledge organization**. Your task is to generate a **MECE-compliant** (Mutually Exclusive, Collectively Exhaustive) set of child concepts for the provided "Current Node".
 
-**Context Overview:**
-- **Current Node:** The primary concept for which you need to generate children.
-- **Parent Node:** The concept directly above the "Current Node" in the hierarchy. This provides broader context.
-- **Sibling Nodes:** Other children of the "Parent Node." Avoid generating child concepts that are too similar to these existing siblings.
+## Your Expertise Includes:
+- Information architecture and taxonomy design
+- MECE framework application
+- Domain-specific concept modeling
+- Hierarchical knowledge representation
 
-**Generation Guidelines:**
+## Context Analysis:
+- **Current Node:** "${selectedNode.name}" - This is your focus for decomposition
+- **Hierarchy Level:** ${parentNode ? 'Sub-concept' : 'Root level'} 
+- **Domain:** Analyze the context to infer the domain and adjust your language accordingly
+
+## Generation Guidelines:
 ${currentGuidelines}
 
 `;
 
-    // Part 4: Output Format Instructions (fixed)
+    // Part 3: Enhanced output format instructions
     const outputFormatInstructions = `
-**Output Format Instructions:**
-Your response **MUST** be a valid JSON array of objects. Each object in the array represents a new child concept and **MUST** strictly conform to the following structure:
+## 📋 Output Requirements:
+
+Your response **MUST** be a valid JSON array. Each object represents a child concept with this exact structure:
+
 \`\`\`json
 [
   {
     "name": "string",
-    "description": "string"
+    "description": "string with markdown formatting supported"
   }
 ]
 \`\`\`
-- The "name" field is the name of the new child concept.
-- The "description" field is a brief explanation of the concept.
 
-**Example:**
-If the "Current Node" is "Renewable Energy Technologies", a possible response could be:
+### Formatting Rules:
+- **name**: Concise label (1-5 words)
+- **description**: 
+  - Can include **bold**, *italics*, \`code\`, and bullet points
+  - First sentence should define what the concept IS
+  - Optional second sentence for key differentiators
+  - Keep under 50 words for readability
+
+## 💡 Example Output:
+
+If the Current Node is "Machine Learning Algorithms", a MECE breakdown might be:
+
 \`\`\`json
 [
-  { "name": "Solar Photovoltaics", "description": "Technology that converts sunlight directly into electricity using semiconductor materials." },
-  { "name": "Wind Turbines", "description": "Devices that convert the kinetic energy of wind into electrical power." },
-  { "name": "Geothermal Power", "description": "Energy derived from the Earth's internal heat, used for electricity generation and direct heating." },
-  { "name": "Hydropower", "description": "Electricity generated from the energy of moving water, such as rivers or tides." },
-  { "name": "Biomass Energy", "description": "Energy produced from organic materials, such as wood, agricultural crops, or waste." },
-  { "name": "Ocean Energy", "description": "Energy harnessed from ocean waves, tides, or thermal gradients." }
+  {
+    "name": "Supervised Learning",
+    "description": "Algorithms that learn from **labeled training data** to make predictions. Includes classification and regression tasks where the desired output is known during training."
+  },
+  {
+    "name": "Unsupervised Learning",
+    "description": "Algorithms that discover **hidden patterns** in unlabeled data. Used for clustering, dimensionality reduction, and anomaly detection without predefined outputs."
+  },
+  {
+    "name": "Reinforcement Learning",
+    "description": "Algorithms that learn through **interaction with an environment** using rewards and penalties. Optimizes decision-making through trial and error."
+  },
+  {
+    "name": "Semi-Supervised Learning",
+    "description": "Hybrid approach using both labeled and unlabeled data. Leverages small amounts of **expensive labeled data** with large amounts of unlabeled data."
+  },
+  {
+    "name": "Self-Supervised Learning",
+    "description": "Algorithms that generate their own labels from the input data. Uses **pretext tasks** to learn representations without manual annotation."
+  },
+  {
+    "name": "Transfer Learning",
+    "description": "Technique that applies knowledge from one domain to another. Reuses **pre-trained models** to solve related problems with less data."
+  }
 ]
 \`\`\`
 
-**Important Considerations:**
-- **Strict JSON:** Do NOT include any introductory text, concluding remarks, apologies, or any markdown formatting (like \`\`\`json ... \`\`\`) outside of the single, raw JSON array in your response.
-- **Focus:** Concentrate on the "Current Node" ("${selectedNode.name}") and its provided context to generate meaningful children.
+## ⚠️ Critical Requirements:
+1. **Valid JSON only** - No text outside the JSON array
+2. **MECE compliance** - Verify mutual exclusivity and collective exhaustiveness
+3. **Consistent pattern** - All children follow the same decomposition approach
+4. **Markdown support** - Enhance readability with formatting
+5. **Domain appropriate** - Use terminology suitable for the inferred domain
 
-Provide your JSON response below in a markdown code block, without any additional text or formatting. Ensure the JSON is valid and well-structured.:
-`;    // Combine all parts to create the full prompt
+Generate your response below:`;
+
+    // Combine all parts to create the full prompt
     const fullPrompt = markdownContext + promptHeader + outputFormatInstructions;
 
     try {
       await navigator.clipboard.writeText(fullPrompt);
-      toast.success(`AI prompt for "${selectedNode.name}" copied to clipboard! Paste it into your preferred AI chatbot to generate children concepts.`);
+      toast.success(`Enhanced AI prompt for "${selectedNode.name}" copied! This prompt uses MECE principles for optimal concept generation.`);
     } catch (err) {
       console.error("Failed to copy AI prompt to clipboard:", err);
       toast.error("Failed to copy AI prompt. Check permissions (HTTPS/localhost) or see console for details.");
     }
-  }, [nodes, guidelines]); // Make sure guidelines is in the dependency array
+  }, [nodes, guidelines]);
 
   return {
     generateMagicWandPrompt,
