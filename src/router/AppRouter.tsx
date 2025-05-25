@@ -34,9 +34,10 @@ const PromptsPageWrapper: React.FC = () => {
     const updatedPrompts = promptCollection.prompts.filter(p => p.id !== promptId);
     updatePromptCollection({ ...promptCollection, prompts: updatedPrompts });
   };
-
   const handlePromptSelect = (promptId: string) => {
     setActivePrompt(promptId);
+    // Also update the collection's active prompt ID
+    updatePromptCollection({ ...promptCollection, activePromptId: promptId });
   };
 
   return (

@@ -139,11 +139,10 @@ export const createInitialData = (): NodeData[] => {
       name: "💾 Data Management",
       description: "Comprehensive data handling system managing node creation, modification, deletion, and persistence. Implements automatic saving to localStorage with error handling and recovery mechanisms. Features data validation, backup creation, and import/export functionality with support for JSON format. Includes clipboard operations for copying and pasting nodes with full branch structures.",
       parent: rootId
-    },
-    {
+    },    {
       id: aiIntegrationId,
       name: "🤖 AI Integration",
-      description: "Advanced AI-powered content generation system using the 'Magic Wand' tool that generates contextually relevant child concepts based on MECE (Mutually Exclusive, Collectively Exhaustive) principles. Includes customizable generation guidelines, context-aware prompts, and usage statistics tracking. The system analyzes parent-child relationships and sibling contexts to generate appropriate suggestions.",
+      description: "Advanced AI-powered content generation system featuring a comprehensive multiple prompts architecture. The enhanced 'Magic Wand' tool generates contextually relevant child concepts using MECE principles and customizable prompt strategies. Features a complete prompt management system with 5 built-in prompts (General MECE, Creative Thinking, Technical Systems, Academic Research, Business Strategy), custom prompt creation, usage analytics, prompt switching, and real-time synchronization across all components.",
       parent: rootId
     },
     {
@@ -245,11 +244,10 @@ export const createInitialData = (): NodeData[] => {
       description: "Advanced clipboard system enabling copy/paste operations for individual nodes and entire branches. Preserves hierarchical relationships when copying subtrees and generates new IDs to prevent conflicts when pasting. Features visual feedback for copy/paste operations and supports cross-session clipboard data through localStorage. Includes branch copying with full descendant preservation.",
       parent: dataManagementId
     },
-      // Level 2 - AI Integration Components
-    {
+    {  // Level 2 - AI Integration Components    {
       id: magicWandId,
       name: "🪄 Magic Wand System",
-      description: "AI-powered content generation system that creates contextually relevant child concepts using copy/paste based techniques. Analyzes current node context, parent relationships, and sibling nodes to generate appropriate suggestions. Uses MECE principles for comprehensive and non-overlapping concept generation. Features customizable generation guidelines and tracks usage statistics for optimization.",
+      description: "AI-powered content generation system with multiple prompts support that creates contextually relevant child concepts using specialized generation strategies. Features 5 built-in prompts (General MECE, Creative Thinking, Technical Systems, Academic Research, Business Strategy) plus custom prompt creation. Analyzes current node context, parent relationships, and sibling nodes to generate appropriate suggestions. Includes prompt dropdown selection, usage tracking, automatic clipboard integration, and seamless prompt switching for different conceptual domains.",
       parent: aiIntegrationId
     },
     {

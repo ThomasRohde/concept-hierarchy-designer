@@ -11,7 +11,8 @@ A powerful interactive tool for creating, organizing, and visualizing hierarchic
 - ⌨️ **Full keyboard navigation** with arrow keys and visual selection
 - ✏️ Edit node labels and descriptions with **Markdown support**
 - 📝 Rich text formatting in descriptions (bold, italic, code, lists, links)
-- 🧠 AI-powered "Magic Wand" feature to generate child concepts copy/paste based technique
+- 🧠 **AI-powered "Magic Wand"** with multiple prompt system for generating child concepts
+- 📝 **Multiple AI prompts** - Create, manage, and switch between different generation strategies
 - 📋 Copy/cut/paste functionality for nodes and branches
 - 🎯 Interactive capability cards with three-generation view
 - 📤 **Export capability cards** in multiple formats (SVG, PNG, PDF, HTML, JSON)
@@ -63,7 +64,8 @@ A powerful interactive tool for creating, organizing, and visualizing hierarchic
 2. **Add child concepts** - Click the "+" button on any node
 3. **Navigate efficiently** - Use arrow keys to move between nodes, or click to select
 4. **Reorganize** - Drag and drop nodes to restructure your hierarchy
-5. **Use Magic Wand** - Generate AI-suggested child concepts for any node
+5. **Use Magic Wand** - Generate AI-suggested child concepts using customizable prompts for any node
+6. **Manage AI prompts** - Create and switch between different AI generation strategies in the Prompts page
 6. **Edit nodes** - Modify labels and descriptions by pressing Enter or clicking the edit icon
 7. **View capability cards** - Click the capability card icon to see hierarchical overviews
 
@@ -98,6 +100,46 @@ Enhance your productivity with these keyboard shortcuts:
 - Tree navigation only works when no input fields are focused
 - Tooltips on buttons show the available shortcuts
 - Form modals display helpful hints about keyboard shortcuts
+
+## 🧠 AI-Powered Magic Wand & Multiple Prompts
+
+The Magic Wand feature uses AI to generate relevant child concepts for any node in your hierarchy. The system now supports **multiple prompts**, allowing you to use different AI generation strategies for different contexts.
+
+### 🎯 How the Magic Wand Works
+
+1. **Select a node** in your tree (click or use keyboard navigation)
+2. **Click the Magic Wand button** (⚡) on the node
+3. **Choose your prompt** from the dropdown (or use the currently active one)
+4. **AI prompt is copied to clipboard** - paste it into your preferred AI tool (ChatGPT, Claude, Gemini, etc.)
+5. **Copy the AI response** and paste it back to automatically create child nodes
+
+### 📝 Multiple Prompts System
+
+#### **Default Prompts Included:**
+- **🌟 General (MECE)** - Balanced approach using Mutually Exclusive, Collectively Exhaustive principles
+- **🧠 Creative Thinking** - Encourages innovative and divergent thinking patterns
+- **🔧 Technical Systems** - Engineering-focused approach for system architecture
+- **📚 Academic Research** - Scholarly methodology with evidence-based analysis
+- **💼 Business Strategy** - Commercial and strategic business perspective
+
+#### **Managing Your Prompts:**
+- **📋 Prompts Page** - Access via the main navigation to view and manage all prompts
+- **✏️ Create Custom Prompts** - Design prompts tailored to your specific domain or methodology
+- **🎯 Set Active Prompt** - Choose which prompt is used by default for Magic Wand operations
+- **📊 Usage Tracking** - See which prompts are most effective for your workflow
+- **🏷️ Categorization** - Organize prompts by domain, type, or purpose
+
+#### **Switching Prompts:**
+- **Main Content**: Use the prompt dropdown in the tree controls area
+- **Prompts Page**: Click "Set as Default" on any prompt
+- **Per-Use**: Select different prompts when using the Magic Wand on individual nodes
+
+### 💡 Tips for Best Results
+
+- **Context Matters**: The AI analyzes parent nodes and siblings to maintain consistency
+- **Descriptive Names**: Use clear, descriptive node names for better AI understanding  
+- **Domain-Specific Prompts**: Create specialized prompts for technical, creative, or business contexts
+- **Iterate and Refine**: Adjust prompts based on the quality of generated concepts
 
 ### 📝 Markdown Support
 

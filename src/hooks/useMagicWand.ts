@@ -41,6 +41,28 @@ export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult =
   // Get the active prompt
   const activePrompt = promptCollection.prompts.find(p => p.id === activePromptId) || promptCollection.prompts[0];
 
+  // Effect to sync with localStorage changes from other components
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const updatedCollection = loadPromptCollection();
+      const updatedActivePrompt = getActivePrompt();
+      
+      setPromptCollection(updatedCollection);
+      setActivePromptIdState(updatedActivePrompt.id);
+    };    // Listen for localStorage changes from other tabs/windows
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Listen for custom prompt change events (for same-tab updates)
+    const handlePromptChange = () => {
+      handleStorageChange();
+    };
+    
+    window.addEventListener('promptCollectionChanged', handlePromptChange);    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('promptCollectionChanged', handlePromptChange);
+    };
+  }, []);
+
   // Legacy migration effect
   useEffect(() => {
     const legacyGuidelines = localStorage.getItem(LEGACY_STORAGE_KEY);
@@ -65,13 +87,15 @@ export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult =
         const updatedCollection = {
           ...promptCollection,
           prompts: [...promptCollection.prompts, customPrompt]
-        };
-        setPromptCollection(updatedCollection);
+        };        setPromptCollection(updatedCollection);
         savePromptCollection(updatedCollection);
         
         // Set as active prompt
         setActivePromptId(customPrompt.id);
         setActivePromptIdState(customPrompt.id);
+        
+        // Emit custom event to notify other hook instances
+        window.dispatchEvent(new CustomEvent('promptCollectionChanged'));
         
         toast.success('Your custom guidelines have been migrated to the new prompt system!');
       }
@@ -79,16 +103,25 @@ export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult =
       // Remove legacy storage
       localStorage.removeItem(LEGACY_STORAGE_KEY);
     }
-  }, [promptCollection]);
-
-  const updatePromptCollection = useCallback((collection: PromptCollection) => {
+  }, [promptCollection]);  const updatePromptCollection = useCallback((collection: PromptCollection) => {
     setPromptCollection(collection);
     savePromptCollection(collection);
-  }, []);
-
+    
+    // If the collection has a different active prompt ID, update local state
+    if (collection.activePromptId && collection.activePromptId !== activePromptId) {
+      setActivePromptIdState(collection.activePromptId);
+      setActivePromptId(collection.activePromptId);
+    }
+    
+    // Emit custom event to notify other hook instances
+    window.dispatchEvent(new CustomEvent('promptCollectionChanged'));
+  }, [activePromptId]);
   const setActivePrompt = useCallback((promptId: string) => {
     setActivePromptIdState(promptId);
     setActivePromptId(promptId);
+    
+    // Emit custom event to notify other hook instances
+    window.dispatchEvent(new CustomEvent('promptCollectionChanged'));
   }, []);
 
   const createPrompt = useCallback(() => {
