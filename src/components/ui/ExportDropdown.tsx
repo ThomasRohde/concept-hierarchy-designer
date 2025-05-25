@@ -30,9 +30,10 @@ const ExportDropdown: React.FC<ExportDropdownProps> = ({
   }, []);
 
   const exportFormats: { id: ExportFormat; label: string }[] = [
-    { id: 'svg', label: 'SVG Image (.svg)' },
-    { id: 'png', label: 'PNG Image (.png)' },
-    { id: 'pdf', label: 'PDF Document (.pdf)' },
+    // Commented out non-working export formats
+    // { id: 'svg', label: 'SVG Image (.svg)' },
+    // { id: 'png', label: 'PNG Image (.png)' },
+    // { id: 'pdf', label: 'PDF Document (.pdf)' },
     { id: 'html', label: 'HTML File (.html)' },
     { id: 'json', label: 'JSON Data (.json)' }
   ];
