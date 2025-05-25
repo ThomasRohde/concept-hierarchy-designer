@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "framer-motion": "^12.12.1",
+    "katex": "^0.16.22",
     "lucide-react": "^0.511.0",
     "react": "^19.1.0",
     "react-dnd": "^16.0.1",
@@ -22,7 +23,9 @@
     "react-router-dom": "^7.6.0",
     "react-tooltip": "^5.28.1",
     "react-window": "^1.8.11",
-    "remark-gfm": "^4.0.1"
+    "rehype-katex": "^7.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

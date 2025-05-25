@@ -1,4 +1,9 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 import { CapabilityCardData, NodeData } from '../types';
 import { getMaturityColor, getAverageMaturity } from '../utils/capabilityCardUtils';
 
@@ -75,13 +80,42 @@ const CapabilityTile: React.FC<CapabilityTileProps> = ({
         )}
       </div>      {/* Description */}
       {node.description && (
-        <p className={`leading-relaxed mb-3 flex-grow ${
+        <div className={`leading-relaxed mb-3 flex-grow ${
           variant === 'current' ? 'text-base line-clamp-4 text-blue-100' : 
           variant === 'child' ? 'text-sm text-white/90 line-clamp-3' : 
           variant === 'grandchild' ? 'text-xs text-white/90 line-clamp-2' : 'text-gray-600'
-        }`}>
-          {node.description}
-        </p>
+        }`}>          <ReactMarkdown
+            remarkPlugins={[remarkGfm, remarkMath]}
+            rehypePlugins={[rehypeKatex]}
+            components={{
+              p: ({ children, ...props }) => (
+                <p className="mb-2 last:mb-0" {...props}>{children}</p>
+              ),
+              strong: ({ children, ...props }) => (
+                <strong className="font-semibold" {...props}>{children}</strong>
+              ),
+              em: ({ children, ...props }) => (
+                <em className="italic" {...props}>{children}</em>
+              ),
+              code: ({ children, ...props }) => (
+                <code className="bg-white/20 px-1 py-0.5 rounded text-xs font-mono" {...props}>
+                  {children}
+                </code>
+              ),
+              ul: ({ children, ...props }) => (
+                <ul className="list-disc list-inside mb-2" {...props}>{children}</ul>
+              ),
+              ol: ({ children, ...props }) => (
+                <ol className="list-decimal list-inside mb-2" {...props}>{children}</ol>
+              ),
+              li: ({ children, ...props }) => (
+                <li className="mb-1" {...props}>{children}</li>
+              )
+            }}
+          >
+            {node.description}
+          </ReactMarkdown>
+        </div>
       )}
 
       {/* Extended fields for capability data */}

@@ -8,9 +8,11 @@ A powerful interactive tool for creating, organizing, and visualizing hierarchic
 
 - 📋 Create and manage hierarchical concept trees
 - 🔄 Drag and drop nodes to reorganize your hierarchy
-- ✏️ Edit node labels and descriptions
+- ✏️ Edit node labels and descriptions with **Markdown support**
+- 📝 Rich text formatting in descriptions (bold, italic, code, lists, links)
 - 🧠 AI-powered "Magic Wand" feature to generate child concepts using Gemini API
 - 📋 Copy/cut/paste functionality for nodes and branches
+- 🎯 Interactive capability cards with three-generation view
 - 🌈 Modern, responsive UI with animations
 - 💾 Local storage persistence for your concept trees
 
@@ -51,6 +53,8 @@ A powerful interactive tool for creating, organizing, and visualizing hierarchic
 - [React DnD](https://react-dnd.github.io/react-dnd/) - Drag and drop for React
 - [Framer Motion](https://www.framer.com/motion/) - Animation library
 - [React Hot Toast](https://react-hot-toast.com/) - Toast notifications
+- [React Markdown](https://github.com/remarkjs/react-markdown) - Markdown rendering
+- [KaTeX](https://katex.org/) - Mathematical notation rendering
 
 ## 📖 How to Use
 
@@ -59,6 +63,26 @@ A powerful interactive tool for creating, organizing, and visualizing hierarchic
 3. **Reorganize** - Drag and drop nodes to restructure your hierarchy
 4. **Use Magic Wand** - Generate AI-suggested child concepts for any node
 5. **Edit nodes** - Modify labels and descriptions by clicking the edit icon
+6. **View capability cards** - Click the capability card icon to see hierarchical overviews
+
+### 📝 Markdown Support
+
+Descriptions support full Markdown formatting, including:
+
+- **Bold text** and *italic text*
+- `inline code` and code blocks
+- Bulleted and numbered lists
+- [Links](https://example.com)
+- Headers and other Markdown features
+- 🧮 **Mathematical expressions** using LaTeX syntax:
+  - Inline math: `$\sigma_x \sigma_p \ge \frac{\hbar}{2}$`
+  - Display math: `$$E = mc^2$$`
+  - Complex formulas: `$$\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}$$`
+
+The formatted descriptions are visible in:
+- Node tooltips (hover over node names)
+- Capability card displays
+- All description viewing areas
 
 ## 🧪 Building for Production
 

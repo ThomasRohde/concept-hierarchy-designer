@@ -2,6 +2,9 @@ import React, { ReactNode, useState, useEffect, lazy, Suspense } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Tooltip } from 'react-tooltip';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 import './MarkdownTooltip.css';
 
 // Lazy load the ReactMarkdown component for better performance
@@ -126,9 +129,9 @@ export const MarkdownTooltip: React.FC<MarkdownTooltipProps> = ({
                   <div className="rounded-full bg-slate-200 h-2 w-2"></div>
                 </div>
               </div>
-            }>
-              <LazyReactMarkdown
-                remarkPlugins={[remarkGfm]}
+            }>              <LazyReactMarkdown
+                remarkPlugins={[remarkGfm, remarkMath]}
+                rehypePlugins={[rehypeKatex]}
                 urlTransform={defaultUrlTransform}
                 skipHtml={!allowHtml}
                 components={{
