@@ -1,7 +1,6 @@
 import React, { useMemo, useRef } from 'react';
 import { NodeData } from '../types';
-import { buildIndex, getCardSubtree, calculateColumns } from '../utils/capabilityCardUtils';
-import { useResizeObserver } from '../hooks/useResizeObserver';
+import { buildIndex, getCardSubtree } from '../utils/capabilityCardUtils';
 import CapabilityTile from './CapabilityTile';
 
 interface CapabilityCardProps {
@@ -18,15 +17,11 @@ const CapabilityCard: React.FC<CapabilityCardProps> = ({
   className = ''
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { width } = useResizeObserver(containerRef);
   // Build index and get subtree data
-  const index = useMemo(() => buildIndex(nodes), [nodes]);  const { current, kids } = useMemo(
+  const index = useMemo(() => buildIndex(nodes), [nodes]);const { current, kids } = useMemo(
     () => getCardSubtree(index, currentId),
     [index, currentId]
   );
-
-  // Calculate responsive columns
-  const cols = calculateColumns(width, 220);
 
   if (!current) {
     return (
@@ -49,25 +44,25 @@ const CapabilityCard: React.FC<CapabilityCardProps> = ({
         </div>        {/* Level N+1 and N+2 - Children with their grandchildren below */}
         {kids.length > 0 && (
           <>
-            {/* Children row */}
-            <div 
-              className="grid gap-4" 
-              style={{ 
-                gridTemplateColumns: `repeat(${Math.min(kids.length, cols)}, 1fr)`
-              }}
-            >
-              {kids.map((kid) => (
-                <div key={`child-${kid.id}`} className="min-h-0">
-                  <CapabilityTile 
-                    node={kid} 
-                    variant="child"
-                    onClick={() => onNodeClick?.(kid.id)}
-                  />
-                </div>
-              ))}
-            </div>
-
-            {/* Grandchildren rows */}
+            {/* Children row with horizontal scrolling */}
+            <div className="overflow-x-auto">
+              <div 
+                className="flex gap-4 pb-2"
+                style={{ 
+                  minWidth: 'fit-content'
+                }}
+              >
+                {kids.map((kid) => (
+                  <div key={`child-${kid.id}`} className="flex-shrink-0" style={{ width: '220px' }}>
+                    <CapabilityTile 
+                      node={kid} 
+                      variant="child"
+                      onClick={() => onNodeClick?.(kid.id)}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>            {/* Grandchildren rows */}
             {(() => {
               // Collect all grandchildren with their parent info
               const allGrandchildren = kids.flatMap((kid) => {
@@ -85,35 +80,38 @@ const CapabilityCard: React.FC<CapabilityCardProps> = ({
                 ...kids.map(kid => (index.children.get(kid.id) ?? []).length)
               );
 
-              // Create rows for grandchildren
+              // Create rows for grandchildren with horizontal scrolling
               const grandchildrenRows = [];
               for (let rowIndex = 0; rowIndex < maxGrandchildrenPerParent; rowIndex++) {
                 grandchildrenRows.push(
                   <div 
                     key={`grandchildren-row-${rowIndex}`}
-                    className="grid gap-4 mt-3"
-                    style={{ 
-                      gridTemplateColumns: `repeat(${Math.min(kids.length, cols)}, 1fr)`
-                    }}
+                    className="overflow-x-auto mt-3"
                   >
-                    {kids.map((kid, kidIndex) => {
-                      const kidGrandchildren = index.children.get(kid.id) ?? [];
-                      const grandchild = kidGrandchildren[rowIndex];
-                      
-                      return (
-                        <div key={`grandchild-${kid.id}-${rowIndex}`} className="min-h-0">
-                          {grandchild ? (
-                            <CapabilityTile 
-                              node={grandchild} 
-                              variant="grandchild"
-                              onClick={() => onNodeClick?.(grandchild.id)}
-                            />
-                          ) : (
-                            <div className="h-full" /> // Empty space to maintain grid
-                          )}
-                        </div>
-                      );
-                    })}
+                    <div 
+                      className="flex gap-4 pb-2"
+                      style={{ 
+                        minWidth: 'fit-content'
+                      }}
+                    >                      {kids.map((kid) => {
+                        const kidGrandchildren = index.children.get(kid.id) ?? [];
+                        const grandchild = kidGrandchildren[rowIndex];
+                        
+                        return (
+                          <div key={`grandchild-${kid.id}-${rowIndex}`} className="flex-shrink-0" style={{ width: '220px' }}>
+                            {grandchild ? (
+                              <CapabilityTile 
+                                node={grandchild} 
+                                variant="grandchild"
+                                onClick={() => onNodeClick?.(grandchild.id)}
+                              />
+                            ) : (
+                              <div className="h-full" /> // Empty space to maintain alignment
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 );
               }
