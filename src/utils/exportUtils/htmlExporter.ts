@@ -6,21 +6,7 @@ import { markdownToHtmlSync } from '../markdownUtils.js';
 /**
  * Creates a standalone HTML representation of the capability card
  * @param nodes All nodes in the tree
-      <div class="capability-card">
-      <!-- Shared scrollable container for both current capability and children -->
-      <div class="capability-scrollable-container">
-        <!-- Current Capability -->
-        <div class="capability-section current-section">
-          <div class="capability-tile capability-current">
-            <div class="capability-name">${current.name}</div>
-            <div class="capability-description">${markdownToHtmlSync(current.description || 'No description')}</div>
-          </div>
-        </div>
-          
-        <!-- Children Capabilities -->
-        ${kids.length > 0 ? `
-        <div class="capability-section">
-          <div class="children-row">`rentNodeId The ID of the current node to create a capability card for
+ * @param currentNodeId The ID of the current node to create a capability card for
  * @returns HTML string representation of the capability card
  */
 const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): string => {
@@ -246,29 +232,43 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
       min-width: 400px;
       width: 400px;
       flex-shrink: 0;
-    }    .capability-child {
+    }    
+    
+    .capability-child {
       min-height: 180px;
       overflow: hidden;
       position: relative;
-      transition: min-height 0.3s ease;
+      transition: all 0.3s ease;
     }
     
-    .capability-child.expanded {
+    /* Hover behavior for child cards */
+    .capability-child:hover .description-content {
+      max-height: none;
+    }
+    
+    .capability-child:hover {
       min-height: auto;
       height: auto;
     }
-      .capability-grandchild {
+      
+    .capability-grandchild {
       min-height: 140px;
       overflow: hidden;
       position: relative;
-      transition: min-height 0.3s ease;
+      transition: all 0.3s ease;
     }
     
-    .capability-grandchild.expanded {
+    /* Hover behavior for grandchild cards */
+    .capability-grandchild:hover .description-content {
+      max-height: none;
+    }
+    
+    .capability-grandchild:hover {
       min-height: auto;
       height: auto;
     }
-      .description-content {
+      
+    .description-content {
       max-height: 100px;
       overflow: hidden;
       transition: max-height 0.3s ease;
@@ -276,36 +276,8 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
       word-wrap: break-word;
       overflow-wrap: break-word;
     }
-    
-    .description-content.expanded {
-      max-height: none;
-    }
-    
-    .expand-button {
-      position: absolute;
-      bottom: 8px;
-      right: 8px;
-      background: #3182ce;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 4px 8px;
-      font-size: 12px;
-      cursor: pointer;
-      display: none;
-    }
-    
-    .expand-button:hover {
-      background: #2c5282;
-    }
-      .capability-child.has-overflow .expand-button {
-      display: block;
-    }
-    
-    .capability-grandchild.has-overflow .expand-button {
-      display: block;
-    }
-      .capability-child.has-overflow .description-content:not(.expanded)::after {
+      
+    .capability-child.has-overflow .description-content:not(:hover)::after {
       content: '';
       position: absolute;
       bottom: 0;
@@ -316,7 +288,7 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
       pointer-events: none;
     }
     
-    .capability-grandchild.has-overflow .description-content:not(.expanded)::after {
+    .capability-grandchild.has-overflow .description-content:not(:hover)::after {
       content: '';
       position: absolute;
       bottom: 0;
@@ -326,7 +298,8 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
       background: linear-gradient(transparent, #FEFCBF);
       pointer-events: none;
     }
-      footer {
+      
+    footer {
       margin-top: 30px;
       text-align: left;
       font-size: 12px;
@@ -360,14 +333,12 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
               <div class="capability-tile capability-child" id="child-${kid.id}">
                 <div class="capability-name">${kid.name}</div>
                 <div class="description-content" id="desc-${kid.id}">${markdownToHtmlSync(kid.description || 'No description')}</div>
-                <button class="expand-button" onclick="toggleExpand('${kid.id}')">Expand</button>
               </div>              ${grandchildren.length > 0 ? `
                 <div class="grandchildren-section">
                   ${grandchildren.map(grandchild => `
                     <div class="capability-tile capability-grandchild" id="grandchild-${grandchild.id}">
                       <div class="capability-name">${grandchild.name}</div>
                       <div class="description-content" id="desc-${grandchild.id}">${markdownToHtmlSync(grandchild.description || 'No description')}</div>
-                      <button class="expand-button" onclick="toggleExpand('${grandchild.id}')">Expand</button>
                     </div>
                   `).join('')}
                 </div>
@@ -383,23 +354,8 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
       <p>Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
     </footer>
   </div>
-    <script>    function toggleExpand(nodeId) {
-      const descElement = document.getElementById('desc-' + nodeId);
-      const childElement = document.getElementById('child-' + nodeId);
-      const grandchildElement = document.getElementById('grandchild-' + nodeId);
-      const cardElement = childElement || grandchildElement;
-      const button = descElement.parentElement.querySelector('.expand-button');
-      
-      if (descElement.classList.contains('expanded')) {
-        descElement.classList.remove('expanded');
-        cardElement.classList.remove('expanded');
-        button.textContent = 'Expand';
-      } else {
-        descElement.classList.add('expanded');
-        cardElement.classList.add('expanded');
-        button.textContent = 'Collapse';
-      }
-    }    // Check for overflow and set current capability width to match children row
+    <script>
+    // Check for overflow and set current capability width to match children row
     document.addEventListener('DOMContentLoaded', function() {
       // Check overflow for child cards
       const childCards = document.querySelectorAll('.capability-child');
@@ -448,9 +404,6 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
       
       // Update width on resize
       window.addEventListener('resize', updateCurrentNodeWidth);
-      
-      // No need for scroll event listeners since we now have a single scrollable container
-      // that naturally handles both elements
     });
   </script>
 </body>
