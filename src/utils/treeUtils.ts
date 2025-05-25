@@ -45,7 +45,7 @@ export const createInitialData = (): NodeData[] => {
   return [
     { 
       id: rootId, 
-      name: '📚 Concept Hierarchy Designer - Complete Documentation', 
+      name: '📚 Concept Hierarchy Designer', 
       description: `# Welcome to Concept Hierarchy Designer! 🎉
 
 A powerful, intuitive tool for creating and managing hierarchical concept structures. Whether you're organizing knowledge, planning projects, or designing systems, this application provides a visual and interactive way to structure your ideas.
