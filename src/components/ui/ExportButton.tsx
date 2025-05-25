@@ -1,7 +1,6 @@
 import React from 'react';
 import { Download } from 'lucide-react';
 import { Button } from './Button';
-import ExportDropdown from './ExportDropdown';
 
 interface ExportButtonProps {
   onClick: () => void;

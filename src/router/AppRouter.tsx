@@ -4,8 +4,51 @@ import Layout from '../components/Layout/Layout';
 import AboutPage from '../components/Pages/AboutPage';
 import HomePage from '../components/Pages/HomePage';
 import AdminPage from '../components/Pages/AdminPage';
+import { PromptsPage } from '../components/Pages/PromptsPage';
+import { useMagicWand } from '../hooks/useMagicWand';
+import { useTreeContext } from '../context/TreeContext';
 import { TreeProvider } from '../context/TreeContext';
 import { Button } from '../components/ui/Button';
+
+// Wrapper component for PromptsPage to provide required props
+const PromptsPageWrapper: React.FC = () => {
+  const { nodes } = useTreeContext();
+  const { 
+    promptCollection, 
+    activePrompt, 
+    updatePromptCollection, 
+    setActivePrompt 
+  } = useMagicWand({ nodes });
+
+  const handlePromptSave = (prompt: any) => {
+    const updatedPrompts = promptCollection.prompts.map(p => 
+      p.id === prompt.id ? prompt : p
+    );
+    if (!promptCollection.prompts.find(p => p.id === prompt.id)) {
+      updatedPrompts.push(prompt);
+    }
+    updatePromptCollection({ ...promptCollection, prompts: updatedPrompts });
+  };
+
+  const handlePromptDelete = (promptId: string) => {
+    const updatedPrompts = promptCollection.prompts.filter(p => p.id !== promptId);
+    updatePromptCollection({ ...promptCollection, prompts: updatedPrompts });
+  };
+
+  const handlePromptSelect = (promptId: string) => {
+    setActivePrompt(promptId);
+  };
+
+  return (
+    <PromptsPage
+      prompts={promptCollection.prompts}
+      onPromptSave={handlePromptSave}
+      onPromptDelete={handlePromptDelete}
+      onPromptSelect={handlePromptSelect}
+      activePromptId={activePrompt?.id || null}
+    />
+  );
+};
 
 // Error boundary component for handling route errors
 const ErrorBoundary = () => {
@@ -32,6 +75,10 @@ const router = createBrowserRouter([
     children: [      {
         index: true,
         element: <HomePage />
+      },
+      {
+        path: 'prompts',
+        element: <PromptsPageWrapper />
       },
       {
         path: 'about',

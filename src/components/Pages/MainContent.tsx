@@ -7,7 +7,6 @@ import ConfirmDeleteModal from "../ConfirmDeleteModal";
 import EditNodeModal from "../EditNodeModal";
 import LoadingSpinner from "../LoadingSpinner";
 import LoadTreeButton from "../LoadTreeButton";
-import MagicWandSettingsModal from "../MagicWandSettingsModal";
 import NewTreeButton from "../NewTreeButton";
 import NewTreeModal from "../NewTreeModal";
 import NodeRow from "../NodeRow";
@@ -113,35 +112,12 @@ const MainContent: React.FC = () => {
     const [nodeToDelete, setNodeToDelete] = useState<{ id: string; name: string } | null>(null);
 
     const [isEditNodeModalOpen, setIsEditNodeModalOpen] = useState(false);
-    const [editingNode, setEditingNode] = useState<NodeData | null>(null);
-
-    // Capability card modal state
+    const [editingNode, setEditingNode] = useState<NodeData | null>(null);    // Capability card modal state
     const [isCapabilityCardOpen, setIsCapabilityCardOpen] = useState(false);
     const [capabilityCardNodeId, setCapabilityCardNodeId] = useState<string | null>(null);
 
-    // Magic wand settings modal
-    const [isMagicWandSettingsOpen, setIsMagicWandSettingsOpen] = useState(false);
-    const handleOpenMagicWandSettings = useCallback(() => {
-        setIsMagicWandSettingsOpen(true);
-    }, []);
-
-    const handleCloseMagicWandSettings = useCallback(() => {
-        setIsMagicWandSettingsOpen(false);
-    }, []);
-
     const { copyToClipboard, pasteAsChild } = useClipboardActions({ setNodes, setCollapsed });
-    const { generateMagicWandPrompt, currentGuidelines, updateGuidelines } = useMagicWand({ nodes });
-
-    const handleSaveMagicWandSettings = useCallback(
-        (guidelines: string) => {
-            updateGuidelines(guidelines);
-        },
-        [updateGuidelines]
-    );
-
-    const handleResetMagicWandSettings = useCallback(() => {
-        updateGuidelines("");
-    }, [updateGuidelines]);
+    const { generateMagicWandPrompt } = useMagicWand({ nodes });
 
     // Create a node map for faster lookups
     const nodeMap = useMemo(() => {
@@ -454,7 +430,6 @@ const MainContent: React.FC = () => {
                 <div className="flex flex-nowrap items-center gap-2">                    <TreeControls
                         onExpandAll={handleExpandAll}
                         onCollapseAll={handleCollapseAll}
-                        onOpenMagicWandSettings={handleOpenMagicWandSettings}
                         disabled={isLoading || isInitializing}
                     />
                 </div>
@@ -518,18 +493,11 @@ const MainContent: React.FC = () => {
                 nodeToEdit={editingNode}
             />{" "}
             <CapabilityCardModal
-                isOpen={isCapabilityCardOpen}
-                onClose={handleCloseCapabilityCard}
+                isOpen={isCapabilityCardOpen}                onClose={handleCloseCapabilityCard}
                 nodes={nodes}
                 currentNodeId={capabilityCardNodeId || ''}
                 onNavigateToNode={handleNavigateToCapabilityCard}
             />
-            <MagicWandSettingsModal
-                isOpen={isMagicWandSettingsOpen}
-                onClose={handleCloseMagicWandSettings}
-                currentGuidelines={currentGuidelines}
-                onSave={handleSaveMagicWandSettings}
-                onReset={handleResetMagicWandSettings}            />
             </>
         </CapabilityCardProvider>
     );

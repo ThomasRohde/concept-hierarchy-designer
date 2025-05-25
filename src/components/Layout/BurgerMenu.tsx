@@ -55,6 +55,7 @@ const BurgerMenu: React.FC<BurgerMenuProps> = ({ className = '' }) => {
     }
   };  const menuItems = [
     { label: 'Home', path: '/' },
+    { label: 'Prompts', path: '/prompts' },
     { label: 'About', path: '/about' },
     { label: 'Admin', path: '/admin' }
     // Note: We're using relative paths here since React Router's Link component 

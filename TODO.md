@@ -51,48 +51,6 @@
 - Include all descriptions with proper Markdown formatting
 - Add table of contents and statistics
 
----
-
-### 🃏 Capability Card Export Button
-**Status:** ✅ Completed  
-**Priority:** High  
-**Files modified:**
-- `src/components/CapabilityCardModal.tsx` (added export dropdown)
-- `src/utils/exportUtils/exportUtils.ts` (created modular export system)
-- `src/utils/exportUtils/jsonExporter.ts` (added JSON export)
-- `src/utils/exportUtils/htmlExporter.ts` (added HTML export)
-- `src/utils/exportUtils/pdfExporter.ts` (added PDF export)
-- `src/utils/exportUtils/svgExporter.ts` (added SVG export)
-- `src/utils/exportUtils/pngExporter.ts` (added PNG export)
-- `src/components/ui/ExportDropdown.tsx` (created export dropdown component)
-
-**Current Implementation Analysis:**
-- ✅ Capability cards show 3-generation view (parent, current, children)
-- ✅ Modal system exists with keyboard shortcuts (ESC, Ctrl+Enter)
-- ✅ Card data structure includes hierarchical relationships
-
-**Implementation Plan:**
-1. **Add Export Button to Capability Card**
-   ```typescript
-   // In CapabilityCard.tsx - add to button group
-   <button onClick={handleExportCard} className="export-btn">
-     <ExportIcon /> Export
-   </button>
-   ```
-
-2. **Export Options Modal**
-   - SVG: Vector graphic of the 3-generation view
-   - PNG: Rasterized image with configurable DPI
-   - HTML: Standalone card view with styling
-   - PDF: Formatted card as PDF document
-
-3. **Capability Card Specific Exports**
-   - Include parent context, current node details, and children overview
-   - Maintain visual hierarchy and relationships
-   - Support custom styling and branding options
-
----
-
 ### 🌳 Main View Export Button  
 **Status:** 🔴 Not Started  
 **Priority:** High  

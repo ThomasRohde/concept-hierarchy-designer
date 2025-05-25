@@ -4,7 +4,7 @@ import { Modal } from './ui/Modal';
 import { Textarea } from './ui/Textarea';
 import { Button } from './ui/Button';
 
-import { DEFAULT_GENERATION_GUIDELINES } from '../hooks/useMagicWand';
+import { DEFAULT_GENERATION_GUIDELINES } from '../utils/promptUtils';
 
 interface MagicWandSettingsModalProps {
   isOpen: boolean;

@@ -11,7 +11,7 @@ A powerful interactive tool for creating, organizing, and visualizing hierarchic
 - ⌨️ **Full keyboard navigation** with arrow keys and visual selection
 - ✏️ Edit node labels and descriptions with **Markdown support**
 - 📝 Rich text formatting in descriptions (bold, italic, code, lists, links)
-- 🧠 AI-powered "Magic Wand" feature to generate child concepts using Gemini API
+- 🧠 AI-powered "Magic Wand" feature to generate child concepts copy/paste based technique
 - 📋 Copy/cut/paste functionality for nodes and branches
 - 🎯 Interactive capability cards with three-generation view
 - 📤 **Export capability cards** in multiple formats (SVG, PNG, PDF, HTML, JSON)
@@ -23,7 +23,6 @@ A powerful interactive tool for creating, organizing, and visualizing hierarchic
 ### Prerequisites
 
 - 📦 [Node.js](https://nodejs.org/) (v16.x or later)
-- 🔑 [Gemini API key](https://ai.google.dev/) for the Magic Wand feature
 
 ### 🔧 Installation
 
