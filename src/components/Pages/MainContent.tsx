@@ -473,7 +473,7 @@ const MainContent: React.FC = () => {
                     <LoadingSpinner size={50} text="Loading data..." />
                 </div>
             ) : (                <div className="p-2 space-y-0.5 flex flex-col flex-grow overflow-hidden">                    
-                    <div className="flex-grow overflow-y-auto overflow-x-hidden w-full min-w-0" ref={treeContainerRef}>
+                    <div className="flex-grow overflow-y-auto overflow-x-hidden w-full min-w-0" ref={treeContainerRef} style={{ scrollbarGutter: 'stable' }}>
                         <AnimatePresence>
                             {nodes.length > 100 ? (                                <VirtualizedTree
                                     nodes={nodes}

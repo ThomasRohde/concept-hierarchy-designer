@@ -123,7 +123,7 @@ const NodeRow: React.FC<NodeRowProps> = ({
                 isDragging ? "shadow-lg dragging" : "shadow-sm"
             } ${isDropTarget ? "drop-target-active" : ""} ${
                 isFocused
-                    ? "!bg-gray-50 !border !border-gray-300"
+                    ? "!bg-gray-50 ring-1 ring-inset ring-gray-300"
                     : "bg-white hover:bg-gray-200/80"
             } mb-1 mr-1 sm:mx-2 relative w-full overflow-hidden`}
             style={{
