@@ -61,9 +61,8 @@ const AutoSaveIndicator: React.FC = () => {
       return 'Auto-save enabled';
     }
   };
-  return (
-    <div className="flex items-center text-xs text-gray-500 ml-2" title="Your work is automatically saved to browser storage">
-      <Save className="w-3 h-3 mr-1" />
+  return (    <div className="flex items-center text-xs text-gray-500 ml-2" title="Your work is automatically saved to browser storage">
+      <Save className="w-4 h-4 mr-1" />
       <span className="hidden sm:inline">{getFormattedLastSaved()}</span>
       <span className="sm:hidden">Auto-saved</span>
     </div>
