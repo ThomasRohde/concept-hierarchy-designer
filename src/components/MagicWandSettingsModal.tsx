@@ -22,11 +22,29 @@ export const MagicWandSettingsModal: React.FC<MagicWandSettingsModalProps> = ({
   onReset
 }) => {
   const [guidelines, setGuidelines] = useState('');
+  
   useEffect(() => {
     if (isOpen) {
       setGuidelines(currentGuidelines || DEFAULT_GENERATION_GUIDELINES);
     }
   }, [isOpen, currentGuidelines]);
+
+  // Handle RETURN key for submission
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+        event.preventDefault();
+        handleSave();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [isOpen, guidelines]);
 
   const handleReset = useCallback(() => {
     setGuidelines(DEFAULT_GENERATION_GUIDELINES);
@@ -61,15 +79,14 @@ export const MagicWandSettingsModal: React.FC<MagicWandSettingsModalProps> = ({
             These guidelines will be used to instruct the AI on how to generate child concepts. Use Markdown formatting.
           </p>
         </div>
-      </div>
-      <div className="mt-6 flex justify-end space-x-2">
-        <Button variant="outline" onClick={handleReset}>
+      </div>      <div className="mt-6 flex justify-end space-x-2">
+        <Button variant="outline" onClick={handleReset} title="Reset to Default">
           Reset to Default
         </Button>
-        <Button variant="outline" onClick={onClose}>
+        <Button variant="outline" onClick={onClose} title="Cancel (ESC)">
           Cancel
         </Button>
-        <Button onClick={handleSave}>
+        <Button onClick={handleSave} title="Save (Ctrl+Enter)">
           Save
         </Button>
       </div>

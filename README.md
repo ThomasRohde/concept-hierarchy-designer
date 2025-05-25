@@ -65,6 +65,24 @@ A powerful interactive tool for creating, organizing, and visualizing hierarchic
 5. **Edit nodes** - Modify labels and descriptions by clicking the edit icon
 6. **View capability cards** - Click the capability card icon to see hierarchical overviews
 
+## ⌨️ Keyboard Shortcuts
+
+Enhance your productivity with these keyboard shortcuts:
+
+### Modal Dialogs
+- **ESC** - Close any modal dialog (cancel action)
+- **Ctrl+Enter** (Cmd+Enter on Mac) - Submit/save form in modals:
+  - Add Child Modal: Save new child concept
+  - Edit Node Modal: Save node changes  
+  - New Tree Modal: Create new tree
+  - Magic Wand Settings: Save AI guidelines
+- **Enter** - Confirm deletion in delete confirmation dialogs
+
+### Tips
+- Keyboard shortcuts work when modal dialogs are open
+- Tooltips on buttons show the available shortcuts
+- Form modals display helpful hints about keyboard shortcuts
+
 ### 📝 Markdown Support
 
 Descriptions support full Markdown formatting, including:

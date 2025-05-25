@@ -23,6 +23,23 @@ const NewTreeModal: React.FC<NewTreeModalProps> = ({ isOpen, onClose, onSave }) 
     }
   }, [isOpen]);
 
+  // Handle RETURN key for submission
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+        event.preventDefault();
+        handleSave();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [isOpen, name, description]);
+
   const handleSave = () => {
     if (name.trim() === '') {
       toast.error('Root node name cannot be empty.');
@@ -60,15 +77,16 @@ const NewTreeModal: React.FC<NewTreeModalProps> = ({ isOpen, onClose, onSave }) 
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter root concept description"
-            rows={3}
-          />
+            rows={3}          />
         </div>
       </div>
-      <div className="mt-6 flex justify-end space-x-2">
-        <Button variant="outline" onClick={onClose}>
+      <div className="mt-4 text-xs text-gray-500 text-center">
+        Tip: Press Ctrl+Enter to create, or ESC to cancel
+      </div>      <div className="mt-6 flex justify-end space-x-2">
+        <Button variant="outline" onClick={onClose} title="Cancel (ESC)">
           Cancel
         </Button>
-        <Button onClick={handleSave}>
+        <Button onClick={handleSave} title="Create New Tree (Ctrl+Enter)">
           Create New Tree
         </Button>
       </div>
