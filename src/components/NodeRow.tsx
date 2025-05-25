@@ -146,21 +146,19 @@ const NodeRow: React.FC<NodeRowProps> = ({
                     // Hide completely on mobile when not hovered for better layout
                     "group-hover:relative"
                 }`}
-            >
-                <Button
+            >                <Button
                     variant="ghost"
                     size="icon"
-                    className="p-0.5 sm:p-1 text-gray-500 hover:text-purple-500"
+                    className="p-0.5 sm:p-1"
                     onClick={handleEdit}
                     aria-label="Edit Node"
                     title="Edit Node"
                 >
                     <FileEdit className="w-4 h-4" />
-                </Button>{" "}
-                <Button
+                </Button>{" "}                <Button
                     variant="ghost"
                     size="icon"
-                    className="p-0.5 sm:p-1 text-gray-500 hover:text-blue-500"
+                    className="p-0.5 sm:p-1"
                     onClick={(e) => {
                         e.stopPropagation();
                         onMagicWand(node);
@@ -169,11 +167,10 @@ const NodeRow: React.FC<NodeRowProps> = ({
                     title="Magic Wand (AI)"
                 >
                     <Wand2 className="w-4 h-4" />
-                </Button>
-                <Button
+                </Button>                <Button
                     variant="ghost"
                     size="icon"
-                    className="p-0.5 sm:p-1 text-gray-500 hover:text-green-500"
+                    className="p-0.5 sm:p-1"
                     onClick={(e) => {
                         e.stopPropagation();
                         onCopyToClipboard(node);
@@ -182,11 +179,10 @@ const NodeRow: React.FC<NodeRowProps> = ({
                     title="Copy to Clipboard"
                 >
                     <Copy className="w-4 h-4" />
-                </Button>{" "}
-                <Button
+                </Button>{" "}                <Button
                     variant="ghost"
                     size="icon"
-                    className="p-0.5 sm:p-1 text-gray-500 hover:text-yellow-500"
+                    className="p-0.5 sm:p-1"
                     onClick={(e) => {
                         e.stopPropagation();
                         onPasteAsChild(node);
@@ -195,11 +191,10 @@ const NodeRow: React.FC<NodeRowProps> = ({
                     title="Paste as Child"
                 >
                     <ClipboardPaste className="w-4 h-4" />
-                </Button>{" "}
-                <Button
+                </Button>{" "}                <Button
                     variant="ghost"
                     size="icon"
-                    className="p-0.5 sm:p-1 text-gray-500 hover:text-indigo-500"
+                    className="p-0.5 sm:p-1"
                     onClick={(e) => {
                         e.stopPropagation();
                         onAddNewChild(node);
@@ -208,11 +203,10 @@ const NodeRow: React.FC<NodeRowProps> = ({
                     title="Add New Child"
                 >
                     <PlusSquare className="w-4 h-4" />
-                </Button>{" "}
-                <Button
+                </Button>{" "}                <Button
                     variant="ghost"
                     size="icon"
-                    className="p-0.5 sm:p-1 text-gray-500 hover:text-red-500"
+                    className="p-0.5 sm:p-1"
                     onClick={handleDelete}
                     aria-label="Delete Node"
                     title="Delete Node"

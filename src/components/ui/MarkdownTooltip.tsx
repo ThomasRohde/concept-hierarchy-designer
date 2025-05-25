@@ -107,9 +107,8 @@ export const MarkdownTooltip: React.FC<MarkdownTooltipProps> = ({
       >        <div className="markdown-content text-sm leading-relaxed" 
              style={{ maxHeight: maxHeight, overflowY: 'auto' }}>
           {isPinnable && (
-            <div className="flex justify-end mb-2">
-              <button 
-                className={`p-1 rounded-full text-xs ${isPinned ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'} transition-colors`}
+            <div className="flex justify-end mb-2">              <button 
+                className={`p-1 rounded-full text-xs ${isPinned ? 'bg-gray-200 text-gray-800' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'} transition-colors`}
                 onClick={handlePinClick}
                 aria-label={isPinned ? 'Unpin tooltip' : 'Pin tooltip'}
                 title={isPinned ? 'Unpin tooltip' : 'Pin tooltip'}
