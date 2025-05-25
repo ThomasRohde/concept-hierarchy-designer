@@ -36,11 +36,10 @@ export default function LoadTreeButton({ onLoad, disabled }: LoadTreeButtonProps
   };
 
   return (
-    <>
-      <Button
+    <>      <Button
         variant="outline" 
         onClick={handleClick}
-        className="flex items-center space-x-2 ml-2"
+        className="flex items-center gap-2"
         title="Load concept hierarchy from JSON file"
         disabled={disabled}
       >

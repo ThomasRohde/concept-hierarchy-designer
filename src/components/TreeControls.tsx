@@ -15,34 +15,31 @@ const TreeControls: React.FC<TreeControlsProps> = ({  onExpandAll,
   disabled = false
 }) => {
   return (
-    <div className="flex items-center space-x-3 mb-2">      <Button
+    <div className="flex items-center gap-2 mb-2">      <Button
         onClick={onExpandAll}
         disabled={disabled}
         variant="outline"
-        size="sm"
-        className="flex items-center gap-1.5"
+        className="flex items-center gap-2"
         title="Expand All"
         aria-label="Expand All"
       >
         <ChevronsDown className="w-4 h-4" />
-        <span className="text-xs font-medium hidden sm:inline">Expand</span>
+        <span className="hidden sm:inline">Expand</span>
       </Button>      <Button
         onClick={onCollapseAll}
         disabled={disabled}
         variant="outline"
-        size="sm"
-        className="flex items-center gap-1.5"
+        className="flex items-center gap-2"
         title="Collapse All"
         aria-label="Collapse All"
       >
         <ChevronsUp className="w-4 h-4" />
-        <span className="text-xs font-medium hidden sm:inline">Collapse</span>
+        <span className="hidden sm:inline">Collapse</span>
       </Button>      <Button
         onClick={onOpenMagicWandSettings}
         disabled={disabled}
         variant="outline"
-        size="sm"
-        className="flex items-center gap-1.5"
+        className="flex items-center gap-2"
         title="Prompt"
         aria-label="Prompt"
       >

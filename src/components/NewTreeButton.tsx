@@ -12,7 +12,7 @@ const NewTreeButton: React.FC<NewTreeButtonProps> = ({ onClick, disabled }) => {
     <Button
       variant="outline"
       onClick={onClick}
-      className="flex items-center space-x-2"
+      className="flex items-center gap-2"
       title="Start a new concept hierarchy"
       disabled={disabled}
     >
