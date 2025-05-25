@@ -25,25 +25,18 @@ const TreeControls: React.FC<TreeControlsProps> = ({
     setActivePrompt,
     createPrompt
   } = useMagicWand({ nodes });
-
   const [isPromptEditorOpen, setIsPromptEditorOpen] = useState(false);
   const handlePromptSelect = (promptId: string) => {
     setActivePrompt(promptId);
-    // Also update the collection's active prompt ID
-    updatePromptCollection({ ...promptCollection, activePromptId: promptId });
   };
 
   const handleOpenPromptEditor = () => {
     setIsPromptEditorOpen(true);
-  };
-  const handleCreateNewPrompt = () => {
+  };  const handleCreateNewPrompt = () => {
     const newPrompt = createPrompt();
     setActivePrompt(newPrompt.id);
-    // Also update the collection's active prompt ID
-    updatePromptCollection({ ...promptCollection, activePromptId: newPrompt.id });
     setIsPromptEditorOpen(true);
   };
-
   const handlePromptSave = (prompt: any) => {
     const updatedPrompts = promptCollection.prompts.map(p => 
       p.id === prompt.id ? prompt : p
@@ -51,7 +44,11 @@ const TreeControls: React.FC<TreeControlsProps> = ({
     if (!promptCollection.prompts.find(p => p.id === prompt.id)) {
       updatedPrompts.push(prompt);
     }
-    updatePromptCollection({ ...promptCollection, prompts: updatedPrompts });
+    updatePromptCollection({ 
+      ...promptCollection, 
+      prompts: updatedPrompts,
+      activePromptId: activePrompt?.id || promptCollection.activePromptId
+    });
     setIsPromptEditorOpen(false);
   };
 

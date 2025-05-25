@@ -19,7 +19,6 @@ const PromptsPageWrapper: React.FC = () => {
     updatePromptCollection, 
     setActivePrompt 
   } = useMagicWand({ nodes });
-
   const handlePromptSave = (prompt: any) => {
     const updatedPrompts = promptCollection.prompts.map(p => 
       p.id === prompt.id ? prompt : p
@@ -27,17 +26,22 @@ const PromptsPageWrapper: React.FC = () => {
     if (!promptCollection.prompts.find(p => p.id === prompt.id)) {
       updatedPrompts.push(prompt);
     }
-    updatePromptCollection({ ...promptCollection, prompts: updatedPrompts });
+    updatePromptCollection({ 
+      ...promptCollection, 
+      prompts: updatedPrompts,
+      activePromptId: activePrompt?.id || promptCollection.activePromptId
+    });
   };
 
   const handlePromptDelete = (promptId: string) => {
     const updatedPrompts = promptCollection.prompts.filter(p => p.id !== promptId);
-    updatePromptCollection({ ...promptCollection, prompts: updatedPrompts });
-  };
-  const handlePromptSelect = (promptId: string) => {
+    updatePromptCollection({ 
+      ...promptCollection, 
+      prompts: updatedPrompts,
+      activePromptId: activePrompt?.id || promptCollection.activePromptId
+    });
+  };const handlePromptSelect = (promptId: string) => {
     setActivePrompt(promptId);
-    // Also update the collection's active prompt ID
-    updatePromptCollection({ ...promptCollection, activePromptId: promptId });
   };
 
   return (

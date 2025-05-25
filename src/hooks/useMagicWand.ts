@@ -115,10 +115,16 @@ export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult =
     
     // Emit custom event to notify other hook instances
     window.dispatchEvent(new CustomEvent('promptCollectionChanged'));
-  }, [activePromptId]);
-  const setActivePrompt = useCallback((promptId: string) => {
+  }, [activePromptId]);  const setActivePrompt = useCallback((promptId: string) => {
     setActivePromptIdState(promptId);
     setActivePromptId(promptId);
+    
+    // Also update the collection's activePromptId to keep everything in sync
+    setPromptCollection(currentCollection => {
+      const updatedCollection = { ...currentCollection, activePromptId: promptId };
+      savePromptCollection(updatedCollection);
+      return updatedCollection;
+    });
     
     // Emit custom event to notify other hook instances
     window.dispatchEvent(new CustomEvent('promptCollectionChanged'));
