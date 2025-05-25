@@ -35,15 +35,26 @@ const CapabilityCard: React.FC<CapabilityCardProps> = ({
     <div 
       ref={containerRef} 
       className={`h-full w-full p-6 overflow-auto ${className}`}
-    >
-      <div className="space-y-6">        {/* Level N - Current node (blue background, full width) */}
-        <div className="w-full">
-          <SimpleTooltip content={current.description || ''}>
-            <CapabilityTile 
-              node={current} 
-              variant="current"
-            />
-          </SimpleTooltip>
+    >      <div className="space-y-6">        {/* Level N - Current node (blue background, spans width of children) */}
+        <div className="overflow-x-auto">
+          <div 
+            className={`flex gap-4 pb-2 ${kids.length <= 4 ? 'w-full' : ''}`}
+            style={kids.length <= 4 ? {} : { minWidth: 'fit-content' }}
+          >
+            <div 
+              className={kids.length <= 4 ? "flex-1" : "flex-shrink-0"} 
+              style={kids.length <= 4 ? { minWidth: '200px' } : { 
+                width: `${kids.length * 220 + (kids.length - 1) * 16}px` // width of all children + gaps
+              }}
+            >
+              <SimpleTooltip content={current.description || ''}>
+                <CapabilityTile 
+                  node={current} 
+                  variant="current"
+                />
+              </SimpleTooltip>
+            </div>
+          </div>
         </div>{/* Level N+1 and N+2 - Children with their grandchildren below */}
         {kids.length > 0 && (
           <>            {/* Children row with responsive layout */}
