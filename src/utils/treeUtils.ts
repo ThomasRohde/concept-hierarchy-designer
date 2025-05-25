@@ -546,92 +546,49 @@ The Magic Wand feature leverages artificial intelligence to help you generate co
 Transform your concept development process with intelligent automation! 🤖🧠`, 
       parent: featuresId 
     },
-    
-    { 
+      { 
       id: capabilityCardsId, 
       name: '🃏 Capability Cards', 
-      description: `# Capability Cards - Detailed Documentation
+      description: `# Capability Cards - Three-Generation View
 
 ## What are Capability Cards? 📋
 
-Capability Cards provide in-depth documentation and detailed views for each concept in your hierarchy. Think of them as expanded information panels that give comprehensive context to your nodes.
+Capability Cards provide a focused three-generation view of your hierarchy, showing the current node along with its immediate children and grandchildren in a responsive layout.
 
-### Key Features
-- **Rich Text Support**: Full markdown formatting capabilities
-- **Visual Enhancement**: Images, links, and multimedia support
-- **Structured Information**: Organized sections for different types of content
-- **Cross-References**: Links between related concepts and cards
+### Features
+- **Three-Generation Display**: Current node, children, and grandchildren
+- **Responsive Layout**: Automatically adjusts to container width
+- **Click Navigation**: Navigate between cards by clicking on child nodes
+- **Modal Interface**: Full-screen card view with navigation controls
+- **Tooltip Support**: Hover to see node descriptions
 
-## Creating Capability Cards 🎨
+## How Capability Cards Work 🎨
 
-### Card Structure
-- **Header Section**: Title, summary, and key metadata
-- **Description Area**: Detailed explanation and context
-- **Related Concepts**: Links to connected nodes and ideas
-- **Implementation Notes**: Practical guidance and examples
-- **Resources**: External links, references, and materials
+### Visual Layout
+- **Current Node**: Highlighted with blue background, spans full width
+- **Children Row**: Direct child nodes displayed below current node
+- **Grandchildren Rows**: Child nodes' children arranged beneath their parents
+- **Responsive Grid**: Automatically adjusts columns based on available space
 
-### Content Types
-- **Concept Definitions**: Clear explanations of complex ideas
-- **Process Documentation**: Step-by-step procedures and workflows
-- **Reference Materials**: Quick-access information and data
-- **Planning Templates**: Reusable structures and frameworks
+### Navigation
+- **Parent Navigation**: Up arrow to go to parent node
+- **Child Navigation**: Click on any child or grandchild to navigate to it
+- **Modal Controls**: Close button and breadcrumb navigation
 
-## Advanced Card Features 🚀
+## Technical Implementation 🚀
 
-### Interactive Elements
-- **Collapsible Sections**: Organize long content efficiently
-- **Tabbed Views**: Multiple perspectives on the same concept
-- **Progress Tracking**: Implementation status and completion
-- **Comments System**: Collaborative notes and feedback (coming soon!)
+### Performance Features
+- **Indexed Data**: Efficient lookups using pre-built node index
+- **Minimal Rendering**: Only renders three generations at a time
+- **Responsive Design**: CSS Grid with automatic column sizing
+- **Smooth Navigation**: Fast transitions between different cards
 
-### Linking and Navigation
-- **Cross-References**: Automatic links between related cards
-- **Back-References**: See which cards reference this concept
-- **Hierarchy Navigation**: Jump to parent/child nodes quickly
-- **Search Integration**: Find cards by content, not just titles
+### Current Limitations
+- **Text Display Only**: Currently shows node names and descriptions
+- **Basic Styling**: Simple tile-based layout without advanced formatting
+- **No Editing**: View-only interface (editing happens in tree view)
 
-### Templates and Standards
-- **Card Templates**: Consistent structure across similar concepts
-- **Style Guidelines**: Maintain visual and content consistency
-- **Required Fields**: Ensure complete documentation
-- **Quality Checklists**: Standards for comprehensive cards
-
-## Use Cases and Applications 📚
-
-### Knowledge Management
-- **Research Documentation**: Detailed findings and analysis
-- **Learning Materials**: Educational content and explanations
-- **Reference Guides**: Quick-access information repositories
-- **Best Practices**: Organizational knowledge and standards
-
-### Project Management
-- **Requirement Specifications**: Detailed feature descriptions
-- **Implementation Guides**: Technical documentation and procedures
-- **Decision Records**: Historical context and rationale
-- **Risk Assessment**: Potential issues and mitigation strategies
-
-### Creative Projects
-- **Character Profiles**: Detailed descriptions for storytelling
-- **Design Systems**: Component documentation and guidelines
-- **Content Planning**: Editorial calendars and content strategies
-- **Brand Guidelines**: Visual identity and messaging standards
-
-## Best Practices 💡
-
-### Content Quality
-- **Clear Writing**: Use simple, accessible language
-- **Visual Hierarchy**: Organize information logically
-- **Regular Updates**: Keep content current and relevant
-- **Peer Review**: Collaborative editing and feedback
-
-### Organization Strategy
-- **Consistent Format**: Use similar structures across cards
-- **Logical Grouping**: Related cards should have similar depth
-- **Progressive Disclosure**: Layer information from general to specific
-- **Cross-Linking**: Create a web of interconnected knowledge
-
-Transform simple concepts into comprehensive knowledge assets! 📖✨`, 
+Experience your hierarchy from a new perspective with visual capability cards! 🃏✨`, 
       parent: featuresId 
     },
     
