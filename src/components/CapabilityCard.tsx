@@ -2,6 +2,7 @@ import React, { useMemo, useRef } from 'react';
 import { NodeData } from '../types';
 import { buildIndex, getCardSubtree } from '../utils/capabilityCardUtils';
 import CapabilityTile from './CapabilityTile';
+import { SimpleTooltip } from './ui/SimpleTooltip';
 
 interface CapabilityCardProps {
   nodes: NodeData[];
@@ -37,29 +38,32 @@ const CapabilityCard: React.FC<CapabilityCardProps> = ({
     >
       <div className="space-y-6">        {/* Level N - Current node (blue background, full width) */}
         <div className="w-full">
-          <CapabilityTile 
-            node={current} 
-            variant="current"
-          />
-        </div>        {/* Level N+1 and N+2 - Children with their grandchildren below */}
+          <SimpleTooltip content={current.description || ''}>
+            <CapabilityTile 
+              node={current} 
+              variant="current"
+            />
+          </SimpleTooltip>
+        </div>{/* Level N+1 and N+2 - Children with their grandchildren below */}
         {kids.length > 0 && (
           <>            {/* Children row with responsive layout */}
             <div className="overflow-x-auto">
               <div 
                 className={`flex gap-4 pb-2 ${kids.length <= 4 ? 'w-full' : ''}`}
                 style={kids.length <= 4 ? {} : { minWidth: 'fit-content' }}
-              >
-                {kids.map((kid) => (
+              >                {kids.map((kid) => (
                   <div 
                     key={`child-${kid.id}`} 
                     className={kids.length <= 4 ? "flex-1" : "flex-shrink-0"} 
                     style={kids.length <= 4 ? { minWidth: '200px' } : { width: '220px' }}
                   >
-                    <CapabilityTile 
-                      node={kid} 
-                      variant="child"
-                      onClick={() => onNodeClick?.(kid.id)}
-                    />
+                    <SimpleTooltip content={kid.description || ''}>
+                      <CapabilityTile 
+                        node={kid} 
+                        variant="child"
+                        onClick={() => onNodeClick?.(kid.id)}
+                      />
+                    </SimpleTooltip>
                   </div>
                 ))}
               </div>
@@ -101,13 +105,14 @@ const CapabilityCard: React.FC<CapabilityCardProps> = ({
                             key={`grandchild-${kid.id}-${rowIndex}`} 
                             className={kids.length <= 4 ? "flex-1" : "flex-shrink-0"} 
                             style={kids.length <= 4 ? { minWidth: '200px' } : { width: '220px' }}
-                          >
-                            {grandchild ? (
-                              <CapabilityTile 
-                                node={grandchild} 
-                                variant="grandchild"
-                                onClick={() => onNodeClick?.(grandchild.id)}
-                              />
+                          >                            {grandchild ? (
+                              <SimpleTooltip content={grandchild.description || ''}>
+                                <CapabilityTile 
+                                  node={grandchild} 
+                                  variant="grandchild"
+                                  onClick={() => onNodeClick?.(grandchild.id)}
+                                />
+                              </SimpleTooltip>
                             ) : (
                               <div className="h-full" /> // Empty space to maintain alignment
                             )}

@@ -42,30 +42,28 @@ const CapabilityTile: React.FC<CapabilityTileProps> = ({
       default:
         return 'bg-white border-gray-200 shadow-sm';
     }
-  };
-
-  return (
+  };  return (
     <div
       className={`
-        rounded-lg border transition-all duration-200 flex flex-col h-full
+        rounded-lg border transition-all duration-200 flex flex-col h-full w-full
         ${getVariantClasses()}
-        ${onClick ? 'cursor-pointer hover:shadow-lg hover:scale-105' : ''}
+        ${onClick ? 'cursor-pointer hover:shadow-lg' : ''}
         ${span ? 'col-span-full' : ''}
         ${className}
         ${variant === 'current' ? 'p-6' : variant === 'child' ? 'p-4' : 'p-3'}
       `}
       onClick={onClick}
     >
-      {/* Header */}
-      <div className="flex items-start justify-between mb-2">
-        <h3 className={`font-semibold leading-tight ${
-          variant === 'current' ? 'text-xl text-white' : 
-          variant === 'child' ? 'text-base text-white' : 
-          variant === 'grandchild' ? 'text-sm text-white' : 'text-gray-800'
-        }`}>
-          {node.name}
-        </h3>
-      </div>      {/* Description */}
+        {/* Header */}
+        <div className="flex items-start justify-between mb-2">
+          <h3 className={`font-semibold leading-tight ${
+            variant === 'current' ? 'text-xl text-white' : 
+            variant === 'child' ? 'text-base text-white' : 
+            variant === 'grandchild' ? 'text-sm text-white' : 'text-gray-800'
+          }`}>
+            {node.name}
+          </h3>
+        </div>{/* Description */}
       {processedDescription && (
         <div className={`leading-relaxed mb-3 flex-grow overflow-hidden ${
           variant === 'current' ? 'text-base text-blue-100' : 
@@ -104,8 +102,7 @@ const CapabilityTile: React.FC<CapabilityTileProps> = ({
                 li: ({ children, ...props }) => (
                   <li className="mb-0.5" {...props}>{children}</li>
                 )
-              }}
-            >
+              }}            >
               {processedDescription}
             </ReactMarkdown>
           </div>
