@@ -99,7 +99,7 @@
   const beforeInstallPromptSupported = 'onbeforeinstallprompt' in window;
   console.log('  beforeinstallprompt supported:', beforeInstallPromptSupported);
   
-  if (window.deferredPrompt || (window as any).PWAUtils?.getDeferredPrompt()) {
+  if (window.deferredPrompt || window['PWAUtils']?.getDeferredPrompt()) {
     console.log('✅ Install prompt is available');
   } else {
     console.log('ℹ️ Install prompt not captured (may appear later)');
