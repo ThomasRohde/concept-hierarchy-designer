@@ -15,11 +15,13 @@ const AboutPage: React.FC = () => {
             in a simple and intuitive way.
           </p>
         </section>
-        
-        <section className="mb-8">
+          <section className="mb-8">
           <h2 className="text-xl font-semibold mb-3">Features</h2>
           <ul className="list-disc pl-4 sm:pl-5 space-y-2">
             <li>Drag and drop interface for intuitive organization</li>
+            <li>Keyboard navigation with arrow keys and visual selection feedback</li>
+            <li>Node selection with highlighting and auto-scroll to focused nodes</li>
+            <li>Comprehensive keyboard shortcuts for efficient navigation</li>
             <li>Unlimited depth for complex hierarchies</li>
             <li>Smart clipboard with copy/paste functionality</li>
             <li>AI-powered suggestions with Magic Wand feature</li>
@@ -30,6 +32,20 @@ const AboutPage: React.FC = () => {
         </section>
         
         <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-3">Keyboard Navigation</h2>
+          <p className="text-gray-700 mb-4">
+            Navigate your concept trees efficiently using keyboard shortcuts:
+          </p>
+          <ul className="list-disc pl-4 sm:pl-5 space-y-2">
+            <li><strong>Arrow Keys:</strong> Navigate between nodes (↑↓) and expand/collapse (←→)</li>
+            <li><strong>Home/End:</strong> Jump to first or last visible node</li>
+            <li><strong>Enter:</strong> Edit the currently selected node</li>
+            <li><strong>Click/Tab:</strong> Select nodes for keyboard navigation</li>
+            <li><strong>Visual Feedback:</strong> Selected nodes are highlighted with gray background</li>
+            <li><strong>Auto-scroll:</strong> Focused nodes automatically scroll into view</li>
+          </ul>
+        </section>
+          <section className="mb-8">
           <h2 className="text-xl font-semibold mb-3">Technology</h2>
           <p className="text-gray-700 mb-4">
             Built with modern web technologies including:
@@ -44,7 +60,21 @@ const AboutPage: React.FC = () => {
           </ul>
         </section>
         
-        <section className="mb-8">          <h2 className="text-xl font-semibold mb-3">Contact</h2>
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-3">Accessibility</h2>
+          <p className="text-gray-700 mb-4">
+            The application is designed with accessibility in mind:
+          </p>
+          <ul className="list-disc pl-4 sm:pl-5 space-y-2">
+            <li>Full keyboard navigation support for all tree operations</li>
+            <li>Clear visual focus indicators for selected nodes</li>
+            <li>ARIA labels and semantic HTML for screen readers</li>
+            <li>Responsive design that works across different screen sizes</li>
+            <li>High contrast visual feedback for interactive elements</li>
+          </ul>
+        </section>
+          <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-3">Contact</h2>
           <p className="text-gray-700">
             For questions, bug reports, or feature suggestions, please contact the developer at:<br />
             <a href="mailto:thomas@rohde.name" className="text-blue-600 hover:underline">

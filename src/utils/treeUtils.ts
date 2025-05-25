@@ -1385,25 +1385,43 @@ Transform your hierarchies into shareable, valuable assets! 📊🌟`,
 
 ## Core Navigation Shortcuts ⚡
 
-### Tree Navigation
-- **↑/↓ Arrow Keys**: Move between nodes
-- **←/→ Arrow Keys**: Expand/collapse nodes
-- **Home**: Jump to root node
+### Tree Navigation (Active Features)
+- **↑/↓ Arrow Keys**: Navigate between visible nodes
+- **←/→ Arrow Keys**: Collapse/expand nodes and navigate to parent/first child
+- **Home**: Jump to first visible node
 - **End**: Jump to last visible node
-- **Page Up/Down**: Scroll tree quickly
-- **Ctrl + F**: Search within hierarchy (coming soon!)
+- **Enter**: Edit the currently selected node
+- **Click or Tab**: Select a node for keyboard navigation
 
-### Node Operations
+### Visual Selection
+- **Node Highlighting**: Selected nodes show gray background and border
+- **Auto-Scroll**: Selected nodes automatically scroll into view
+- **Focus Indication**: Clear visual feedback for current selection
+- **Persistent State**: Selection maintained during tree navigation
+
+### Node Operations (Current Implementation)
 - **Enter**: Edit selected node
+- **Mouse Click**: Select and focus nodes
+- **Drag & Drop**: Reorganize nodes by dragging
+- **Button Clicks**: Access node actions (edit, delete, magic wand, etc.)
+
+### Planned Features (Coming Soon!)
 - **Ctrl + N**: Add new child node
 - **Ctrl + D**: Duplicate selected node
 - **Delete**: Remove selected node (with confirmation)
 - **F2**: Rename node quickly
 - **Escape**: Cancel current operation
+- **Ctrl + F**: Search within hierarchy
 
 ## Advanced Shortcuts 🚀
 
-### Editing & Content
+### Modal Dialog Controls (Active Features)
+- **ESC**: Close any modal dialog (cancel action)
+- **Ctrl + Enter**: Submit/save forms in modals (Add Child, Edit Node, New Tree, Magic Wand Settings)
+- **Enter**: Confirm deletion in confirmation dialogs
+- **Tab/Shift+Tab**: Navigate between form fields
+
+### Editing & Content (Planned Features)
 - **Ctrl + S**: Manual save (auto-save is default)
 - **Ctrl + Z**: Undo last action (coming soon!)
 - **Ctrl + Y**: Redo action (coming soon!)
@@ -1411,14 +1429,15 @@ Transform your hierarchies into shareable, valuable assets! 📊🌟`,
 - **Ctrl + B**: Bold text in markdown
 - **Ctrl + I**: Italic text in markdown
 
-### Clipboard Operations
-- **Ctrl + C**: Copy selected node
-- **Ctrl + V**: Paste as child of selected node
-- **Ctrl + X**: Cut selected node
-- **Shift + Ctrl + V**: Paste as sibling
-- **Alt + Ctrl + V**: Paste special options
+### Clipboard Operations (Partially Implemented)
+- **Copy/Paste Buttons**: Use UI buttons for copy and paste operations
+- **Ctrl + C**: Copy selected node (planned)
+- **Ctrl + V**: Paste as child of selected node (planned)
+- **Ctrl + X**: Cut selected node (planned)
+- **Shift + Ctrl + V**: Paste as sibling (planned)
+- **Alt + Ctrl + V**: Paste special options (planned)
 
-### Application Controls
+### Application Controls (Planned Features)
 - **Ctrl + E**: Export hierarchy
 - **Ctrl + O**: Import hierarchy
 - **Ctrl + Shift + N**: New hierarchy
@@ -1427,19 +1446,29 @@ Transform your hierarchies into shareable, valuable assets! 📊🌟`,
 
 ## Mouse & Touchpad Efficiency 🖱️
 
-### Click Operations
-- **Single Click**: Select node
-- **Double Click**: Edit node quickly
+### Click Operations (Current Implementation)
+- **Single Click**: Select and focus node for keyboard navigation
+- **Button Clicks**: Access node actions (edit, delete, magic wand, copy, paste, capability card)
+- **Drag Initiation**: Click and hold to start dragging nodes
+- **Expand/Collapse**: Click chevron icons to expand or collapse nodes
+
+### Planned Click Operations
+- **Double Click**: Edit node quickly (coming soon!)
 - **Right Click**: Context menu (coming soon!)
-- **Middle Click**: Open capability card
+- **Middle Click**: Open capability card (coming soon!)
 - **Ctrl + Click**: Multi-select (coming soon!)
 
-### Drag & Drop Techniques
-- **Standard Drag**: Move node to new parent
+### Drag & Drop Techniques (Active Features)
+- **Standard Drag**: Move node to new parent with visual feedback
+- **Drop Indicators**: Visual guides show valid drop locations
+- **Hover Effects**: Preview drop zones while dragging
+- **Invalid Drop Prevention**: Clear indicators for invalid operations
+
+### Planned Drag & Drop Features
 - **Ctrl + Drag**: Copy node to new location
 - **Shift + Drag**: Move as sibling
 - **Alt + Drag**: Advanced placement options
-- **Precision Dropping**: Use visual guides for exact placement
+- **Multi-node Drag**: Select and move multiple nodes
 
 ## Workflow Optimization 📈
 

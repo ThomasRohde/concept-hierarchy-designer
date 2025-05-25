@@ -8,6 +8,7 @@ A powerful interactive tool for creating, organizing, and visualizing hierarchic
 
 - 📋 Create and manage hierarchical concept trees
 - 🔄 Drag and drop nodes to reorganize your hierarchy
+- ⌨️ **Full keyboard navigation** with arrow keys and visual selection
 - ✏️ Edit node labels and descriptions with **Markdown support**
 - 📝 Rich text formatting in descriptions (bold, italic, code, lists, links)
 - 🧠 AI-powered "Magic Wand" feature to generate child concepts using Gemini API
@@ -60,14 +61,28 @@ A powerful interactive tool for creating, organizing, and visualizing hierarchic
 
 1. **Create a new concept tree** - Use the "New Tree" button
 2. **Add child concepts** - Click the "+" button on any node
-3. **Reorganize** - Drag and drop nodes to restructure your hierarchy
-4. **Use Magic Wand** - Generate AI-suggested child concepts for any node
-5. **Edit nodes** - Modify labels and descriptions by clicking the edit icon
-6. **View capability cards** - Click the capability card icon to see hierarchical overviews
+3. **Navigate efficiently** - Use arrow keys to move between nodes, or click to select
+4. **Reorganize** - Drag and drop nodes to restructure your hierarchy
+5. **Use Magic Wand** - Generate AI-suggested child concepts for any node
+6. **Edit nodes** - Modify labels and descriptions by pressing Enter or clicking the edit icon
+7. **View capability cards** - Click the capability card icon to see hierarchical overviews
 
 ## ⌨️ Keyboard Shortcuts
 
 Enhance your productivity with these keyboard shortcuts:
+
+### Tree Navigation
+- **↑/↓ Arrow Keys** - Navigate between nodes in the tree
+- **←/→ Arrow Keys** - Collapse/expand nodes and navigate to parent/first child
+- **Home** - Jump to the first visible node
+- **End** - Jump to the last visible node  
+- **Enter** - Edit the selected node
+- **Click or Tab** - Select a node for keyboard navigation
+
+### Visual Selection
+- Selected nodes are highlighted with a light gray background and border
+- Keyboard navigation automatically scrolls selected nodes into view
+- Selection state is maintained as you navigate the tree
 
 ### Modal Dialogs
 - **ESC** - Close any modal dialog (cancel action)
@@ -80,6 +95,7 @@ Enhance your productivity with these keyboard shortcuts:
 
 ### Tips
 - Keyboard shortcuts work when modal dialogs are open
+- Tree navigation only works when no input fields are focused
 - Tooltips on buttons show the available shortcuts
 - Form modals display helpful hints about keyboard shortcuts
 
