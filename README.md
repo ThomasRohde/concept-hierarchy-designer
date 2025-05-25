@@ -14,6 +14,7 @@ A powerful interactive tool for creating, organizing, and visualizing hierarchic
 - 🧠 AI-powered "Magic Wand" feature to generate child concepts using Gemini API
 - 📋 Copy/cut/paste functionality for nodes and branches
 - 🎯 Interactive capability cards with three-generation view
+- 📤 **Export capability cards** in multiple formats (SVG, PNG, PDF, HTML, JSON)
 - 🌈 Modern, responsive UI with animations
 - 💾 Local storage persistence for your concept trees
 

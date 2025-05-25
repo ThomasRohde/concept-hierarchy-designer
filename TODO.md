@@ -54,12 +54,17 @@
 ---
 
 ### 🃏 Capability Card Export Button
-**Status:** 🔴 Not Started  
+**Status:** ✅ Completed  
 **Priority:** High  
-**Files to modify:**
-- `src/components/CapabilityCard.tsx` (add export button)
-- `src/components/CapabilityCardModal.tsx` (add export options)
-- `src/utils/capabilityCardUtils.ts` (add export-specific utilities)
+**Files modified:**
+- `src/components/CapabilityCardModal.tsx` (added export dropdown)
+- `src/utils/exportUtils/exportUtils.ts` (created modular export system)
+- `src/utils/exportUtils/jsonExporter.ts` (added JSON export)
+- `src/utils/exportUtils/htmlExporter.ts` (added HTML export)
+- `src/utils/exportUtils/pdfExporter.ts` (added PDF export)
+- `src/utils/exportUtils/svgExporter.ts` (added SVG export)
+- `src/utils/exportUtils/pngExporter.ts` (added PNG export)
+- `src/components/ui/ExportDropdown.tsx` (created export dropdown component)
 
 **Current Implementation Analysis:**
 - ✅ Capability cards show 3-generation view (parent, current, children)
