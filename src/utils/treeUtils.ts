@@ -36,7 +36,6 @@ export const createInitialData = (): NodeData[] => {
   // Level 2 IDs - AI Integration
   const magicWandId = genId();
   const promptManagementId = genId();
-  const geminiApiId = genId();
   
   // Level 2 IDs - Export System
   const capabilityCardsId = genId();
@@ -119,7 +118,7 @@ export const createInitialData = (): NodeData[] => {
     {
       id: rootId,
       name: "🌳 Concept Hierarchy Designer",
-      description: "A powerful interactive tool for creating, organizing, and visualizing hierarchical concept maps using AI assistance. Built with React and TypeScript, this application provides an intuitive drag-and-drop interface for managing complex concept hierarchies with unlimited depth. The system features AI-powered content generation through the Gemini API, comprehensive keyboard navigation, export capabilities in multiple formats, and local storage persistence. Designed for knowledge workers, researchers, educators, and anyone who needs to organize complex information into structured hierarchies.",
+      description: "A powerful interactive tool for creating, organizing, and visualizing hierarchical concept maps using AI assistance. Built with React and TypeScript, this application provides an intuitive drag-and-drop interface for managing complex concept hierarchies with unlimited depth. The system features AI-powered content generation through the Magic Wand, comprehensive keyboard navigation, export capabilities in multiple formats, and local storage persistence. Designed for knowledge workers, researchers, educators, and anyone who needs to organize complex information into structured hierarchies.",
       parent: null
     },
       // Level 1 - Main System Components
@@ -144,7 +143,7 @@ export const createInitialData = (): NodeData[] => {
     {
       id: aiIntegrationId,
       name: "🤖 AI Integration",
-      description: "Advanced AI-powered content generation system using Google's Gemini API. Features the 'Magic Wand' tool that generates contextually relevant child concepts based on MECE (Mutually Exclusive, Collectively Exhaustive) principles. Includes customizable generation guidelines, context-aware prompts, and usage statistics tracking. The system analyzes parent-child relationships and sibling contexts to generate appropriate suggestions.",
+      description: "Advanced AI-powered content generation system using the 'Magic Wand' tool that generates contextually relevant child concepts based on MECE (Mutually Exclusive, Collectively Exhaustive) principles. Includes customizable generation guidelines, context-aware prompts, and usage statistics tracking. The system analyzes parent-child relationships and sibling contexts to generate appropriate suggestions.",
       parent: rootId
     },
     {
@@ -250,7 +249,7 @@ export const createInitialData = (): NodeData[] => {
     {
       id: magicWandId,
       name: "🪄 Magic Wand System",
-      description: "AI-powered content generation system that creates contextually relevant child concepts using Google's Gemini API. Analyzes current node context, parent relationships, and sibling nodes to generate appropriate suggestions. Uses MECE principles for comprehensive and non-overlapping concept generation. Features customizable generation guidelines and tracks usage statistics for optimization.",
+      description: "AI-powered content generation system that creates contextually relevant child concepts using copy/paste based techniques. Analyzes current node context, parent relationships, and sibling nodes to generate appropriate suggestions. Uses MECE principles for comprehensive and non-overlapping concept generation. Features customizable generation guidelines and tracks usage statistics for optimization.",
       parent: aiIntegrationId
     },
     {
@@ -259,13 +258,7 @@ export const createInitialData = (): NodeData[] => {
       description: "Sophisticated prompt engineering system for generating high-quality AI responses. Creates context-rich prompts including node relationships, domain analysis, and custom generation guidelines. Features template management, variable substitution, and prompt optimization based on usage patterns. Includes example outputs and formatting instructions for consistent results.",
       parent: aiIntegrationId
     },
-    {
-      id: geminiApiId,
-      name: "🔗 Gemini API Integration",
-      description: "Direct integration with Google's Gemini API for natural language processing and content generation. Handles API authentication, rate limiting, error handling, and response parsing. Features retry logic for failed requests and optimized prompt construction for token efficiency. Includes response validation and formatting to ensure usable output.",
-      parent: aiIntegrationId
-    },
-      // Level 2 - Export System Components
+    // Level 2 - Export System Components
     {
       id: capabilityCardsId,
       name: "🃏 Capability Cards",
