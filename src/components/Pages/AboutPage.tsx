@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
+import { CardContent } from '../ui/Card';
 
 const AboutPage: React.FC = () => {
   return (

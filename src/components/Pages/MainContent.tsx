@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
 import AddChildModal from "../AddChildModal";
+import CapabilityCardModal from "../CapabilityCardModal";
 import ConfirmDeleteModal from "../ConfirmDeleteModal";
 import EditNodeModal from "../EditNodeModal";
 import LoadingSpinner from "../LoadingSpinner";
@@ -16,6 +17,7 @@ import VirtualizedTree from "../VirtualizedTree";
 import { useClipboardActions } from "../../hooks/useClipboardActions";
 import { useMagicWand } from "../../hooks/useMagicWand";
 import { useTreeContext } from "../../context/TreeContext";
+import { CapabilityCardProvider } from "../../context/CapabilityCardContext";
 import { NodeData } from "../../types";
 import { saveTreeAsJson, validateNodeData } from "../../utils/exportUtils";
 import { genId } from "../../utils/treeUtils";
@@ -96,9 +98,7 @@ const MainContent: React.FC = () => {
             setContainerWidth(treeContainerRef.current.offsetWidth);
             setContainerHeight(treeContainerRef.current.offsetHeight);
         }
-    }, [nodes.length, collapsed.size]);
-
-    const [isAddChildModalOpen, setIsAddChildModalOpen] = useState(false);
+    }, [nodes.length, collapsed.size]);    const [isAddChildModalOpen, setIsAddChildModalOpen] = useState(false);
     const [addingChildToParentNode, setAddingChildToParentNode] = useState<NodeData | null>(null);
 
     // No need to initialize data here anymore, it's handled by the TreeContext
@@ -110,6 +110,10 @@ const MainContent: React.FC = () => {
 
     const [isEditNodeModalOpen, setIsEditNodeModalOpen] = useState(false);
     const [editingNode, setEditingNode] = useState<NodeData | null>(null);
+
+    // Capability card modal state
+    const [isCapabilityCardOpen, setIsCapabilityCardOpen] = useState(false);
+    const [capabilityCardNodeId, setCapabilityCardNodeId] = useState<string | null>(null);
 
     // Magic wand settings modal
     const [isMagicWandSettingsOpen, setIsMagicWandSettingsOpen] = useState(false);
@@ -343,9 +347,7 @@ const MainContent: React.FC = () => {
     const handleCloseEditNodeModal = useCallback(() => {
         setIsEditNodeModalOpen(false);
         setEditingNode(null);
-    }, []);
-
-    const handleSaveEditedNode = useCallback(
+    }, []);    const handleSaveEditedNode = useCallback(
         (nodeId: string, newName: string, newDescription: string) => {
             setNodes((currentNodes) => {
                 return currentNodes.map((node) => {
@@ -359,6 +361,22 @@ const MainContent: React.FC = () => {
         },
         [handleCloseEditNodeModal]
     );
+
+    // Capability Card Modal Handlers
+    const handleOpenCapabilityCard = useCallback((node: NodeData) => {
+        setCapabilityCardNodeId(node.id);
+        setIsCapabilityCardOpen(true);
+    }, []);
+
+    const handleCloseCapabilityCard = useCallback(() => {
+        setIsCapabilityCardOpen(false);
+        setCapabilityCardNodeId(null);
+    }, []);
+
+    const handleNavigateToCapabilityCard = useCallback((nodeId: string) => {
+        setCapabilityCardNodeId(nodeId);
+        // Keep modal open, just change the node
+    }, []);
 
     // Expand and collapse all handlers
     const handleExpandAll = useCallback(() => {
@@ -382,9 +400,7 @@ const MainContent: React.FC = () => {
             copyToClipboard(node, nodes);
         },
         [copyToClipboard, nodes]
-    );
-
-    const nodeRowProps: Omit<React.ComponentProps<typeof NodeRow>, "node" | "depth" | "isCollapsed" | "hasChildren"> = {
+    );    const nodeRowProps: Omit<React.ComponentProps<typeof NodeRow>, "node" | "depth" | "isCollapsed" | "hasChildren"> = {
         toggleCollapse,
         moveNode,
         onAddNewChild: openAddChildModal,
@@ -393,8 +409,10 @@ const MainContent: React.FC = () => {
         onMagicWand: generateMagicWandPrompt,
         onDeleteNode: openDeleteConfirmationModal,
         onEditNode: handleOpenEditNodeModal,
-    };    return (
-        <>            <div className="flex justify-between items-center px-2 sm:px-4 mb-2">
+        onViewCapabilityCard: handleOpenCapabilityCard,    };    return (
+        <CapabilityCardProvider onOpenCapabilityCard={handleOpenCapabilityCard}>
+            <>
+                <div className="flex justify-between items-center px-2 sm:px-4 mb-2">
                 <div className="flex flex-nowrap items-center gap-2">
                     <TreeControls
                         onExpandAll={handleExpandAll}
@@ -440,8 +458,7 @@ const MainContent: React.FC = () => {
                         </AnimatePresence>
                     </div>
                 </div>
-            )}
-            {/* Modals */}
+            )}            {/* Modals */}
             <AddChildModal
                 isOpen={isAddChildModalOpen}
                 onClose={handleCloseAddChildModal}
@@ -461,14 +478,21 @@ const MainContent: React.FC = () => {
                 onSave={handleSaveEditedNode}
                 nodeToEdit={editingNode}
             />{" "}
+            <CapabilityCardModal
+                isOpen={isCapabilityCardOpen}
+                onClose={handleCloseCapabilityCard}
+                nodes={nodes}
+                currentNodeId={capabilityCardNodeId || ''}
+                onNavigateToNode={handleNavigateToCapabilityCard}
+            />
             <MagicWandSettingsModal
                 isOpen={isMagicWandSettingsOpen}
                 onClose={handleCloseMagicWandSettings}
                 currentGuidelines={currentGuidelines}
                 onSave={handleSaveMagicWandSettings}
-                onReset={handleResetMagicWandSettings}
-            />
-        </>
+                onReset={handleResetMagicWandSettings}            />
+            </>
+        </CapabilityCardProvider>
     );
 };
 

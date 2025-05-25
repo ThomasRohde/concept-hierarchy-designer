@@ -1,5 +1,4 @@
 import { useDragLayer } from 'react-dnd';
-import { DND_ITEM_TYPE } from '../constants';
 
 export const CustomDragLayer = () => {
   const { isDragging, currentOffset } = useDragLayer((monitor) => ({

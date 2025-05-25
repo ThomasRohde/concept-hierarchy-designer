@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ChevronDown, ChevronRight, ClipboardPaste, Copy, FileEdit, PlusSquare, Trash2, Wand2 } from "lucide-react";
+import { ChevronDown, ChevronRight, ClipboardPaste, Copy, FileEdit, PlusSquare, Trash2, Wand2, CreditCard } from "lucide-react";
 import React, { useEffect } from "react";
 import { DragSourceMonitor, useDrag, useDrop } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
@@ -22,6 +22,7 @@ export interface NodeRowProps {
     onMagicWand: (node: NodeData, customGuidelines?: string) => void;
     onDeleteNode: (nodeId: string) => void;
     onEditNode: (node: NodeData) => void;
+    onViewCapabilityCard?: (node: NodeData) => void;
 }
 
 const NodeRow: React.FC<NodeRowProps> = ({
@@ -37,6 +38,7 @@ const NodeRow: React.FC<NodeRowProps> = ({
     onMagicWand,
     onDeleteNode,
     onEditNode,
+    onViewCapabilityCard,
 }) => {
     const [{ isDragging }, drag, preview] = useDrag({
         type: DND_ITEM_TYPE,
@@ -155,7 +157,23 @@ const NodeRow: React.FC<NodeRowProps> = ({
                     title="Edit Node"
                 >
                     <FileEdit className="w-4 h-4" />
-                </Button>{" "}                <Button
+                </Button>{" "}
+                {onViewCapabilityCard && (
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="p-0.5 sm:p-1"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onViewCapabilityCard(node);
+                        }}
+                        aria-label="View Capability Card"
+                        title="View Capability Card"
+                    >
+                        <CreditCard className="w-4 h-4" />
+                    </Button>
+                )}{" "}
+                <Button
                     variant="ghost"
                     size="icon"
                     className="p-0.5 sm:p-1"
@@ -167,7 +185,7 @@ const NodeRow: React.FC<NodeRowProps> = ({
                     title="Magic Wand (AI)"
                 >
                     <Wand2 className="w-4 h-4" />
-                </Button>                <Button
+                </Button><Button
                     variant="ghost"
                     size="icon"
                     className="p-0.5 sm:p-1"

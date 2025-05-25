@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, CreditCard } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { useTreeContext } from '../../context/TreeContext';
+import { useOptionalCapabilityCardContext } from '../../context/CapabilityCardContext';
 
 interface BurgerMenuProps {
   className?: string;
@@ -11,9 +13,21 @@ interface BurgerMenuProps {
 const BurgerMenu: React.FC<BurgerMenuProps> = ({ className = '' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { nodes } = useTreeContext();
+  const capabilityCardContext = useOptionalCapabilityCardContext();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  // Find the root node (node with no parent)
+  const rootNode = nodes.find(node => node.parent === null);
+
+  const handleViewRootCapabilityCard = () => {
+    if (rootNode && capabilityCardContext?.onOpenCapabilityCard) {
+      capabilityCardContext.onOpenCapabilityCard(rootNode);
+      setIsOpen(false); // Close menu after opening capability card
+    }
   };
 
   const menuVariants = {
@@ -101,6 +115,19 @@ const BurgerMenu: React.FC<BurgerMenuProps> = ({ className = '' }) => {
                 </li>
               );
             })}
+            
+            {/* Capability Card for Root Node */}
+            {rootNode && capabilityCardContext?.onOpenCapabilityCard && (
+              <li>
+                <button
+                  onClick={handleViewRootCapabilityCard}
+                  className="w-full text-left px-5 py-2 text-lg transition-colors duration-200 nav-link flex items-center gap-2 hover:bg-gray-100"
+                >
+                  <CreditCard className="h-5 w-5" />
+                  Root Capability Card
+                </button>
+              </li>
+            )}
           </ul>
         </nav>
       </motion.div>
