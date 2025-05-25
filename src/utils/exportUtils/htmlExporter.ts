@@ -24,7 +24,7 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Capability Card: ${current.name}</title>
+  <title>${current.name}</title>
   <style>
     * {
       box-sizing: border-box;
@@ -309,12 +309,11 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
 <body>
   <div class="card-container">
     <div class="header">
-      <h1>Capability Card: ${current.name}</h1>
+      <h1>${current.name}</h1>
       <p>Exported from Concept Hierarchy Designer</p>
     </div>
       <div class="capability-card">      <!-- Current Capability -->
       <div class="capability-section current-section">
-        <h2 class="section-title">Current Capability</h2>
         <div class="capability-tile capability-current">
           <div class="capability-name">${current.name}</div>
           <div class="capability-description">${markdownToHtmlSync(current.description || 'No description')}</div>
@@ -323,7 +322,6 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
         <!-- Children Capabilities -->
       ${kids.length > 0 ? `
       <div class="capability-section">
-        <h2 class="section-title">Children Capabilities</h2>
         <div class="children-row">
           ${kids.map(kid => {
             const grandchildren = index.children.get(kid.id) || [];
