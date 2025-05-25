@@ -6,2149 +6,592 @@ export const genId = (): string => Math.random().toString(36).substring(2, 15);
 export const createInitialData = (): NodeData[] => {
   // Generate IDs first to establish proper parent-child relationships
   const rootId = genId();
-  const gettingStartedId = genId();
-  const featuresId = genId();
-  const architectureId = genId();
-  const usageGuideId = genId();
-  const advancedId = genId();
-  const troubleshootingId = genId();
-  const contributingId = genId();
-  
-  // Getting Started sub-sections
-  const installationId = genId();
-  const quickStartId = genId();
-  const firstProjectId = genId();
-  
-  // Features sub-sections
-  const hierarchyMgmtId = genId();
+  const coreSystemId = genId();
+  const userInterfaceId = genId();
+  const dataManagementId = genId();
+  const aiIntegrationId = genId();
+  const exportSystemId = genId();
+  const keyboardNavigationId = genId();
   const dragDropId = genId();
-  const exportImportId = genId();
+  const utilsId = genId();
+  const adminId = genId();
+  
+  // Level 2 IDs - Core System
+  const treeContextId = genId();
+  const nodeDataId = genId();
+  const stateManagementId = genId();
+  
+  // Level 2 IDs - User Interface
+  const mainContentId = genId();
+  const nodeRowId = genId();
+  const modalsId = genId();
+  const controlsId = genId();
+  const layoutId = genId();
+  
+  // Level 2 IDs - Data Management
+  const storageId = genId();
+  const importExportId = genId();
+  const clipboardId = genId();
+  
+  // Level 2 IDs - AI Integration
   const magicWandId = genId();
+  const promptManagementId = genId();
+  const geminiApiId = genId();
+  
+  // Level 2 IDs - Export System
   const capabilityCardsId = genId();
+  const formatOptionsId = genId();
+  const exportUtilsId = genId();
   
-  // Architecture sub-sections
-  const techStackId = genId();
-  const projectStructureId = genId();
-  const dataModelId = genId();
+  // Level 2 IDs - Keyboard Navigation
+  const navigationHooksId = genId();
+  const shortcutsId = genId();
+  const accessibilityId = genId();
   
-  // Usage Guide sub-sections
-  const createHierarchyId = genId();
-  const managingNodesId = genId();
-  const exportingDataId = genId();
-  const keyboardShortcutsId = genId();
+  // Level 2 IDs - Drag and Drop
+  const dndSystemId = genId();
+  const visualFeedbackId = genId();
+  const hierarchyReorganizationId = genId();
   
-  // Advanced sub-sections
-  const customizationId = genId();
-  const integrationId = genId();
+  // Level 2 IDs - Utils
+  const treeUtilsId = genId();
+  const validationId = genId();
+  const helpersId = genId();
+  
+  // Level 2 IDs - Admin
+  const statisticsId = genId();
   const performanceId = genId();
+  const debuggingId = genId();
+  
+  // Level 3 IDs - Tree Context & State Management
+  const nodeArrayId = genId();
+  const collapsedStateId = genId();
+  const loadingStateId = genId();
+  const persistenceId = genId();
+  
+  // Level 3 IDs - Main Content & UI
+  const virtualizationId = genId();
+  const renderingId = genId();
+  const eventHandlingId = genId();
+  const responsiveDesignId = genId();
+  
+  // Level 3 IDs - Modals
+  const addChildModalId = genId();
+  const editNodeModalId = genId();
+  const confirmDeleteModalId = genId();
+  const newTreeModalId = genId();
+  const magicWandSettingsModalId = genId();
+  const capabilityCardModalId = genId();
+  
+  // Level 3 IDs - Controls
+  const treeControlsId = genId();
+  const saveLoadButtonsId = genId();
+  const expandCollapseId = genId();
+  
+  // Level 3 IDs - Node Row Features
+  const nodeDisplayId = genId();
+  const actionButtonsId = genId();
+  const tooltipsId = genId();
+  const focusManagementId = genId();
+  
+  // Level 3 IDs - Magic Wand
+  const promptGenerationId = genId();
+  const guidelinesId = genId();
+  const aiResponseHandlingId = genId();
+  const statisticsTrackingId = genId();
+  
+  // Level 3 IDs - Export Features
+  const jsonExportId = genId();
+  const htmlExportId = genId();
+  
+  // Level 3 IDs - Keyboard Navigation
+  const arrowKeyNavigationId = genId();
+  const expandCollapseKeysId = genId();
+  const homeEndKeysId = genId();
+  const enterKeyEditingId = genId();
+  
+  // Level 3 IDs - Clipboard
+  const copyOperationsId = genId();
+  const pasteOperationsId = genId();
+  const branchCopyingId = genId();
   
   return [
-    { 
-      id: rootId, 
-      name: '📚 Concept Hierarchy Designer', 
-      description: `# Welcome to Concept Hierarchy Designer! 🎉
-
-A powerful, intuitive tool for creating and managing hierarchical concept structures. Whether you're organizing knowledge, planning projects, or designing systems, this application provides a visual and interactive way to structure your ideas.
-
-## 🌟 Key Highlights
-- **Visual Tree Structure**: Interactive hierarchical display
-- **Drag & Drop**: Intuitive node reorganization
-- **AI-Powered Assistance**: Magic Wand feature for automated content generation
-- **Export/Import**: Save and share your hierarchies
-- **Capability Cards**: Detailed documentation for each concept
-- **Auto-Save**: Never lose your work
-
-*Navigate through the documentation tree to explore all features and capabilities!*`, 
-      parent: null 
+    // Root Node
+    {
+      id: rootId,
+      name: "Concept Hierarchy Designer",
+      description: "A powerful interactive tool for creating, organizing, and visualizing hierarchical concept maps using AI assistance. Built with React and TypeScript, this application provides an intuitive drag-and-drop interface for managing complex concept hierarchies with unlimited depth. The system features AI-powered content generation through the Gemini API, comprehensive keyboard navigation, export capabilities in multiple formats, and local storage persistence. Designed for knowledge workers, researchers, educators, and anyone who needs to organize complex information into structured hierarchies.",
+      parent: null
     },
     
-    // Main Sections
-    { 
-      id: gettingStartedId, 
-      name: '🚀 Getting Started', 
-      description: `# Getting Started with Concept Hierarchy Designer
-
-Your journey begins here! This section will help you get up and running quickly with the application.
-
-## What You'll Learn:
-- How to install and set up the application
-- Creating your first concept hierarchy
-- Basic navigation and interface overview
-- Essential features to get productive immediately
-
-Perfect for newcomers and those who want a refresher on the basics.`, 
-      parent: rootId 
+    // Level 1 - Main System Components
+    {
+      id: coreSystemId,
+      name: "Core System Architecture",
+      description: "The foundational architecture of the application built on React 18 with TypeScript for type safety. Implements a context-based state management pattern for tree data, with hooks for business logic separation. The system uses a flat array structure for nodes with parent-child relationships, enabling efficient operations and virtualization for large trees. Features automatic persistence to localStorage and optimized rendering with React.memo and useMemo optimizations.",
+      parent: rootId
+    },
+    {
+      id: userInterfaceId,
+      name: "User Interface System",
+      description: "Modern, responsive UI built with Tailwind CSS and Framer Motion animations. Features a clean, intuitive design with hover states, transitions, and visual feedback. The interface adapts seamlessly between desktop and tablet views, with optimized touch targets and spacing. Implements consistent design patterns across all components with a focus on usability and accessibility.",
+      parent: rootId
+    },
+    {
+      id: dataManagementId,
+      name: "Data Management",
+      description: "Comprehensive data handling system managing node creation, modification, deletion, and persistence. Implements automatic saving to localStorage with error handling and recovery mechanisms. Features data validation, backup creation, and import/export functionality with support for JSON format. Includes clipboard operations for copying and pasting nodes with full branch structures.",
+      parent: rootId
+    },
+    {
+      id: aiIntegrationId,
+      name: "AI Integration",
+      description: "Advanced AI-powered content generation system using Google's Gemini API. Features the 'Magic Wand' tool that generates contextually relevant child concepts based on MECE (Mutually Exclusive, Collectively Exhaustive) principles. Includes customizable generation guidelines, context-aware prompts, and usage statistics tracking. The system analyzes parent-child relationships and sibling contexts to generate appropriate suggestions.",
+      parent: rootId
+    },
+    {
+      id: exportSystemId,
+      name: "Export System",
+      description: "Flexible export system supporting multiple formats including JSON, HTML, PDF, SVG, and PNG. Features specialized capability card exports showing three-generation views (parent, current, children) with professional formatting. Includes tree-wide exports for complete hierarchy documentation and individual node exports for focused presentations. All exports maintain formatting and hierarchical relationships.",
+      parent: rootId
+    },
+    {
+      id: keyboardNavigationId,
+      name: "Keyboard Navigation",
+      description: "Comprehensive keyboard navigation system enabling efficient tree traversal without mouse interaction. Supports arrow key navigation (up/down for siblings, left/right for parent/child), Home/End keys for jumping to boundaries, and Enter for editing. Features visual selection feedback with gray highlighting and automatic scrolling to keep focused nodes visible. Includes modal keyboard shortcuts for rapid form submission.",
+      parent: rootId
+    },
+    {
+      id: dragDropId,
+      name: "Drag and Drop System",
+      description: "Intuitive drag-and-drop interface powered by react-dnd for reorganizing hierarchy structures. Features visual feedback during dragging with drop target highlighting and validation to prevent invalid moves (like dropping a node onto its own descendant). Includes custom drag preview with smooth animations and automatic expansion of drop targets for better usability.",
+      parent: rootId
+    },
+    {
+      id: utilsId,
+      name: "Utility Functions",
+      description: "Core utility functions providing essential tree operations including node creation, relationship management, search, and validation. Features efficient algorithms for finding parents, children, descendants, and calculating tree statistics. Includes helper functions for ID generation, data validation, and common tree manipulations used throughout the application.",
+      parent: rootId
+    },
+    {
+      id: adminId,
+      name: "Admin & Analytics",
+      description: "Administrative interface providing comprehensive analytics and system management tools. Features detailed tree statistics including node counts, depth analysis, storage usage, and Magic Wand usage metrics. Includes data backup creation, hard reset functionality, and performance monitoring. Provides insights into user behavior and system usage patterns for optimization purposes.",
+      parent: rootId
     },
     
-    { 
-      id: featuresId, 
-      name: '✨ Features & Capabilities', 
-      description: `# Features & Capabilities Overview
-
-Discover the powerful features that make Concept Hierarchy Designer a comprehensive tool for organizing and managing hierarchical information.
-
-## Core Features:
-- **Hierarchical Organization**: Multi-level tree structures
-- **Interactive Interface**: Click, drag, and modify with ease
-- **Smart Automation**: AI-powered content suggestions
-- **Data Management**: Import/export capabilities
-- **Visual Design**: Clean, modern interface
-
-Explore each feature in detail to maximize your productivity!`, 
-      parent: rootId 
+    // Level 2 - Core System Components
+    {
+      id: treeContextId,
+      name: "Tree Context Provider",
+      description: "Central state management using React Context API to provide tree data and operations throughout the component tree. Manages the main nodes array, collapsed state set, loading states, and initialization flags. Implements automatic persistence to localStorage with debounced saves and error handling. The context provides both state and dispatch functions for tree modifications.",
+      parent: coreSystemId
+    },
+    {
+      id: nodeDataId,
+      name: "NodeData Interface",
+      description: "Core TypeScript interface defining the structure of tree nodes with id, name, description, and parent properties. The flat structure with parent references enables efficient operations while maintaining hierarchical relationships. All nodes use generated string IDs for uniqueness, with null parent indicating root nodes. Description field supports Markdown formatting for rich text content.",
+      parent: coreSystemId
+    },
+    {
+      id: stateManagementId,
+      name: "State Management",
+      description: "Sophisticated state management system handling tree data, UI states, and user interactions. Uses React hooks pattern with custom hooks for business logic separation. Implements optimistic updates with rollback capabilities and maintains consistency between UI state and persisted data. Features loading states, error handling, and state synchronization across components.",
+      parent: coreSystemId
     },
     
-    { 
-      id: architectureId, 
-      name: '🏗️ Architecture & Technical Details', 
-      description: `# Architecture & Technical Details
-
-Understanding the technical foundation of Concept Hierarchy Designer helps developers contribute and users understand the system's capabilities.
-
-## Technical Overview:
-- **Modern Web Technologies**: Built with React and TypeScript
-- **Responsive Design**: Works on desktop and mobile
-- **Local Storage**: Data persistence without server dependency
-- **Modular Design**: Clean, maintainable codebase
-
-Perfect for developers, technical users, and those interested in the implementation details.`, 
-      parent: rootId 
+    // Level 2 - User Interface Components
+    {
+      id: mainContentId,
+      name: "Main Content Component",
+      description: "Primary application container managing the tree view, modals, and main user interactions. Coordinates between all major features including node editing, tree manipulation, keyboard navigation, and modal management. Implements virtualization for large trees (>100 nodes) and standard rendering for smaller trees. Handles responsive layout and container sizing.",
+      parent: userInterfaceId
+    },
+    {
+      id: nodeRowId,
+      name: "Node Row Component",
+      description: "Individual node display component featuring drag-and-drop functionality, action buttons, and interactive elements. Shows node name with Markdown tooltip for descriptions, expand/collapse controls for parent nodes, and hover-revealed action buttons. Implements focus management for keyboard navigation and visual feedback for selection states. Supports touch interactions on mobile devices.",
+      parent: userInterfaceId
+    },
+    {
+      id: modalsId,
+      name: "Modal System",
+      description: "Comprehensive modal dialog system for node editing, tree creation, confirmations, and settings. Features keyboard shortcuts (ESC to close, Ctrl+Enter to submit), focus management, and accessibility support. Includes specialized modals for adding children, editing nodes, confirming deletions, creating new trees, and configuring Magic Wand settings. All modals support form validation and error display.",
+      parent: userInterfaceId
+    },
+    {
+      id: controlsId,
+      name: "Tree Controls",
+      description: "Control panel providing tree-wide operations including expand/collapse all, new tree creation, save/load functionality, and Magic Wand settings access. Features responsive button layout with icon-only display on mobile and text labels on desktop. Includes disabled states during loading and consistent styling across all control elements.",
+      parent: userInterfaceId
+    },
+    {
+      id: layoutId,
+      name: "Layout System",
+      description: "Responsive layout system with header, sidebar navigation, and main content areas. Features a burger menu for mobile navigation, routing between different pages (Home, About, Admin), and consistent spacing throughout the application. Implements scroll management, container sizing, and adaptive layouts for different screen sizes.",
+      parent: userInterfaceId
     },
     
-    { 
-      id: usageGuideId, 
-      name: '📖 Usage Guide & Best Practices', 
-      description: `# Usage Guide & Best Practices
-
-Master the art of creating effective concept hierarchies with proven strategies and detailed usage instructions.
-
-## What's Included:
-- **Step-by-step workflows** for common tasks
-- **Best practices** for organizing concepts
-- **Efficiency tips** to work faster
-- **Real-world examples** and use cases
-
-Transform from a beginner to a power user with these comprehensive guides!`, 
-      parent: rootId 
+    // Level 2 - Data Management Components
+    {
+      id: storageId,
+      name: "Local Storage System",
+      description: "Robust local storage implementation for persistent data storage with automatic saving and retrieval. Uses prefixed keys to avoid conflicts with other applications and implements versioning for data migration. Features error handling for storage quota exceeded scenarios and automatic cleanup of obsolete data. Includes backup creation before major operations.",
+      parent: dataManagementId
+    },
+    {
+      id: importExportId,
+      name: "Import/Export Operations",
+      description: "Comprehensive import/export system supporting JSON format for tree data interchange. Features file validation, error handling, and progress feedback for large operations. Includes metadata preservation, format versioning, and compatibility checking. Supports both full tree exports and selective node exports with relationship preservation.",
+      parent: dataManagementId
+    },
+    {
+      id: clipboardId,
+      name: "Clipboard Operations",
+      description: "Advanced clipboard system enabling copy/paste operations for individual nodes and entire branches. Preserves hierarchical relationships when copying subtrees and generates new IDs to prevent conflicts when pasting. Features visual feedback for copy/paste operations and supports cross-session clipboard data through localStorage. Includes branch copying with full descendant preservation.",
+      parent: dataManagementId
     },
     
-    { 
-      id: advancedId, 
-      name: '⚡ Advanced Features & Customization', 
-      description: `# Advanced Features & Customization
-
-Unlock the full potential of Concept Hierarchy Designer with advanced features and customization options.
-
-## Advanced Topics:
-- **Customization options** for power users
-- **Integration possibilities** with other tools
-- **Performance optimization** techniques
-- **Advanced workflows** and automation
-
-Take your concept hierarchy skills to the next level!`, 
-      parent: rootId 
+    // Level 2 - AI Integration Components
+    {
+      id: magicWandId,
+      name: "Magic Wand System",
+      description: "AI-powered content generation system that creates contextually relevant child concepts using Google's Gemini API. Analyzes current node context, parent relationships, and sibling nodes to generate appropriate suggestions. Uses MECE principles for comprehensive and non-overlapping concept generation. Features customizable generation guidelines and tracks usage statistics for optimization.",
+      parent: aiIntegrationId
+    },
+    {
+      id: promptManagementId,
+      name: "Prompt Management",
+      description: "Sophisticated prompt engineering system for generating high-quality AI responses. Creates context-rich prompts including node relationships, domain analysis, and custom generation guidelines. Features template management, variable substitution, and prompt optimization based on usage patterns. Includes example outputs and formatting instructions for consistent results.",
+      parent: aiIntegrationId
+    },
+    {
+      id: geminiApiId,
+      name: "Gemini API Integration",
+      description: "Direct integration with Google's Gemini API for natural language processing and content generation. Handles API authentication, rate limiting, error handling, and response parsing. Features retry logic for failed requests and optimized prompt construction for token efficiency. Includes response validation and formatting to ensure usable output.",
+      parent: aiIntegrationId
     },
     
-    { 
-      id: troubleshootingId, 
-      name: '🔧 Troubleshooting & FAQ', 
-      description: `# Troubleshooting & Frequently Asked Questions
-
-Having issues? Find solutions to common problems and answers to frequently asked questions.
-
-## Common Issues:
-- **Performance problems** and solutions
-- **Browser compatibility** information
-- **Data recovery** procedures
-- **Feature not working** troubleshooting
-
-Quick solutions to keep you productive and minimize downtime.`, 
-      parent: rootId 
+    // Level 2 - Export System Components
+    {
+      id: capabilityCardsId,
+      name: "Capability Cards",
+      description: "Specialized visualization showing three-generation node relationships (parent, current, children) in a card format. Features hierarchical context display, navigation between related nodes, and export capabilities in multiple formats. Designed for presentation and documentation purposes with professional styling and layout. Includes relationship indicators and contextual information.",
+      parent: exportSystemId
+    },
+    {
+      id: formatOptionsId,
+      name: "Export Format Options",
+      description: "Multiple export format support including JSON for data interchange, HTML for web viewing, PDF for documentation, SVG for vector graphics, and PNG for raster images. Each format optimized for specific use cases with appropriate styling and layout. Features format-specific options and quality settings for professional output.",
+      parent: exportSystemId
+    },
+    {
+      id: exportUtilsId,
+      name: "Export Utilities",
+      description: "Core export functionality providing format conversion, styling application, and file generation. Features modular architecture with separate exporters for each format, shared utilities for common operations, and error handling for export failures. Includes progress tracking for large exports and memory optimization for handling large trees.",
+      parent: exportSystemId
     },
     
-    { 
-      id: contributingId, 
-      name: '🤝 Contributing & Community', 
-      description: `# Contributing & Community
-
-Join our community of users and contributors! Learn how to contribute to the project and connect with other users.
-
-## Get Involved:
-- **Report bugs** and suggest features
-- **Contribute code** and documentation
-- **Share your hierarchies** with the community
-- **Help other users** with questions
-
-Together, we can make Concept Hierarchy Designer even better!`, 
-      parent: rootId 
+    // Level 2 - Keyboard Navigation Components
+    {
+      id: navigationHooksId,
+      name: "Navigation Hooks",
+      description: "Custom React hooks implementing keyboard navigation logic with efficient tree traversal algorithms. Manages focus state, visible node calculation, and navigation boundaries. Features arrow key handling for directional movement, expand/collapse controls, and integration with tree state management. Includes focus restoration and smooth scrolling to maintain user context.",
+      parent: keyboardNavigationId
+    },
+    {
+      id: shortcutsId,
+      name: "Keyboard Shortcuts",
+      description: "Comprehensive keyboard shortcut system covering tree navigation, modal operations, and editing functions. Features contextual shortcuts that adapt based on current application state and focused elements. Includes global shortcuts for tree operations and modal-specific shortcuts for form submission and cancellation. All shortcuts documented with tooltips and help text.",
+      parent: keyboardNavigationId
+    },
+    {
+      id: accessibilityId,
+      name: "Accessibility Features",
+      description: "ARIA-compliant accessibility implementation with screen reader support, focus management, and keyboard-only operation capability. Features semantic markup, descriptive labels, and logical tab order throughout the application. Includes high contrast mode support and responsive design for various accessibility needs.",
+      parent: keyboardNavigationId
     },
     
-    // Getting Started Sub-sections
-    { 
-      id: installationId, 
-      name: '💻 Installation & Setup', 
-      description: `# Installation & Setup
-
-## Prerequisites
-- Modern web browser (Chrome, Firefox, Safari, Edge)
-- No additional software required!
-
-## Quick Setup
-1. **Access the Application**: Simply open the web application in your browser
-2. **No Installation Required**: This is a web-based application
-3. **Local Storage**: Your data is saved locally in your browser
-
-## Browser Requirements
-- **JavaScript**: Must be enabled
-- **Local Storage**: Required for data persistence
-- **Modern CSS**: For optimal visual experience
-
-## First Launch
-When you first open the application:
-1. You'll see a sample hierarchy to explore
-2. All features are immediately available
-3. Your changes are automatically saved
-4. No account or login required
-
-🎉 **That's it!** You're ready to start creating concept hierarchies.`, 
-      parent: gettingStartedId 
+    // Level 2 - Drag and Drop Components
+    {
+      id: dndSystemId,
+      name: "DnD Core System",
+      description: "React DnD-based drag and drop implementation with custom preview components and drop validation. Features smooth animations, visual feedback during dragging, and prevention of invalid operations. Includes touch support for mobile devices and accessible alternatives for non-pointer users. Implements optimistic updates with rollback on invalid operations.",
+      parent: dragDropId
+    },
+    {
+      id: visualFeedbackId,
+      name: "Visual Feedback",
+      description: "Rich visual feedback system for drag and drop operations including drop target highlighting, invalid drop indicators, and custom drag previews. Features smooth animations, color-coded feedback, and clear visual cues for allowed operations. Includes hover states, selection indicators, and transition animations for professional user experience.",
+      parent: dragDropId
+    },
+    {
+      id: hierarchyReorganizationId,
+      name: "Hierarchy Reorganization",
+      description: "Intelligent hierarchy restructuring with validation to maintain tree integrity. Prevents circular references, validates parent-child relationships, and automatically handles edge cases. Features batch operations for efficient large-scale reorganization and undo/redo capabilities for user error recovery. Includes automatic tree expansion for better visibility after moves.",
+      parent: dragDropId
     },
     
-    { 
-      id: quickStartId, 
-      name: '⚡ Quick Start Guide', 
-      description: `# Quick Start Guide - 5 Minutes to Productivity
-
-## Step 1: Create Your First Node 🌱
-- Click the **"+ Add Child"** button on any existing node
-- Enter a name and description for your concept
-- Press **Enter** or click **Save**
-
-## Step 2: Build Your Hierarchy 🌳
-- Add child nodes to create sub-concepts
-- Use **drag and drop** to reorganize nodes
-- **Expand/collapse** nodes using the arrow icons
-
-## Step 3: Enhance with Descriptions 📝
-- Click the **Edit** icon to modify any node
-- Use **Markdown formatting** for rich descriptions
-- Add emojis and formatting for visual appeal
-
-## Step 4: Use Smart Features ✨
-- Try the **Magic Wand** for AI-generated content
-- **Copy/Paste** nodes to duplicate structures
-- **Export** your hierarchy when complete
-
-## Step 5: Save & Share 💾
-- Your work auto-saves continuously
-- Use **Export** to download as JSON
-- **Import** previously saved hierarchies
-
-**Congratulations!** 🎉 You're now ready to create amazing concept hierarchies.`, 
-      parent: gettingStartedId 
+    // Level 2 - Utility Components
+    {
+      id: treeUtilsId,
+      name: "Tree Utilities",
+      description: "Core tree manipulation functions including node creation, relationship management, search operations, and tree traversal algorithms. Features efficient parent/child lookups, descendant enumeration, and depth calculation. Includes utility functions for tree validation, statistics calculation, and common operations used throughout the application.",
+      parent: utilsId
+    },
+    {
+      id: validationId,
+      name: "Data Validation",
+      description: "Comprehensive validation system ensuring data integrity for node structures, hierarchical relationships, and import/export operations. Features schema validation, relationship consistency checking, and error reporting. Includes validation for user inputs, API responses, and file formats with detailed error messages for debugging.",
+      parent: utilsId
+    },
+    {
+      id: helpersId,
+      name: "Helper Functions",
+      description: "Common utility functions for string manipulation, ID generation, formatting, and data transformation. Features pure functions with no side effects, comprehensive error handling, and optimized performance for frequently called operations. Includes date formatting, number formatting, and text processing utilities.",
+      parent: utilsId
     },
     
-    { 
-      id: firstProjectId, 
-      name: '🎯 Creating Your First Project', 
-      description: `# Creating Your First Project
-
-## Choose Your Project Type 🎨
-Start with a structure that matches your needs:
-
-### 📚 Knowledge Organization
-- Research topics and subtopics
-- Learning curriculum structure
-- Reference material organization
-
-### 🏢 Business Planning
-- Project breakdown structures
-- Organizational hierarchies
-- Process documentation
-
-### 💡 Creative Projects
-- Story outlines and character development
-- Design system organization
-- Content strategy planning
-
-## Step-by-Step Project Creation
-
-### 1. Define Your Root Concept
-- Start with a clear, descriptive name
-- Include the project's main purpose
-- Add context in the description
-
-### 2. Identify Main Categories
-- Break down into 3-7 main areas
-- Keep categories distinct and logical
-- Use consistent naming conventions
-
-### 3. Add Detail Levels
-- Create subcategories as needed
-- Include specific examples
-- Add implementation details
-
-### 4. Review and Refine
-- Check for logical flow
-- Ensure balanced hierarchy depth
-- Verify completeness
-
-## 💡 Pro Tips
-- **Start broad, then narrow**: Begin with high-level concepts
-- **Use consistent language**: Maintain terminology throughout
-- **Regular reviews**: Periodically assess and reorganize
-- **Collaborative thinking**: Consider multiple perspectives
-
-Your first project sets the foundation for future success! 🚀`, 
-      parent: gettingStartedId 
+    // Level 2 - Admin Components
+    {
+      id: statisticsId,
+      name: "Statistics Dashboard",
+      description: "Comprehensive analytics dashboard showing tree statistics, user behavior metrics, and system usage patterns. Features real-time calculations of node counts, tree depth, storage usage, and Magic Wand effectiveness. Includes trending data, usage patterns, and performance metrics for system optimization and user insights.",
+      parent: adminId
+    },
+    {
+      id: performanceId,
+      name: "Performance Monitoring",
+      description: "Performance tracking system monitoring rendering performance, memory usage, and operation timings. Features component rendering optimization, memory leak detection, and performance bottleneck identification. Includes metrics collection for large tree handling and optimization recommendations for better user experience.",
+      parent: adminId
+    },
+    {
+      id: debuggingId,
+      name: "Debugging Tools",
+      description: "Development and debugging utilities including error tracking, state inspection, and performance profiling. Features comprehensive logging, error boundary implementation, and development-mode debugging aids. Includes tools for data inspection, operation tracing, and issue reproduction for effective troubleshooting.",
+      parent: adminId
     },
     
-    // Features Sub-sections
-    { 
-      id: hierarchyMgmtId, 
-      name: '🌳 Hierarchy Management', 
-      description: `# Hierarchy Management - Organizing Your Concepts
-
-## Tree Structure Fundamentals 🌲
-
-### Understanding Hierarchies
-- **Root Node**: The top-level concept or project
-- **Parent Nodes**: Categories that contain sub-concepts
-- **Child Nodes**: Specific items within a category
-- **Leaf Nodes**: End-level items with no children
-
-### Hierarchy Best Practices
-- **Logical Grouping**: Related concepts should be grouped together
-- **Balanced Depth**: Avoid going too deep (5-7 levels max recommended)
-- **Consistent Granularity**: Similar level of detail at same depths
-- **Clear Naming**: Descriptive, unambiguous node names
-
-## Managing Your Tree Structure 🔧
-
-### Adding Nodes
-- **Add Child**: Creates a sub-concept under the selected node
-- **Multiple Children**: Add several related concepts quickly
-- **Bulk Creation**: Use templates or copy-paste for efficiency
-
-### Organizing Nodes
-- **Drag & Drop**: Easily move nodes between parents
-- **Cut/Copy/Paste**: Duplicate or relocate entire branches
-- **Reordering**: Arrange siblings in logical order
-
-### Editing Structure
-- **Rename Nodes**: Update names as concepts evolve
-- **Merge Concepts**: Combine similar or duplicate nodes
-- **Split Concepts**: Break complex nodes into sub-concepts
-
-## Visual Organization Tips 🎨
-- **Use Emojis**: Visual indicators for different types of concepts
-- **Color Coding**: Consistent visual themes (coming soon!)
-- **Descriptive Names**: Clear, searchable terminology
-- **Hierarchical Logic**: Maintain parent-child relationships that make sense
-
-Transform your ideas into well-organized, navigable knowledge structures! 📊`, 
-      parent: featuresId 
+    // Level 3 - Tree Context & State Management Details
+    {
+      id: nodeArrayId,
+      name: "Node Array Management",
+      description: "Efficient array-based storage for tree nodes with optimized CRUD operations. Uses immutable update patterns for predictable state changes and implements filtering, sorting, and search operations. Features bulk operations for performance and maintains referential integrity across all node relationships.",
+      parent: treeContextId
+    },
+    {
+      id: collapsedStateId,
+      name: "Collapsed State Management",
+      description: "Set-based storage for tracking expanded/collapsed node states with efficient lookup and update operations. Implements smart defaults for new nodes and bulk expand/collapse operations. Features state persistence and restoration for maintaining user preferences across sessions.",
+      parent: treeContextId
+    },
+    {
+      id: loadingStateId,
+      name: "Loading State Coordination",
+      description: "Centralized loading state management for async operations including data loading, saving, AI generation, and export operations. Features progress tracking, error state handling, and user feedback coordination. Implements optimistic updates with loading indicators for better user experience.",
+      parent: treeContextId
+    },
+    {
+      id: persistenceId,
+      name: "Data Persistence Layer",
+      description: "Automatic persistence system with debounced saves, error recovery, and data versioning. Features conflict resolution for concurrent modifications and backup creation before destructive operations. Implements efficient serialization and compression for large datasets.",
+      parent: treeContextId
     },
     
-    { 
-      id: dragDropId, 
-      name: '🖱️ Drag & Drop Interface', 
-      description: `# Drag & Drop Interface - Intuitive Reorganization
-
-## Understanding Drag & Drop 🎯
-
-### Visual Feedback
-- **Hover Effects**: See where nodes can be dropped
-- **Drop Zones**: Clear indicators for valid drop locations
-- **Drag Preview**: Visual representation while dragging
-- **Conflict Prevention**: Invalid drops are clearly indicated
-
-### Drag Operations
-- **Click and Hold**: Start dragging any node
-- **Move Between Parents**: Change node relationships
-- **Reorder Siblings**: Arrange nodes within the same parent
-- **Multi-level Moves**: Drag across different hierarchy levels
-
-## Advanced Drag Techniques 🚀
-
-### Precision Dropping
-- **Drop as Child**: Create parent-child relationships
-- **Drop as Sibling**: Place nodes at the same level
-- **Drop Before/After**: Specific positioning within siblings
-- **Visual Guides**: Lines and highlights show exact placement
-
-### Bulk Operations
-- **Select Multiple**: Drag groups of related nodes (coming soon!)
-- **Branch Moving**: Move entire sub-trees at once
-- **Template Dragging**: Drag from template libraries
-
-### Keyboard Modifiers
-- **Ctrl + Drag**: Copy instead of move (coming soon!)
-- **Shift + Drag**: Constrain to specific directions
-- **Alt + Drag**: Advanced placement options
-
-## Best Practices 💡
-
-### Efficient Workflow
-- **Plan Before Moving**: Visualize the end structure
-- **Test Relationships**: Ensure logical parent-child connections
-- **Undo Available**: Don't worry about mistakes
-- **Save Frequently**: Auto-save protects your changes
-
-### Organization Strategies
-- **Top-Down Organization**: Start with high-level structure
-- **Group Similar Items**: Use proximity for related concepts
-- **Maintain Balance**: Avoid overly deep or wide branches
-- **Logical Flow**: Ensure natural reading order
-
-Make restructuring your concepts as easy as thinking about them! 🧠✨`, 
-      parent: featuresId 
+    // Level 3 - Main Content & UI Details
+    {
+      id: virtualizationId,
+      name: "Tree Virtualization",
+      description: "React Window-based virtualization for handling large trees (>100 nodes) with smooth scrolling and efficient memory usage. Features dynamic item sizing, scroll position restoration, and keyboard navigation integration. Implements windowing algorithms for optimal performance with thousands of nodes.",
+      parent: mainContentId
+    },
+    {
+      id: renderingId,
+      name: "Tree Rendering Engine",
+      description: "Recursive tree rendering system with optimized performance through React.memo and careful re-render prevention. Features conditional rendering based on collapse state and efficient diff algorithms for minimal DOM updates. Implements smooth animations and transitions for tree state changes.",
+      parent: mainContentId
+    },
+    {
+      id: eventHandlingId,
+      name: "Event Handling System",
+      description: "Comprehensive event handling for tree interactions including clicks, keyboard events, drag operations, and touch gestures. Features event delegation for performance, proper event bubbling control, and integration with all tree operations. Implements debouncing for high-frequency events.",
+      parent: mainContentId
+    },
+    {
+      id: responsiveDesignId,
+      name: "Responsive Design System",
+      description: "Mobile-first responsive design with adaptive layouts, touch-friendly targets, and screen size optimization. Features breakpoint-based styling, adaptive spacing, and optimized interactions for different device types. Implements progressive enhancement for advanced features on larger screens.",
+      parent: mainContentId
     },
     
-    { 
-      id: exportImportId, 
-      name: '💾 Export & Import Capabilities', 
-      description: `# Export & Import Capabilities - Data Portability
-
-## Export Options 📤
-
-### JSON Format
-- **Complete Structure**: Preserves all hierarchy relationships
-- **Metadata Included**: Names, descriptions, and IDs
-- **Human Readable**: Easy to view and edit externally
-- **Version Control**: Perfect for tracking changes over time
-
-### Export Process
-1. **Click Export Button**: Located in the main toolbar
-2. **Choose Filename**: Descriptive name for your hierarchy
-3. **Download File**: Automatically saves to your downloads folder
-4. **Backup Created**: Instant backup of your entire structure
-
-### What's Exported
-- **All Nodes**: Complete hierarchy with relationships
-- **Descriptions**: Full markdown content and formatting
-- **Structure**: Parent-child relationships preserved
-- **Metadata**: Creation dates and unique identifiers
-
-## Import Capabilities 📥
-
-### Supported Formats
-- **JSON Files**: Native format with full feature support
-- **Validation**: Automatic checks for data integrity
-- **Error Handling**: Clear messages for problematic files
-- **Backup Restore**: Seamless restoration of previous versions
-
-### Import Process
-1. **Click Import Button**: Access from the main interface
-2. **Select File**: Choose your previously exported JSON file
-3. **Validation**: System checks file structure and content
-4. **Merge or Replace**: Choose how to handle existing data
-
-### Import Options
-- **Replace Current**: Completely replace existing hierarchy
-- **Merge with Existing**: Combine with current structure (coming soon!)
-- **Import as Branch**: Add as subtree to existing node (coming soon!)
-
-## Data Management Best Practices 🗃️
-
-### Regular Backups
-- **Weekly Exports**: Create regular backup schedules
-- **Version Naming**: Use dates or version numbers in filenames
-- **Multiple Locations**: Store backups in different locations
-- **Project Milestones**: Export at significant project stages
-
-### Collaboration Workflows
-- **Share JSON Files**: Easy collaboration via file sharing
-- **Version Control**: Track changes with Git or similar tools
-- **Team Synchronization**: Regular import/export cycles
-- **Conflict Resolution**: Manual merge strategies
-
-### Data Security
-- **Local Storage**: Data stays on your device
-- **No Cloud Dependency**: Full control over your information
-- **Encryption Ready**: Files can be encrypted externally
-- **Privacy Maintained**: No data transmission to external servers
-
-Keep your valuable concept hierarchies safe and shareable! 🔒📊`, 
-      parent: featuresId 
+    // Level 3 - Modal Details
+    {
+      id: addChildModalId,
+      name: "Add Child Modal",
+      description: "Modal dialog for creating new child nodes with form validation, Markdown preview, and parent context display. Features auto-focus on name field, keyboard shortcuts for submission, and integration with tree state management. Includes input validation and error handling with user feedback.",
+      parent: modalsId
+    },
+    {
+      id: editNodeModalId,
+      name: "Edit Node Modal",
+      description: "Node editing interface with pre-populated form fields, Markdown support for descriptions, and live validation. Features undo/redo capabilities, keyboard shortcuts, and integration with focus management. Includes change tracking and confirmation for unsaved changes.",
+      parent: modalsId
+    },
+    {
+      id: confirmDeleteModalId,
+      name: "Confirm Delete Modal",
+      description: "Safety confirmation dialog for node deletion with clear consequence explanation and descendant count display. Features prominent warning styling, keyboard navigation, and clear action buttons. Includes information about cascade deletion effects on child nodes.",
+      parent: modalsId
+    },
+    {
+      id: newTreeModalId,
+      name: "New Tree Modal",
+      description: "Tree creation interface for starting fresh hierarchies with root node configuration. Features template selection, default values, and validation for required fields. Includes confirmation for replacing existing tree data and backup creation options.",
+      parent: modalsId
+    },
+    {
+      id: magicWandSettingsModalId,
+      name: "Magic Wand Settings Modal",
+      description: "AI configuration interface for customizing generation guidelines with syntax highlighting and preview capabilities. Features template management, guideline history, and reset to defaults functionality. Includes help text and examples for effective prompt engineering.",
+      parent: modalsId
+    },
+    {
+      id: capabilityCardModalId,
+      name: "Capability Card Modal",
+      description: "Full-screen modal for displaying capability cards with navigation controls and export options. Features three-generation view with parent context, current node details, and children overview. Includes zoom controls, navigation between related nodes, and multi-format export capabilities.",
+      parent: modalsId
     },
     
-    { 
-      id: magicWandId, 
-      name: '🪄 Magic Wand - AI Assistance', 
-      description: `# Magic Wand - AI-Powered Content Generation
-
-## What is the Magic Wand? ✨
-
-The Magic Wand feature leverages artificial intelligence to help you generate content, expand ideas, and enhance your concept hierarchies automatically.
-
-### Key Capabilities
-- **Content Generation**: Create descriptions and expand concepts
-- **Idea Expansion**: Generate related sub-concepts automatically
-- **Structure Suggestions**: Recommend hierarchy improvements
-- **Text Enhancement**: Improve existing descriptions and content
-
-## How to Use Magic Wand 🎯
-
-### Basic Usage
-1. **Select a Node**: Choose the concept you want to enhance
-2. **Click Magic Wand**: Look for the 🪄 icon in the node controls
-3. **Choose Generation Type**: Select what kind of content to generate
-4. **Review Results**: AI-generated content appears for your review
-5. **Accept or Modify**: Keep, edit, or regenerate as needed
-
-### Generation Types
-- **Expand Description**: Enhance existing concept descriptions
-- **Generate Children**: Create logical sub-concepts automatically
-- **Suggest Structure**: Recommend organizational improvements
-- **Content Ideas**: Brainstorm related concepts and topics
-
-## Advanced Magic Wand Features 🚀
-
-### Custom Guidelines
-- **Context Setting**: Provide specific instructions for generation
-- **Style Preferences**: Define tone, format, and approach
-- **Domain Expertise**: Specify field or industry context
-- **Length Control**: Set desired content length and detail level
-
-### Smart Suggestions
-- **Pattern Recognition**: Learns from your existing structure
-- **Consistency Maintenance**: Matches your naming and style conventions
-- **Relevance Filtering**: Ensures suggestions fit your project context
-- **Quality Scoring**: Ranks suggestions by relevance and quality
-
-### Iterative Improvement
-- **Regeneration**: Try different approaches with one click
-- **Refinement**: Build on previous generations
-- **Combination**: Merge multiple AI suggestions
-- **Human-AI Collaboration**: Perfect blend of creativity and automation
-
-## Best Practices for AI Assistance 💡
-
-### Effective Prompting
-- **Be Specific**: Clear, detailed instructions yield better results
-- **Provide Context**: Include relevant background information
-- **Set Expectations**: Define scope and boundaries for generation
-- **Use Examples**: Show the AI what you're looking for
-
-### Quality Control
-- **Always Review**: AI suggestions need human oversight
-- **Fact-Check**: Verify accuracy of generated content
-- **Brand Alignment**: Ensure consistency with your project goals
-- **Iterative Refinement**: Use multiple generations to improve results
-
-### Creative Workflows
-- **Brainstorming Sessions**: Generate lots of ideas quickly
-- **Structure Exploration**: Try different organizational approaches
-- **Content Inspiration**: Overcome writer's block and creative barriers
-- **Rapid Prototyping**: Quickly create comprehensive hierarchies
-
-Transform your concept development process with intelligent automation! 🤖🧠`, 
-      parent: featuresId 
+    // Level 3 - Control Details
+    {
+      id: treeControlsId,
+      name: "Tree Control Panel",
+      description: "Primary control interface with expand/collapse all, Magic Wand access, and tree-wide operations. Features consistent button styling, responsive layout, and disabled states during operations. Implements tooltips for user guidance and keyboard shortcut indicators.",
+      parent: controlsId
     },
-      { 
-      id: capabilityCardsId, 
-      name: '🃏 Capability Cards', 
-      description: `# Capability Cards - Three-Generation View
-
-## What are Capability Cards? 📋
-
-Capability Cards provide a focused three-generation view of your hierarchy, showing the current node along with its immediate children and grandchildren in a responsive layout.
-
-### Features
-- **Three-Generation Display**: Current node, children, and grandchildren
-- **Responsive Layout**: Automatically adjusts to container width
-- **Click Navigation**: Navigate between cards by clicking on child nodes
-- **Modal Interface**: Full-screen card view with navigation controls
-- **Tooltip Support**: Hover to see node descriptions
-
-## How Capability Cards Work 🎨
-
-### Visual Layout
-- **Current Node**: Highlighted with blue background, spans full width
-- **Children Row**: Direct child nodes displayed below current node
-- **Grandchildren Rows**: Child nodes' children arranged beneath their parents
-- **Responsive Grid**: Automatically adjusts columns based on available space
-
-### Navigation
-- **Parent Navigation**: Up arrow to go to parent node
-- **Child Navigation**: Click on any child or grandchild to navigate to it
-- **Modal Controls**: Close button and breadcrumb navigation
-
-## Technical Implementation 🚀
-
-### Performance Features
-- **Indexed Data**: Efficient lookups using pre-built node index
-- **Minimal Rendering**: Only renders three generations at a time
-- **Responsive Design**: CSS Grid with automatic column sizing
-- **Smooth Navigation**: Fast transitions between different cards
-
-### Current Limitations
-- **Text Display Only**: Currently shows node names and descriptions
-- **Basic Styling**: Simple tile-based layout without advanced formatting
-- **No Editing**: View-only interface (editing happens in tree view)
-
-Experience your hierarchy from a new perspective with visual capability cards! 🃏✨`, 
-      parent: featuresId 
+    {
+      id: saveLoadButtonsId,
+      name: "Save/Load Operations",
+      description: "File operations interface for importing/exporting tree data with progress indicators and error handling. Features drag-and-drop file upload, format validation, and backup creation before loading new data. Includes filename suggestions and export options.",
+      parent: controlsId
+    },
+    {
+      id: expandCollapseId,
+      name: "Expand/Collapse Controls",
+      description: "Bulk tree state management with smart expand/collapse algorithms and user preference preservation. Features selective expansion based on tree depth and node types. Implements efficient state updates and visual feedback for large-scale operations.",
+      parent: controlsId
     },
     
-    // Architecture Sub-sections (continued in next sections...)
-    { 
-      id: techStackId, 
-      name: '⚙️ Technology Stack', 
-      description: `# Technology Stack - Modern Web Development
-
-## Frontend Technologies 🖥️
-
-### Core Framework
-- **React 18**: Modern component-based UI library
-- **TypeScript**: Type-safe JavaScript for better development
-- **Vite**: Fast build tool and development server
-- **Modern ES6+**: Latest JavaScript features and syntax
-
-### UI and Styling
-- **Tailwind CSS**: Utility-first CSS framework
-- **Framer Motion**: Smooth animations and transitions
-- **Lucide React**: Beautiful, customizable icons
-- **PostCSS**: Advanced CSS processing
-
-### State Management
-- **React Context**: Built-in state management for global data
-- **Custom Hooks**: Reusable stateful logic
-- **Local Storage**: Browser-based data persistence
-- **useState/useEffect**: React hooks for component state
-
-## Development Tools 🛠️
-
-### Build and Development
-- **Vite**: Lightning-fast HMR and building
-- **TypeScript Compiler**: Static type checking
-- **ESLint**: Code quality and consistency
-- **Prettier**: Code formatting (recommended)
-
-### Browser APIs
-- **Local Storage API**: Data persistence without server
-- **Drag and Drop API**: Native browser drag operations
-- **File API**: Import/export functionality
-- **Resize Observer**: Responsive layout adjustments
-
-## Architecture Principles 🏗️
-
-### Component Design
-- **Functional Components**: Modern React patterns
-- **Custom Hooks**: Reusable logic extraction
-- **Composition over Inheritance**: Flexible component structure
-- **Single Responsibility**: Each component has one purpose
-
-### Code Organization
-- **Feature-Based Structure**: Organized by functionality
-- **Barrel Exports**: Clean import/export patterns
-- **Type Definitions**: Centralized TypeScript interfaces
-- **Utility Functions**: Shared helper functions
-
-### Performance Considerations
-- **Virtual Scrolling**: Efficient rendering of large lists
-- **React.memo**: Prevent unnecessary re-renders
-- **Lazy Loading**: Code splitting for optimal bundle size
-- **Browser Optimization**: Leveraging native browser features
-
-## Why This Stack? 🤔
-
-### Developer Experience
-- **Type Safety**: Catch errors during development
-- **Hot Reload**: Instant feedback during development
-- **Modern Tooling**: Industry-standard development tools
-- **Component Reusability**: Modular, maintainable code
-
-### User Experience
-- **Fast Performance**: Optimized bundle and runtime
-- **Responsive Design**: Works on all device sizes
-- **Smooth Interactions**: Polished animations and transitions
-- **Accessibility**: Built with web standards in mind
-
-### Maintainability
-- **Clean Architecture**: Well-organized, scalable codebase
-- **TypeScript Benefits**: Self-documenting code with types
-- **Testing Ready**: Easy to unit test and debug
-- **Future Proof**: Built on stable, evolving technologies
-
-Ready to contribute? This stack makes development enjoyable and productive! 🚀`, 
-      parent: architectureId 
+    // Level 3 - Node Row Features
+    {
+      id: nodeDisplayId,
+      name: "Node Display Elements",
+      description: "Core node presentation including name display, description tooltips, hierarchy indicators, and visual styling. Features truncation handling, responsive text sizing, and accessibility markup. Implements hover states, selection indicators, and focus management for keyboard navigation.",
+      parent: nodeRowId
+    },
+    {
+      id: actionButtonsId,
+      name: "Action Button Set",
+      description: "Comprehensive action buttons for edit, delete, copy, paste, add child, Magic Wand, and capability card operations. Features hover-revealed display, responsive sizing, and consistent styling. Includes tooltips, keyboard shortcuts, and disabled states based on context.",
+      parent: nodeRowId
+    },
+    {
+      id: tooltipsId,
+      name: "Markdown Tooltips",
+      description: "Rich tooltip system supporting Markdown formatting for node descriptions with interactive content. Features pinnable tooltips, syntax highlighting, and responsive positioning. Includes link support, code formatting, and list rendering for comprehensive content display.",
+      parent: nodeRowId
+    },
+    {
+      id: focusManagementId,
+      name: "Focus Management",
+      description: "Sophisticated focus handling for keyboard navigation with visual indicators and scroll-to-view functionality. Features focus restoration after operations, tab order management, and integration with screen readers. Implements focus trapping in modals and logical focus flow.",
+      parent: nodeRowId
     },
     
-    { 
-      id: projectStructureId, 
-      name: '📁 Project Structure', 
-      description: `# Project Structure - Code Organization
-
-## Root Directory Structure 📂
-
-\`\`\`
-concept-hierarchy-designer/
-├── public/           # Static assets and favicons
-├── src/             # Source code
-├── package.json     # Dependencies and scripts
-├── vite.config.ts   # Build configuration
-├── tsconfig.json    # TypeScript configuration
-├── tailwind.config.js # Styling configuration
-└── README.md        # Project documentation
-\`\`\`
-
-## Source Code Organization 🗂️
-
-### Main Application Structure
-\`\`\`
-src/
-├── App.tsx          # Main application component
-├── index.tsx        # Application entry point
-├── index.css        # Global styles
-├── types.ts         # Global type definitions
-└── constants.ts     # Application constants
-\`\`\`
-
-### Components Directory
-\`\`\`
-components/
-├── Layout/          # Layout and navigation components
-│   ├── Layout.tsx
-│   └── BurgerMenu.tsx
-├── Pages/           # Main page components
-│   ├── HomePage.tsx
-│   ├── AboutPage.tsx
-│   └── MainContent.tsx
-├── ui/              # Reusable UI components
-│   ├── Button.tsx
-│   ├── Modal.tsx
-│   ├── Input.tsx
-│   └── Card.tsx
-└── [Feature Components] # Feature-specific components
-\`\`\`
-
-### Supporting Directories
-\`\`\`
-├── context/         # React context providers
-├── hooks/           # Custom React hooks
-├── router/          # Routing configuration
-├── utils/           # Utility functions
-└── types/           # Additional type definitions
-\`\`\`
-
-## Detailed Directory Breakdown 🔍
-
-### Components Structure
-- **Layout Components**: Header, navigation, and page structure
-- **Page Components**: Route-level components for different views
-- **UI Components**: Reusable interface elements
-- **Feature Components**: Specific functionality (modals, trees, cards)
-
-### Context and State
-- **TreeContext**: Manages hierarchy data and operations
-- **CapabilityCardContext**: Handles card-specific state
-- **Global State**: Application-wide configuration and settings
-
-### Custom Hooks
-- **useAutoSave**: Automatic data persistence
-- **useMagicWand**: AI feature integration
-- **useClipboardActions**: Copy/paste functionality
-- **useResizeObserver**: Responsive layout handling
-
-### Utilities
-- **treeUtils**: Hierarchy manipulation functions
-- **storageUtils**: Local storage operations
-- **exportUtils**: Import/export functionality
-- **capabilityCardUtils**: Card-specific operations
-
-## File Naming Conventions 📝
-
-### Component Files
-- **PascalCase**: \`ComponentName.tsx\`
-- **Descriptive Names**: Clear purpose indication
-- **Feature Grouping**: Related components together
-- **Index Files**: Barrel exports for clean imports
-
-### Utility Files
-- **camelCase**: \`utilityFunction.ts\`
-- **Purpose-Based**: Names reflect functionality
-- **Consistent Suffixes**: \`Utils\`, \`Helpers\`, \`Services\`
-
-### Type Files
-- **Interfaces**: Clear, descriptive interface names
-- **Enums**: Uppercase with descriptive values
-- **Type Unions**: Logical groupings of related types
-
-## Import/Export Patterns 📦
-
-### Clean Imports
-\`\`\`typescript
-// Barrel exports from directories
-export { Button } from './Button';
-export { Modal } from './Modal';
-export { Input } from './Input';
-
-// Clean component imports
-import { Button, Modal, Input } from './ui';
-\`\`\`
-
-### Type Exports
-\`\`\`typescript
-// Centralized type definitions
-export interface NodeData {
-  id: string;
-  name: string;
-  description: string;
-  parent: string | null;
-}
-\`\`\`
-
-## Best Practices 💡
-
-### Code Organization
-- **Feature-First**: Group by functionality, not file type
-- **Consistent Structure**: Similar patterns across features
-- **Clear Dependencies**: Minimal coupling between modules
-- **Reusable Components**: Build once, use everywhere
-
-### Maintainability
-- **Single Responsibility**: Each file has one clear purpose
-- **Descriptive Naming**: Names explain functionality
-- **Documentation**: Comments for complex logic
-- **Type Safety**: TypeScript interfaces for all data
-
-Navigate the codebase with confidence using this organized structure! 🧭`, 
-      parent: architectureId 
+    // Level 3 - Magic Wand Details
+    {
+      id: promptGenerationId,
+      name: "Prompt Generation Engine",
+      description: "Advanced prompt construction system analyzing node context, relationships, and domain patterns for optimal AI responses. Features template-based generation, variable substitution, and context enrichment. Implements MECE principle enforcement and domain-specific language adaptation.",
+      parent: magicWandId
+    },
+    {
+      id: guidelinesId,
+      name: "Generation Guidelines",
+      description: "Customizable AI generation guidelines with template management and best practices integration. Features default guidelines based on MECE principles, user customization capabilities, and guideline versioning. Includes examples, explanations, and optimization recommendations.",
+      parent: magicWandId
+    },
+    {
+      id: aiResponseHandlingId,
+      name: "AI Response Processing",
+      description: "Response parsing and validation system for AI-generated content with error handling and format conversion. Features JSON parsing, content validation, and automatic node creation. Implements retry logic for failed generations and response quality assessment.",
+      parent: magicWandId
+    },
+    {
+      id: statisticsTrackingId,
+      name: "Usage Statistics Tracking",
+      description: "Comprehensive tracking of Magic Wand usage including success rates, generation patterns, and user behavior analytics. Features call counting, error tracking, and effectiveness measurement. Implements privacy-conscious analytics with local storage and user control.",
+      parent: magicWandId
     },
     
-    { 
-      id: dataModelId, 
-      name: '📊 Data Model & State Management', 
-      description: `# Data Model & State Management
-
-## Core Data Structures 🗃️
-
-### NodeData Interface
-\`\`\`typescript
-interface NodeData {
-  id: string;           // Unique identifier
-  name: string;         // Display name
-  description: string;  // Detailed description (markdown)
-  parent: string | null; // Parent node ID (null for root)
-}
-\`\`\`
-
-### Flat vs Hierarchical Structure
-- **Storage**: Flat array structure for efficiency
-- **Display**: Converted to hierarchical tree for UI
-- **Benefits**: Easy to search, filter, and manipulate
-- **Performance**: O(1) lookups with proper indexing
-
-## State Management Architecture 🏗️
-
-### React Context Pattern
-- **TreeContext**: Primary data and operations
-- **CapabilityCardContext**: Card-specific state
-- **Provider Hierarchy**: Logical nesting of contexts
-- **Consumer Components**: Clean separation of concerns
-
-### State Flow
-\`\`\`
-User Action → Component → Context → State Update → Re-render
-\`\`\`
-
-### Data Operations
-- **CRUD Operations**: Create, Read, Update, Delete nodes
-- **Tree Manipulations**: Move, copy, restructure
-- **Batch Operations**: Multiple changes in single transaction
-- **Undo/Redo**: State history management (future feature)
-
-## Local Storage Integration 💾
-
-### Persistence Strategy
-- **Auto-Save**: Continuous background saving
-- **Storage Key**: Unique identifier for data isolation
-- **Serialization**: JSON format for data storage
-- **Recovery**: Automatic restoration on application load
-
-### Data Validation
-\`\`\`typescript
-const validateNodeData = (data: any): data is NodeData[] => {
-  // Type checking and structure validation
-  return Array.isArray(data) && 
-         data.every(node => 
-           typeof node.id === 'string' &&
-           typeof node.name === 'string' &&
-           typeof node.description === 'string' &&
-           (node.parent === null || typeof node.parent === 'string')
-         );
-};
-\`\`\`
-
-## Tree Operations 🌳
-
-### Hierarchy Utilities
-- **getChildren()**: Find all child nodes of a parent
-- **getParent()**: Find the parent of a specific node
-- **findNode()**: Locate node and its relationships
-- **moveNode()**: Update parent-child relationships
-
-### Algorithms
-- **Depth-First Search**: Tree traversal for operations
-- **Breadth-First Search**: Level-order processing
-- **Path Finding**: Navigate between any two nodes
-- **Cycle Detection**: Prevent circular references
-
-## Performance Optimizations ⚡
-
-### Efficient Updates
-- **Immutable Updates**: Prevent unnecessary re-renders
-- **Selective Re-rendering**: Component-level optimization
-- **Memoization**: Cache expensive calculations
-- **Virtual Scrolling**: Handle large datasets efficiently
-
-### Memory Management
-- **Object Reuse**: Minimize garbage collection
-- **Event Cleanup**: Proper listener management
-- **Component Cleanup**: useEffect cleanup functions
-- **Storage Limits**: Monitor local storage usage
-
-## Data Flow Patterns 🔄
-
-### Unidirectional Flow
-1. **User Interaction**: Click, drag, type
-2. **Event Handler**: Process user input
-3. **Context Action**: Update global state
-4. **State Change**: Trigger re-renders
-5. **UI Update**: Reflect new state
-
-### Error Handling
-- **Validation**: Input validation at entry points
-- **Graceful Degradation**: Fallback for data issues
-- **Error Boundaries**: Catch and handle React errors
-- **User Feedback**: Clear error messages and recovery
-
-## Advanced Patterns 🚀
-
-### Custom Hooks Integration
-\`\`\`typescript
-const useTreeOperations = () => {
-  const { nodes, setNodes } = useContext(TreeContext);
-  
-  const addNode = useCallback((parentId: string, nodeData: Partial<NodeData>) => {
-    // Implementation with optimistic updates
-  }, [nodes, setNodes]);
-  
-  return { addNode, deleteNode, moveNode };
-};
-\`\`\`
-
-### State Synchronization
-- **Multiple Components**: Consistent state across UI
-- **Real-time Updates**: Immediate reflection of changes
-- **Conflict Resolution**: Handle concurrent modifications
-- **State Persistence**: Maintain state across sessions
-
-## Future Enhancements 🔮
-
-### Planned Improvements
-- **Real-time Collaboration**: Multi-user editing
-- **Version History**: Track and revert changes
-- **Cloud Sync**: Optional cloud storage integration
-- **Advanced Search**: Full-text search across hierarchies
-
-### Scalability Considerations
-- **Large Datasets**: Optimize for thousands of nodes
-- **Lazy Loading**: Load subtrees on demand
-- **Incremental Updates**: Partial re-rendering
-- **Background Processing**: Non-blocking operations
-
-Build robust, scalable applications with this solid data foundation! 🏛️`, 
-      parent: architectureId 
+    // Level 3 - Export Features
+    {
+      id: jsonExportId,
+      name: "JSON Export",
+      description: "Standard JSON format export preserving complete tree structure and metadata for data interchange. Features schema versioning, relationship preservation, and compression options. Implements validation and error checking for export integrity.",
+      parent: formatOptionsId
+    },
+    {
+      id: htmlExportId,
+      name: "HTML Export",
+      description: "Web-ready HTML export with embedded CSS, responsive design, and interactive features. Features standalone documents, custom styling options, and print optimization. Implements accessibility markup and semantic structure for maximum compatibility.",
+      parent: formatOptionsId
+    },
+   
+    // Level 3 - Keyboard Navigation Details
+    {
+      id: arrowKeyNavigationId,
+      name: "Arrow Key Navigation",
+      description: "Directional navigation using arrow keys for intuitive tree traversal with up/down for siblings and left/right for hierarchy levels. Features smooth focus transitions, automatic scrolling, and visual feedback. Implements boundary handling and logical navigation flow.",
+      parent: navigationHooksId
+    },
+    {
+      id: expandCollapseKeysId,
+      name: "Expand/Collapse Keys",
+      description: "Left/right arrow key functionality for expanding and collapsing nodes with smart behavior based on current state. Features recursive expansion options and level-by-level navigation. Implements visual feedback and state persistence for user preferences.",
+      parent: navigationHooksId
+    },
+    {
+      id: homeEndKeysId,
+      name: "Home/End Navigation",
+      description: "Boundary navigation with Home key jumping to first visible node and End key to last visible node. Features efficient calculation of visible boundaries and smooth scrolling to targets. Implements wraparound options and context-aware positioning.",
+      parent: navigationHooksId
+    },
+    {
+      id: enterKeyEditingId,
+      name: "Enter Key Editing",
+      description: "Enter key activation for editing focused nodes with automatic form opening and field focus. Features edit mode detection and modal integration. Implements save shortcuts and form validation with keyboard-only operation support.",
+      parent: navigationHooksId
     },
     
-    // Usage Guide Sub-sections
-    { 
-      id: createHierarchyId, 
-      name: '🌱 Creating Effective Hierarchies', 
-      description: `# Creating Effective Hierarchies
-
-## Planning Your Hierarchy 📋
-
-### Start with Purpose
-- **Define Objectives**: What do you want to achieve?
-- **Identify Audience**: Who will use this hierarchy?
-- **Set Scope**: What topics/concepts will be included?
-- **Choose Depth**: How detailed should you go?
-
-### Hierarchical Thinking
-- **Top-Down Approach**: Start with broad categories
-- **Bottom-Up Approach**: Begin with specific items and group
-- **Mixed Strategy**: Combine both approaches as needed
-- **Iterative Design**: Refine through multiple passes
-
-## Structure Best Practices 🏗️
-
-### The 7±2 Rule
-- **Optimal Branching**: 5-9 children per node works best
-- **Cognitive Load**: Too many options overwhelm users
-- **Logical Grouping**: Combine related items when possible
-- **Balanced Trees**: Avoid extremely wide or deep structures
-
-### Naming Conventions
-- **Consistent Style**: Use similar patterns throughout
-- **Descriptive Names**: Clear, unambiguous terminology
-- **Action-Oriented**: Use verbs for process steps
-- **Hierarchy Indicators**: Show relationships in names
-
-## Content Organization 📚
-
-### Logical Flow
-- **Sequential Order**: Arrange by importance or chronology
-- **Alphabetical Sorting**: Use when no natural order exists
-- **Frequency-Based**: Most-used items first
-- **Conceptual Grouping**: Related ideas together
-
-### Depth Management
-- **3-5 Levels**: Optimal for most hierarchies
-- **Avoid Going Too Deep**: 7+ levels become unwieldy
-- **Consistent Granularity**: Similar detail level per depth
-- **Progressive Disclosure**: Show details only when needed
-
-## Common Hierarchy Patterns 🔄
-
-### Knowledge Organization
-\`\`\`
-Subject → Topics → Subtopics → Specific Examples
-Education → Math → Algebra → Linear Equations
-\`\`\`
-
-### Process Documentation
-\`\`\`
-Process → Phases → Steps → Actions
-Project → Planning → Requirements → Gather Stakeholder Input
-\`\`\`
-
-### Product/Service Structure
-\`\`\`
-Category → Products → Features → Specifications
-Electronics → Laptops → Performance → Processing Power
-\`\`\`
-
-### Organizational Hierarchy
-\`\`\`
-Organization → Departments → Teams → Roles
-Company → Engineering → Frontend → Senior Developer
-\`\`\`
-
-## Quality Checklist ✅
-
-### Structure Review
-- [ ] **Clear Purpose**: Each node has a defined role
-- [ ] **Logical Relationships**: Parent-child connections make sense
-- [ ] **Balanced Distribution**: No extremely heavy or light branches
-- [ ] **Complete Coverage**: All relevant topics included
-- [ ] **No Redundancy**: Eliminate duplicate concepts
-
-### Usability Check
-- [ ] **Easy Navigation**: Users can find information quickly
-- [ ] **Intuitive Names**: Terminology is familiar to users
-- [ ] **Consistent Style**: Similar formatting throughout
-- [ ] **Appropriate Depth**: Not too shallow or deep
-- [ ] **Clear Scope**: Boundaries are well-defined
-
-## Real-World Examples 🌍
-
-### Educational Curriculum
-\`\`\`
-Course → Modules → Lessons → Activities → Exercises
-\`\`\`
-
-### Business Strategy
-\`\`\`
-Strategy → Objectives → Initiatives → Projects → Tasks
-\`\`\`
-
-### Content Management
-\`\`\`
-Website → Sections → Pages → Components → Elements
-\`\`\`
-
-### Research Organization
-\`\`\`
-Research Area → Topics → Questions → Methods → Results
-\`\`\`
-
-Transform complex information into clear, navigable structures! 🗺️`, 
-      parent: usageGuideId 
+    // Level 3 - Clipboard Details
+    {
+      id: copyOperationsId,
+      name: "Copy Operations",
+      description: "Node and branch copying with metadata preservation and relationship tracking. Features single node copy and full branch copy with descendant preservation. Implements clipboard integration and cross-session copy support through localStorage.",
+      parent: clipboardId
     },
-    
-    { 
-      id: managingNodesId, 
-      name: '🔧 Managing Nodes & Content', 
-      description: `# Managing Nodes & Content
-
-## Node Lifecycle Management 🔄
-
-### Creating Nodes
-- **Add Child**: Create sub-concepts under existing nodes
-- **Bulk Creation**: Add multiple related nodes quickly
-- **Template Usage**: Start with predefined structures
-- **Import Content**: Bring in existing hierarchies
-
-### Editing Operations
-- **Rename Nodes**: Update names as concepts evolve
-- **Modify Descriptions**: Enhance content with markdown
-- **Restructure**: Move nodes to better locations
-- **Merge/Split**: Combine or divide concepts as needed
-
-### Content Enhancement
-- **Rich Descriptions**: Use markdown for formatting
-- **Visual Elements**: Add emojis and symbols
-- **Cross-References**: Link to related concepts
-- **External Links**: Connect to resources and references
-
-## Advanced Node Operations 🚀
-
-### Batch Operations
-- **Multi-Select**: Work with multiple nodes (coming soon!)
-- **Copy/Paste**: Duplicate structures efficiently
-- **Find & Replace**: Update content across nodes
-- **Bulk Edit**: Modify multiple nodes simultaneously
-
-### Content Templates
-- **Standard Formats**: Consistent node structures
-- **Reusable Patterns**: Common hierarchy templates
-- **Style Guidelines**: Maintain visual consistency
-- **Quality Standards**: Ensure complete documentation
-
-## Organization Strategies 📊
-
-### Categorization Methods
-- **By Function**: Group by what items do
-- **By Topic**: Organize around subject areas
-- **By Importance**: Priority-based arrangement
-- **By Timeline**: Chronological ordering
-- **By User Type**: Audience-specific organization
-
-### Maintenance Practices
-- **Regular Reviews**: Periodic structure assessment
-- **Content Updates**: Keep information current
-- **Dead Link Removal**: Clean up broken references
-- **Redundancy Elimination**: Remove duplicate content
-- **Performance Optimization**: Maintain efficient structure
-
-## Content Quality Guidelines 📝
-
-### Writing Standards
-- **Clear Language**: Use simple, accessible terms
-- **Consistent Tone**: Maintain uniform voice
-- **Proper Grammar**: Professional presentation
-- **Scannable Format**: Easy to read quickly
-- **Actionable Content**: Provide practical guidance
-
-### Markdown Best Practices
-\`\`\`markdown
-# Use Headers for Structure
-## Organize with Subheaders
-- Use bullet points for lists
-- **Bold** for emphasis
-- *Italics* for subtle emphasis
-- [Links](url) for references
-- \`Code\` for technical terms
-\`\`\`
-
-### Visual Enhancement
-- **Emojis**: Add visual interest and categorization
-- **Consistent Symbols**: Use similar icons for same types
-- **Color Coordination**: Plan for future color features
-- **White Space**: Use spacing for readability
-
-## Collaboration Features 🤝
-
-### Sharing & Export
-- **JSON Export**: Share complete hierarchies
-- **Selective Export**: Share specific branches (coming soon!)
-- **Print-Friendly**: Format for documentation
-- **Version Control**: Track changes over time
-
-### Review Process
-- **Peer Review**: Collaborative content improvement
-- **Feedback Integration**: Incorporate suggestions
-- **Quality Assurance**: Systematic content checking
-- **Approval Workflows**: Formal review processes
-
-## Troubleshooting Common Issues 🔍
-
-### Performance Problems
-- **Large Hierarchies**: Optimize for many nodes
-- **Deep Nesting**: Avoid excessive depth
-- **Heavy Content**: Balance detail with performance
-- **Memory Usage**: Monitor browser resource usage
-
-### Content Issues
-- **Broken Structure**: Fix logical inconsistencies
-- **Duplicate Content**: Identify and merge duplicates
-- **Orphaned Nodes**: Reconnect isolated content
-- **Incomplete Information**: Fill gaps in documentation
-
-### User Experience
-- **Navigation Difficulties**: Simplify complex structures
-- **Information Overload**: Break down complex concepts
-- **Unclear Relationships**: Clarify parent-child connections
-- **Inconsistent Formatting**: Standardize presentation
-
-## Maintenance Workflows 🔄
-
-### Daily Operations
-- **Content Updates**: Regular information refresh
-- **Structure Adjustments**: Minor organizational changes
-- **Quality Checks**: Quick content review
-- **User Feedback**: Address immediate concerns
-
-### Weekly Reviews
-- **Structure Assessment**: Overall organization review
-- **Content Audit**: Systematic quality check
-- **Performance Analysis**: System efficiency review
-- **Backup Creation**: Regular data preservation
-
-### Monthly Planning
-- **Strategic Review**: Long-term structure planning
-- **Major Restructuring**: Significant organizational changes
-- **Template Updates**: Refresh standard formats
-- **Best Practice Review**: Process improvement
-
-Master the art of content organization and node management! 🎯`, 
-      parent: usageGuideId 
+    {
+      id: pasteOperationsId,
+      name: "Paste Operations",
+      description: "Intelligent paste functionality with ID regeneration, relationship reconstruction, and conflict resolution. Features paste as child operation with automatic hierarchy integration. Implements validation and error handling for invalid paste operations.",
+      parent: clipboardId
     },
-    
-    { 
-      id: exportingDataId, 
-      name: '📤 Exporting & Sharing Data', 
-      description: `# Exporting & Sharing Data
-
-## Export Formats & Options 📁
-
-### JSON Export (Primary)
-- **Complete Structure**: Full hierarchy with all metadata
-- **Human Readable**: Easy to view and edit in text editors
-- **Version Control**: Perfect for Git and change tracking
-- **Import Compatible**: Seamless re-import into application
-
-### Export Process Walkthrough
-1. **Prepare for Export**: Review hierarchy completeness
-2. **Click Export Button**: Located in main toolbar
-3. **Choose Filename**: Use descriptive, date-stamped names
-4. **Download File**: Automatic save to downloads folder
-5. **Verify Export**: Quick check of file contents
-
-### What Gets Exported
-- **Node Data**: Names, descriptions, and unique IDs
-- **Hierarchy Structure**: Parent-child relationships
-- **Metadata**: Creation timestamps and version info
-- **Formatting**: Markdown content preserved
-- **Settings**: Configuration and preferences (coming soon!)
-
-## File Organization Strategies 🗂️
-
-### Naming Conventions
-\`\`\`
-[Project]-[Version]-[Date].json
-concept-hierarchy-v1.2-2024-12-25.json
-documentation-final-2024-12-25.json
-research-notes-draft-2024-12-25.json
-\`\`\`
-
-### Version Management
-- **Incremental Versions**: v1.0, v1.1, v1.2 for updates
-- **Date Stamps**: Include export date for reference
-- **Status Indicators**: draft, review, final, archived
-- **Project Codes**: Short prefixes for easy identification
-
-### Storage Organization
-\`\`\`
-Project Hierarchies/
-├── Active Projects/
-│   ├── project-a-current.json
-│   └── project-b-wip.json
-├── Archived/
-│   ├── 2024/
-│   └── 2023/
-├── Templates/
-│   ├── education-template.json
-│   └── business-template.json
-└── Backups/
-    ├── Daily/
-    └── Weekly/
-\`\`\`
-
-## Sharing & Collaboration 🤝
-
-### File Sharing Methods
-- **Email Attachments**: Simple for small teams
-- **Cloud Storage**: Dropbox, Google Drive, OneDrive
-- **Version Control**: Git repositories for developers
-- **Project Management**: Attach to tickets and tasks
-
-### Collaboration Workflows
-- **Round-Robin Editing**: Sequential team editing
-- **Branch-Based**: Parallel development of sections
-- **Review Cycles**: Structured feedback processes
-- **Merge Strategies**: Combining multiple contributions
-
-### Best Practices for Teams
-- **Clear Ownership**: Define who manages what sections
-- **Regular Sync**: Scheduled sharing and updates
-- **Conflict Resolution**: Procedures for handling disagreements
-- **Communication**: Document changes and rationale
-
-## Advanced Export Features 🚀
-
-### Selective Export (Coming Soon)
-- **Branch Export**: Export specific subtrees only
-- **Filtered Export**: Export based on criteria
-- **Template Creation**: Save reusable structure patterns
-- **Custom Formats**: PDF, HTML, and other formats
-
-### Automation Options
-- **Scheduled Exports**: Automatic backup creation
-- **API Integration**: Connect with other tools
-- **Webhook Support**: Trigger exports from events
-- **Batch Processing**: Export multiple hierarchies
-
-## Import & Restoration 📥
-
-### Import Process
-1. **File Validation**: Automatic format checking
-2. **Preview Changes**: See what will be imported
-3. **Merge Options**: Choose how to handle existing data
-4. **Conflict Resolution**: Handle duplicate or conflicting data
-5. **Import Confirmation**: Finalize the import process
-
-### Import Strategies
-- **Replace All**: Complete replacement of current hierarchy
-- **Merge Smart**: Intelligent combination of structures
-- **Append Branch**: Add imported content as subtree
-- **Selective Import**: Choose specific nodes to import
-
-### Recovery Procedures
-- **Backup Restoration**: Recover from previous exports
-- **Partial Recovery**: Restore specific sections
-- **Data Validation**: Ensure integrity after import
-- **Rollback Options**: Undo problematic imports
-
-## External Integration 🔗
-
-### Documentation Systems
-- **Wiki Integration**: Import into knowledge bases
-- **CMS Systems**: Content management system import
-- **Documentation Generators**: Automated doc creation
-- **Learning Platforms**: Educational content import
-
-### Development Tools
-- **Code Documentation**: Generate API docs from hierarchies
-- **Project Planning**: Import into project management tools
-- **Issue Tracking**: Create tickets from hierarchy items
-- **Architecture Diagrams**: Generate visual representations
-
-### Data Analysis
-- **Spreadsheet Import**: Convert to CSV for analysis
-- **Database Integration**: Import into structured databases
-- **Reporting Tools**: Generate reports from hierarchy data
-- **Visualization**: Create charts and graphs
-
-## Security & Privacy 🔒
-
-### Data Protection
-- **Local Storage**: Data never leaves your device
-- **Encryption Options**: Encrypt exported files externally
-- **Access Control**: Manage who can access exports
-- **Audit Trails**: Track export and sharing activities
-
-### Privacy Considerations
-- **Sensitive Content**: Review before sharing
-- **Redaction Options**: Remove confidential information
-- **Anonymization**: Replace identifying information
-- **Compliance**: Meet organizational security requirements
-
-### Best Security Practices
-- **Regular Backups**: Multiple backup locations
-- **Access Logging**: Track file access and modifications
-- **Secure Sharing**: Use encrypted channels for sensitive data
-- **Regular Reviews**: Periodic security assessment
-
-Transform your hierarchies into shareable, valuable assets! 📊🌟`, 
-      parent: usageGuideId 
-    },
-    
-    { 
-      id: keyboardShortcutsId, 
-      name: '⌨️ Keyboard Shortcuts & Efficiency Tips', 
-      description: `# Keyboard Shortcuts & Efficiency Tips
-
-## Core Navigation Shortcuts ⚡
-
-### Tree Navigation (Active Features)
-- **↑/↓ Arrow Keys**: Navigate between visible nodes
-- **←/→ Arrow Keys**: Collapse/expand nodes and navigate to parent/first child
-- **Home**: Jump to first visible node
-- **End**: Jump to last visible node
-- **Enter**: Edit the currently selected node
-- **Click or Tab**: Select a node for keyboard navigation
-
-### Visual Selection
-- **Node Highlighting**: Selected nodes show gray background and border
-- **Auto-Scroll**: Selected nodes automatically scroll into view
-- **Focus Indication**: Clear visual feedback for current selection
-- **Persistent State**: Selection maintained during tree navigation
-
-### Node Operations (Current Implementation)
-- **Enter**: Edit selected node
-- **Mouse Click**: Select and focus nodes
-- **Drag & Drop**: Reorganize nodes by dragging
-- **Button Clicks**: Access node actions (edit, delete, magic wand, etc.)
-
-### Planned Features (Coming Soon!)
-- **Ctrl + N**: Add new child node
-- **Ctrl + D**: Duplicate selected node
-- **Delete**: Remove selected node (with confirmation)
-- **F2**: Rename node quickly
-- **Escape**: Cancel current operation
-- **Ctrl + F**: Search within hierarchy
-
-## Advanced Shortcuts 🚀
-
-### Modal Dialog Controls (Active Features)
-- **ESC**: Close any modal dialog (cancel action)
-- **Ctrl + Enter**: Submit/save forms in modals (Add Child, Edit Node, New Tree, Magic Wand Settings)
-- **Enter**: Confirm deletion in confirmation dialogs
-- **Tab/Shift+Tab**: Navigate between form fields
-
-### Editing & Content (Planned Features)
-- **Ctrl + S**: Manual save (auto-save is default)
-- **Ctrl + Z**: Undo last action (coming soon!)
-- **Ctrl + Y**: Redo action (coming soon!)
-- **Ctrl + A**: Select all text in editor
-- **Ctrl + B**: Bold text in markdown
-- **Ctrl + I**: Italic text in markdown
-
-### Clipboard Operations (Partially Implemented)
-- **Copy/Paste Buttons**: Use UI buttons for copy and paste operations
-- **Ctrl + C**: Copy selected node (planned)
-- **Ctrl + V**: Paste as child of selected node (planned)
-- **Ctrl + X**: Cut selected node (planned)
-- **Shift + Ctrl + V**: Paste as sibling (planned)
-- **Alt + Ctrl + V**: Paste special options (planned)
-
-### Application Controls (Planned Features)
-- **Ctrl + E**: Export hierarchy
-- **Ctrl + O**: Import hierarchy
-- **Ctrl + Shift + N**: New hierarchy
-- **F5**: Refresh/reload application
-- **F11**: Toggle fullscreen mode
-
-## Mouse & Touchpad Efficiency 🖱️
-
-### Click Operations (Current Implementation)
-- **Single Click**: Select and focus node for keyboard navigation
-- **Button Clicks**: Access node actions (edit, delete, magic wand, copy, paste, capability card)
-- **Drag Initiation**: Click and hold to start dragging nodes
-- **Expand/Collapse**: Click chevron icons to expand or collapse nodes
-
-### Planned Click Operations
-- **Double Click**: Edit node quickly (coming soon!)
-- **Right Click**: Context menu (coming soon!)
-- **Middle Click**: Open capability card (coming soon!)
-- **Ctrl + Click**: Multi-select (coming soon!)
-
-### Drag & Drop Techniques (Active Features)
-- **Standard Drag**: Move node to new parent with visual feedback
-- **Drop Indicators**: Visual guides show valid drop locations
-- **Hover Effects**: Preview drop zones while dragging
-- **Invalid Drop Prevention**: Clear indicators for invalid operations
-
-### Planned Drag & Drop Features
-- **Ctrl + Drag**: Copy node to new location
-- **Shift + Drag**: Move as sibling
-- **Alt + Drag**: Advanced placement options
-- **Multi-node Drag**: Select and move multiple nodes
-
-## Workflow Optimization 📈
-
-### Quick Creation Patterns
-1. **Outline Method**: Create structure first, add details later
-2. **Top-Down**: Start with main categories, then drill down
-3. **Bottom-Up**: Begin with details, organize into categories
-4. **Hybrid Approach**: Mix strategies based on content type
-
-### Bulk Operations
-- **Template Creation**: Build reusable node structures
-- **Copy-Paste Workflows**: Duplicate similar structures
-- **Batch Editing**: Modify multiple nodes efficiently
-- **Import Patterns**: Use existing hierarchies as starting points
-
-### Time-Saving Techniques
-- **Markdown Shortcuts**: Use formatting for quick styling
-- **Emoji Shortcuts**: Standard emoji codes (e.g., :star: → ⭐)
-- **Auto-Complete**: Let browser suggest repeated text
-- **Template Libraries**: Maintain collection of useful structures
-
-## Productivity Features 🎯
-
-### Focus Modes
-- **Collapse All**: Ctrl + Shift + ← (overview mode)
-- **Expand All**: Ctrl + Shift + → (detail mode)
-- **Focus Node**: Hide other branches temporarily
-- **Zen Mode**: Minimize distractions (coming soon!)
-
-### Quick Access
-- **Recent Hierarchies**: Quick access to recent work
-- **Favorites**: Bookmark frequently used nodes
-- **Search Results**: Jump to specific content
-- **History Navigation**: Browse previous edits
-
-### Batch Processing
-- **Find & Replace**: Update content across multiple nodes
-- **Style Application**: Apply formatting to multiple items
-- **Structure Changes**: Reorganize multiple branches
-- **Quality Checks**: Validate content across hierarchy
-
-## Customization Options ⚙️
-
-### Interface Preferences
-- **Theme Selection**: Choose visual appearance
-- **Layout Options**: Customize workspace arrangement
-- **Font Settings**: Adjust text size and family
-- **Color Schemes**: Personalize visual elements
-
-### Behavioral Settings
-- **Auto-Save Interval**: Control save frequency
-- **Confirmation Dialogs**: Toggle safety prompts
-- **Animation Speed**: Adjust UI animation timing
-- **Default Templates**: Set preferred starting structures
-
-## Advanced Power User Tips 💡
-
-### Expert Workflows
-- **Keyboard-Only Navigation**: Complete tasks without mouse
-- **Rapid Prototyping**: Quickly create concept outlines
-- **Content Migration**: Efficiently import from other sources
-- **Template Management**: Build and maintain structure libraries
-
-### Performance Optimization
-- **Large Hierarchies**: Techniques for managing complex structures
-- **Memory Management**: Keep browser performance optimal
-- **Startup Speed**: Faster application loading
-- **Responsive Usage**: Smooth operation on all devices
-
-### Integration Techniques
-- **Browser Bookmarks**: Quick access to hierarchies
-- **External Editors**: Work with exported content
-- **Automation Scripts**: Custom workflow enhancements
-- **API Usage**: Programmatic interaction (future feature)
-
-## Mobile & Touch Optimization 📱
-
-### Touch Gestures
-- **Tap**: Select and interact with nodes
-- **Long Press**: Access context options
-- **Pinch to Zoom**: Scale tree view
-- **Swipe**: Navigate between sections
-- **Two-Finger Scroll**: Move through large hierarchies
-
-### Mobile-Specific Features
-- **Touch-Friendly Buttons**: Larger interactive elements
-- **Gesture Navigation**: Intuitive touch controls
-- **Responsive Layout**: Optimal display on small screens
-- **Offline Capability**: Work without internet connection
-
-## Accessibility Features ♿
-
-### Keyboard Accessibility
-- **Tab Navigation**: Complete keyboard control
-- **Screen Reader Support**: ARIA labels and descriptions
-- **Focus Indicators**: Clear visual focus states
-- **Skip Links**: Quick navigation options
-
-### Visual Accessibility
-- **High Contrast**: Enhanced visibility options
-- **Zoom Support**: Browser zoom compatibility
-- **Font Scaling**: Adjustable text sizes
-- **Color Independence**: Information not solely color-dependent
-
-Master these techniques to become a hierarchy creation powerhouse! 🚀⚡`, 
-      parent: usageGuideId 
-    },
-    
-    // Advanced Sub-sections
-    { 
-      id: customizationId, 
-      name: '🎨 Customization & Personalization', 
-      description: `# Customization & Personalization
-
-## Visual Customization 🖌️
-
-### Theme Options
-- **Light Theme**: Clean, bright interface for day use
-- **Dark Theme**: Easy on eyes for extended sessions
-- **High Contrast**: Enhanced visibility for accessibility
-- **Custom Themes**: Create your own color schemes (coming soon!)
-
-### Interface Personalization
-- **Layout Preferences**: Customize workspace arrangement
-- **Panel Sizes**: Adjust tree and content panel widths
-- **Font Settings**: Choose typeface and size preferences
-- **Icon Styles**: Select from different icon sets
-
-### Visual Hierarchy
-- **Indentation Settings**: Control tree depth visualization
-- **Node Styling**: Customize node appearance
-- **Color Coding**: Assign colors to different node types
-- **Visual Indicators**: Custom symbols and badges
-
-## Behavioral Customization ⚙️
-
-### Auto-Save Configuration
-- **Save Frequency**: Control how often data is saved
-- **Save Triggers**: Define what actions trigger saves
-- **Backup Retention**: Number of backup versions to keep
-- **Recovery Options**: Automatic recovery preferences
-
-### Interaction Preferences
-- **Click Behavior**: Single vs double-click actions
-- **Drag Sensitivity**: Adjust drag-and-drop responsiveness
-- **Confirmation Dialogs**: Choose which actions need confirmation
-- **Animation Speed**: Control interface animation timing
-
-### Default Settings
-- **New Node Templates**: Default content for new nodes
-- **Hierarchy Structure**: Preferred starting organization
-- **Export Settings**: Default export format and options
-- **Import Behavior**: How to handle imported content
-
-## Content Customization 📝
-
-### Template System
-- **Node Templates**: Predefined content structures
-- **Hierarchy Templates**: Complete tree starting points
-- **Style Templates**: Formatting and presentation standards
-- **Custom Fields**: Additional data fields (future feature)
-
-### Markdown Enhancements
-- **Custom CSS**: Personalized styling for descriptions
-- **Syntax Highlighting**: Enhanced code block display
-- **Custom Shortcuts**: Personal markdown abbreviations
-- **Link Behavior**: How external links are handled
-
-### Content Defaults
-- **Description Format**: Standard structure for new nodes
-- **Naming Conventions**: Automatic naming patterns
-- **Emoji Sets**: Preferred emoji collections
-- **Language Settings**: Localization preferences
-
-## Workspace Customization 🖥️
-
-### Layout Options
-- **Panel Arrangement**: Customize interface layout
-- **Toolbar Configuration**: Choose visible tools and options
-- **Sidebar Content**: Select what appears in side panels
-- **Status Bar**: Information displayed at bottom
-
-### Productivity Features
-- **Quick Access Bar**: Shortcuts to frequently used features
-- **Recent Items**: Number of recent hierarchies to show
-- **Search Settings**: Search behavior and results display
-- **Notification Preferences**: What alerts to show
-
-### Multi-Monitor Support
-- **Window Management**: Optimal display across screens
-- **Panel Distribution**: Spread interface across monitors
-- **Resolution Adaptation**: Adjust for different screen sizes
-- **Scaling Options**: Handle high-DPI displays
-
-## Advanced Customization 🚀
-
-### API Integration
-- **Webhook Configuration**: Connect to external services
-- **Export Automation**: Scheduled or triggered exports
-- **Import Sources**: Automatic data import from other tools
-- **Custom Integrations**: Build connections to other systems
-
-### Plugin System (Future)
-- **Extension Framework**: Add custom functionality
-- **Community Plugins**: Install user-created extensions
-- **Custom Widgets**: Add specialized interface elements
-- **Data Processors**: Custom import/export formats
-
-### Performance Tuning
-- **Rendering Options**: Optimize for large hierarchies
-- **Memory Management**: Control resource usage
-- **Caching Settings**: Improve application responsiveness
-- **Background Processing**: Handle heavy operations efficiently
-
-## User Profiles & Settings 👤
-
-### Profile Management
-- **Multiple Profiles**: Different settings for different use cases
-- **Profile Switching**: Quick changes between configurations
-- **Settings Export**: Share configurations with others
-- **Cloud Sync**: Synchronize settings across devices (future)
-
-### Workspace Presets
-- **Research Mode**: Optimized for information gathering
-- **Planning Mode**: Focused on project organization
-- **Presentation Mode**: Clean display for sharing
-- **Development Mode**: Enhanced for technical documentation
-
-## Personalization Best Practices 💡
-
-### Getting Started
-1. **Start Simple**: Begin with basic customizations
-2. **Experiment Gradually**: Try one change at a time
-3. **Save Configurations**: Backup your preferred settings
-4. **Reset When Needed**: Return to defaults if overwhelmed
-
-### Optimization Strategies
-- **Task-Based Setup**: Configure for your specific workflows
-- **Performance Balance**: Customize without sacrificing speed
-- **Accessibility First**: Ensure changes don't hinder usability
-- **Regular Review**: Periodically assess and update settings
-
-### Common Customization Patterns
-- **Minimalist Setup**: Clean, distraction-free interface
-- **Power User Config**: Maximum features and shortcuts
-- **Team Standard**: Consistent setup across organization
-- **Project-Specific**: Different settings for different work types
-
-## Sharing Customizations 🤝
-
-### Configuration Export
-- **Settings Files**: Export customization preferences
-- **Template Sharing**: Share node and hierarchy templates
-- **Style Sheets**: Distribute custom CSS and themes
-- **Best Practices**: Document successful configurations
-
-### Team Standardization
-- **Organization Themes**: Consistent branding across team
-- **Workflow Standards**: Shared productivity configurations
-- **Template Libraries**: Common starting points for projects
-- **Training Materials**: Help others adopt effective setups
-
-## Troubleshooting Customizations 🔧
-
-### Common Issues
-- **Performance Impact**: Heavy customizations slowing interface
-- **Compatibility Problems**: Settings conflicts between features
-- **Display Issues**: Customizations not appearing correctly
-- **Reset Procedures**: How to return to working state
-
-### Recovery Options
-- **Backup Restoration**: Recover previous working settings
-- **Incremental Reset**: Remove problematic customizations
-- **Safe Mode**: Load with minimal customizations
-- **Support Resources**: Where to get help with customization issues
-
-Transform the application into your perfect productivity environment! 🎯✨`, 
-      parent: advancedId 
-    },
-    
-    { 
-      id: integrationId, 
-      name: '🔗 Integration & External Tools', 
-      description: `# Integration & External Tools
-
-## Export Integrations 📤
-
-### Documentation Systems
-- **Confluence**: Export to wiki pages and spaces
-- **Notion**: Convert hierarchies to Notion databases
-- **Obsidian**: Generate markdown files with backlinks
-- **GitBook**: Create structured documentation
-- **MediaWiki**: Export to wiki format
-
-### Project Management
-- **Jira**: Convert nodes to issues and epics
-- **Trello**: Generate boards and cards from hierarchy
-- **Asana**: Create tasks and project structures
-- **Monday.com**: Build project workflows
-- **Linear**: Generate development tickets
-
-### Development Tools
-- **GitHub Issues**: Create issue templates from nodes
-- **GitLab**: Generate project documentation
-- **Azure DevOps**: Create work items and features
-- **Bitbucket**: Generate repository documentation
-- **Code Documentation**: Generate API docs from structure
-
-## Import Sources 📥
-
-### Existing Documentation
-- **Markdown Files**: Import from existing docs
-- **JSON Structures**: Convert from other hierarchy tools
-- **CSV/Excel**: Import tabular data as hierarchies
-- **XML Files**: Convert structured data
-- **API Responses**: Import from external services
-
-### Content Management
-- **WordPress**: Import post hierarchies
-- **Drupal**: Convert taxonomy structures
-- **SharePoint**: Import document structures
-- **Google Drive**: Convert folder hierarchies
-- **Dropbox**: Import file organization
-
-### Research Tools
-- **Zotero**: Import research bibliographies
-- **Mendeley**: Convert reference hierarchies
-- **EndNote**: Import citation structures
-- **Roam Research**: Convert graph structures
-- **RemNote**: Import hierarchical notes
-
-## API Integration Framework 🔧
-
-### Webhook Support
-- **Export Triggers**: Automatic export on changes
-- **Import Notifications**: Alerts when new data available
-- **Status Updates**: Real-time synchronization status
-- **Error Handling**: Graceful failure and retry logic
-
-### REST API (Future)
-- **CRUD Operations**: Full programmatic control
-- **Bulk Operations**: Efficient large-scale modifications
-- **Authentication**: Secure access control
-- **Rate Limiting**: Prevent system overload
-
-### GraphQL Support (Future)
-- **Flexible Queries**: Request exactly needed data
-- **Real-time Subscriptions**: Live update notifications
-- **Schema Introspection**: Discover available operations
-- **Batch Operations**: Efficient multiple requests
-
-## Automation Workflows 🤖
-
-### Zapier Integration
-- **Trigger Events**: New nodes, modifications, exports
-- **Action Targets**: Send data to hundreds of apps
-- **Multi-Step Workflows**: Complex automation chains
-- **Error Handling**: Robust failure recovery
-
-### IFTTT Support
-- **Simple Triggers**: Basic event-based automation
-- **Mobile Integration**: Connect with phone and IoT devices
-- **Social Media**: Automatic posting and sharing
-- **Productivity Apps**: Connect with task managers
-
-### Custom Automation
-- **Scheduled Jobs**: Time-based automatic operations
-- **Event-Driven**: React to specific changes
-- **Batch Processing**: Handle multiple items efficiently
-- **Monitoring**: Track automation success and failures
-
-## Data Synchronization 🔄
-
-### Cloud Storage
-- **Google Drive**: Automatic backup and sync
-- **Dropbox**: File-based synchronization
-- **OneDrive**: Microsoft ecosystem integration
-- **iCloud**: Apple device synchronization
-- **Amazon S3**: Enterprise cloud storage
-
-### Version Control
-- **Git Integration**: Track changes like code
-- **Branch Management**: Parallel development paths
-- **Merge Conflicts**: Resolve simultaneous edits
-- **History Tracking**: Complete change audit trail
-
-### Real-time Collaboration
-- **Operational Transform**: Conflict-free simultaneous editing
-- **Presence Awareness**: See who's working on what
-- **Comment System**: Collaborative discussion threads
-- **Change Notifications**: Real-time update alerts
-
-## Business Intelligence 📊
-
-### Analytics Platforms
-- **Google Analytics**: Track usage patterns
-- **Mixpanel**: User behavior analysis
-- **Amplitude**: Product analytics
-- **Custom Dashboards**: Build specific metrics views
-
-### Reporting Tools
-- **Tableau**: Advanced data visualization
-- **Power BI**: Microsoft business intelligence
-- **Google Data Studio**: Free reporting platform
-- **Custom Reports**: Generate specific insights
-
-### Data Warehousing
-- **BigQuery**: Google cloud analytics
-- **Snowflake**: Cloud data platform
-- **Redshift**: Amazon data warehouse
-- **Custom ETL**: Extract, transform, load processes
-
-## Development Ecosystem 🛠️
-
-### Code Generation
-- **API Documentation**: Generate from hierarchy structure
-- **Database Schemas**: Convert to database designs
-- **Configuration Files**: Generate app config from hierarchy
-- **Test Cases**: Create test suites from structure
-
-### Development Tools
-- **VS Code Extension**: Direct integration with editor
-- **CLI Tools**: Command-line interface for automation
-- **Browser Extensions**: Enhanced web browsing integration
-- **Mobile Apps**: Companion mobile applications
-
-### Monitoring & Observability
-- **Application Monitoring**: Track system performance
-- **Error Tracking**: Capture and analyze errors
-- **Usage Analytics**: Understand user behavior
-- **Performance Metrics**: Monitor system health
-
-## Enterprise Integration 🏢
-
-### Single Sign-On (SSO)
-- **SAML**: Enterprise authentication standard
-- **OAuth**: Modern authorization framework
-- **LDAP**: Directory service integration
-- **Active Directory**: Microsoft enterprise directory
-
-### Security & Compliance
-- **Audit Logging**: Complete activity tracking
-- **Data Encryption**: Protect sensitive information
-- **Access Controls**: Role-based permissions
-- **Compliance Reporting**: Meet regulatory requirements
-
-### Enterprise Features
-- **Multi-tenant**: Isolate different organizations
-- **Custom Branding**: White-label deployments
-- **SLA Monitoring**: Service level agreements
-- **Priority Support**: Enhanced customer service
-
-## Integration Best Practices 💡
-
-### Planning Integration
-1. **Define Requirements**: Clear integration objectives
-2. **Map Data Flow**: Understand how data moves
-3. **Test Thoroughly**: Validate all integration points
-4. **Monitor Performance**: Track integration health
-5. **Document Process**: Maintain integration documentation
-
-### Security Considerations
-- **API Keys**: Secure credential management
-- **Data Privacy**: Protect sensitive information
-- **Access Control**: Limit integration permissions
-- **Audit Trails**: Track all integration activities
-
-### Performance Optimization
-- **Batch Operations**: Group requests efficiently
-- **Caching Strategy**: Reduce redundant API calls
-- **Rate Limiting**: Respect external service limits
-- **Error Recovery**: Handle failures gracefully
-
-## Future Integration Roadmap 🚀
-
-### Planned Integrations
-- **Microsoft Office**: Direct Word/Excel integration
-- **Slack**: Team communication integration
-- **Discord**: Community and gaming integration
-- **Zoom**: Meeting and webinar integration
-
-### AI & Machine Learning
-- **Natural Language Processing**: Automatic content analysis
-- **Recommendation Engine**: Suggest improvements
-- **Auto-categorization**: Intelligent content organization
-- **Sentiment Analysis**: Understand content tone
-
-Connect your hierarchies to your entire digital ecosystem! 🌐🔗`, 
-      parent: advancedId 
-    },
-    
-    { 
-      id: performanceId, 
-      name: '⚡ Performance Optimization', 
-      description: `# Performance Optimization
-
-## Understanding Performance Factors 📊
-
-### Client-Side Performance
-- **Browser Rendering**: How the interface displays and updates
-- **Memory Usage**: RAM consumption during operation
-- **CPU Utilization**: Processing power for complex operations
-- **Storage Access**: Local storage read/write performance
-- **Network Impact**: Even though local, some operations have overhead
-
-### Hierarchy Size Impact
-- **Node Count**: Performance scales with number of nodes
-- **Depth Levels**: Very deep hierarchies can impact navigation
-- **Content Size**: Large descriptions affect memory usage
-- **Update Frequency**: How often changes are made
-
-### Browser Considerations
-- **JavaScript Engine**: V8 (Chrome), SpiderMonkey (Firefox) differences
-- **Memory Management**: Garbage collection patterns
-- **Rendering Engine**: How different browsers handle DOM updates
-- **Storage Limits**: Browser local storage constraints
-
-## Optimization Strategies 🚀
-
-### Efficient Data Structures
-- **Flat Array Storage**: Optimized for search and manipulation
-- **Index Mapping**: Quick parent-child lookups
-- **Lazy Loading**: Load subtrees only when needed
-- **Virtual Scrolling**: Render only visible nodes
-
-### Memory Management
-- **Object Pooling**: Reuse objects instead of creating new ones
-- **Event Cleanup**: Proper removal of event listeners
-- **Component Unmounting**: Clean React component lifecycle
-- **Garbage Collection**: Minimize memory leaks
-
-### Rendering Optimization
-- **React.memo**: Prevent unnecessary re-renders
-- **useMemo/useCallback**: Cache expensive computations
-- **Virtualization**: Only render visible tree portions
-- **Batched Updates**: Group multiple changes together
-
-## Large Hierarchy Best Practices 📈
-
-### Structure Guidelines
-- **Optimal Depth**: Keep hierarchies under 10 levels deep
-- **Branch Balance**: Avoid extremely wide or narrow branches
-- **Content Distribution**: Distribute information evenly
-- **Logical Grouping**: Group related concepts to reduce navigation
-
-### Content Management
-- **Description Length**: Balance detail with performance
-- **Markdown Complexity**: Simple formatting performs better
-- **External Links**: Use sparingly to avoid loading delays
-- **Image Content**: Optimize or link externally
-
-### Navigation Patterns
-- **Progressive Disclosure**: Show details only when needed
-- **Collapse by Default**: Start with collapsed subtrees
-- **Search Functionality**: Quick access to specific content
-- **Breadcrumb Navigation**: Clear path through hierarchy
-
-## Browser Optimization 🌐
-
-### Chrome Optimization
-- **DevTools**: Use Performance tab to identify bottlenecks
-- **Memory Tab**: Monitor memory usage patterns
-- **Extensions**: Disable unnecessary browser extensions
-- **Hardware Acceleration**: Enable for better rendering
-
-### Firefox Optimization
-- **about:config**: Tune performance settings
-- **Developer Tools**: Network and performance analysis
-- **Memory Tools**: Track memory allocation
-- **Privacy Settings**: Balance privacy with performance
-
-### Safari Optimization
-- **Web Inspector**: Debug performance issues
-- **Storage Management**: Monitor local storage usage
-- **Energy Impact**: Optimize for battery life
-- **Privacy Features**: Understand tracking protection impact
-
-## Performance Monitoring 📱
-
-### Built-in Metrics
-- **Load Time**: How quickly the application starts
-- **Response Time**: Interface responsiveness to interactions
-- **Memory Growth**: Track memory usage over time
-- **Storage Usage**: Monitor local storage consumption
-
-### Performance Indicators
-- **Slow Operations**: Identify bottlenecks in common tasks
-- **Error Rates**: Track and reduce error occurrences
-- **User Experience**: Measure perceived performance
-- **Resource Utilization**: CPU and memory efficiency
-
-### Diagnostic Tools
-- **Browser DevTools**: Built-in performance analysis
-- **Lighthouse**: Automated performance auditing
-- **Performance Observer**: Real-time performance monitoring
-- **Custom Metrics**: Application-specific measurements
-
-## Troubleshooting Performance Issues 🔍
-
-### Common Problems
-- **Slow Loading**: Application takes too long to start
-- **Laggy Interface**: Delayed response to user interactions
-- **Memory Leaks**: Gradually increasing memory usage
-- **Storage Limits**: Reaching browser storage constraints
-
-### Diagnostic Steps
-1. **Identify Symptoms**: What specific performance issues?
-2. **Measure Baseline**: Current performance metrics
-3. **Isolate Variables**: Test with different data sizes
-4. **Monitor Resources**: Track CPU, memory, storage usage
-5. **Implement Solutions**: Apply targeted optimizations
-
-### Quick Fixes
-- **Browser Restart**: Clear temporary files and memory
-- **Extension Disable**: Remove conflicting browser extensions
-- **Cache Clear**: Reset browser cache and storage
-- **Data Cleanup**: Remove unnecessary nodes and content
-
-## Advanced Performance Techniques ⚡
-
-### Code Splitting
-- **Dynamic Imports**: Load features only when needed
-- **Route-Based Splitting**: Separate page-level code
-- **Component Lazy Loading**: Load components on demand
-- **Feature Flags**: Enable/disable expensive features
-
-### Caching Strategies
-- **Browser Caching**: Leverage browser storage efficiently
-- **Computation Caching**: Cache expensive calculations
-- **Component Memoization**: Avoid redundant rendering
-- **Data Caching**: Store frequently accessed information
-
-### Background Processing
-- **Web Workers**: Offload heavy computations
-- **Idle Callbacks**: Use browser idle time efficiently
-- **Debounced Operations**: Reduce operation frequency
-- **Batched Updates**: Group multiple changes
-
-## Mobile Performance 📱
-
-### Touch Device Optimization
-- **Touch Responsiveness**: Minimize touch delay
-- **Scroll Performance**: Smooth scrolling experience
-- **Gesture Recognition**: Efficient touch gesture handling
-- **Viewport Management**: Optimal mobile layout
-
-### Resource Constraints
-- **Limited Memory**: Optimize for mobile RAM constraints
-- **CPU Efficiency**: Minimize processing on mobile devices
-- **Battery Life**: Reduce energy consumption
-- **Network Awareness**: Consider mobile data usage
-
-### Mobile Best Practices
-- **Responsive Design**: Efficient layout for small screens
-- **Touch Targets**: Appropriate button and link sizes
-- **Loading States**: Clear feedback during operations
-- **Offline Capability**: Work without network connection
-
-## Future Performance Enhancements 🔮
-
-### Planned Optimizations
-- **Web Assembly**: High-performance computation modules
-- **Service Workers**: Advanced caching and offline support
-- **IndexedDB**: More efficient client-side database
-- **Progressive Web App**: Native app-like performance
-
-### Emerging Technologies
-- **HTTP/3**: Faster network protocols
-- **WebGPU**: Graphics processing acceleration
-- **Streaming**: Real-time data streaming
-- **Edge Computing**: Distributed processing
-
-### Continuous Improvement
-- **Performance Budgets**: Set and maintain performance targets
-- **Automated Testing**: Regular performance regression testing
-- **User Feedback**: Real-world performance insights
-- **Optimization Cycles**: Regular performance review and improvement
-
-Achieve lightning-fast performance for hierarchies of any size! ⚡🚀`, 
-      parent: advancedId 
+    {
+      id: branchCopyingId,
+      name: "Branch Copying",
+      description: "Complete subtree copying preserving full hierarchical structures with all descendants and relationships. Features recursive copying algorithms and efficient bulk operations. Implements progress tracking for large branches and memory optimization.",
+      parent: clipboardId
     }
   ];
 };

@@ -2,7 +2,7 @@
 
 A powerful interactive tool for creating, organizing, and visualizing hierarchical concept maps using AI assistance.
 
-![Concept Hierarchy Designer](https://via.placeholder.com/800x400?text=Concept+Hierarchy+Designer) <!-- Consider replacing this with an actual screenshot of your app -->
+![Concept Hierarchy Designer](public/screenshot.png) <!-- Consider replacing this with an actual screenshot of your app -->
 
 ## ✨ Features
 
