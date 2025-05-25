@@ -414,7 +414,7 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
 };
 
 /**
- * Saves the capability card as a standalone HTML file
+ * Saves the capability card as a standalone HTML file and opens it in the browser
  * @param nodes All nodes in the tree
  * @param currentNodeId The ID of the node to create a capability card for
  * @param filename The name of the file to save (without extension)
@@ -427,5 +427,22 @@ export const saveCapabilityCardAsHtml = async (
   const html = generateCapabilityCardHtml(nodes, currentNodeId);
   
   const blob = new Blob([html], { type: 'text/html' });
+  
+  // Save the file using file-saver
   saveAs(blob, `${filename}.html`);
+  
+  // Also open the HTML in a new browser tab/window
+  const url = URL.createObjectURL(blob);
+  const newWindow = window.open(url, '_blank');
+  
+  // Clean up the URL after a delay to ensure it has time to load
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+  }, 10000); // 10 seconds should be enough for the browser to load the content
+  
+  // Fallback: if popup was blocked, provide user feedback
+  if (!newWindow) {
+    console.warn('Popup blocked - HTML file saved but could not be opened automatically');
+    // You could add a toast notification here if you have a toast system
+  }
 };
