@@ -5,6 +5,9 @@
   color: #333333;
   scrollbar-width: thin;
   scrollbar-color: #d1d5db #f3f4f6;
+  /* Ensure scrolling works within tooltip */
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
 }
 
 .simple-tooltip-content::-webkit-scrollbar {
@@ -93,6 +96,9 @@
   min-width: 200px !important;
   width: max-content !important;
   transition: opacity 0.2s ease, transform 0.2s ease !important;
+  /* Ensure tooltip can capture scroll events */
+  pointer-events: auto !important;
+  overscroll-behavior: contain !important;
 }
 
 /* Enhanced tooltip animations */

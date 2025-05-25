@@ -1,4 +1,4 @@
-import React, { ReactNode, useState, lazy, Suspense } from 'react';
+import React, { ReactNode, useState, lazy, Suspense, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Tooltip } from 'react-tooltip';
 import remarkGfm from 'remark-gfm';
@@ -48,6 +48,40 @@ export const SimpleTooltip: React.FC<SimpleTooltipProps> = ({
   // Generate a random ID if none is provided
   const tooltipId = id || `simple-tooltip-${Math.random().toString(36).substring(2, 9)}`;
   const [isVisible, setIsVisible] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Handle scroll events to prevent page scrolling when scrolling within tooltip
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (!scrollContainerRef.current) return;
+      
+      const container = scrollContainerRef.current;
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      const isScrollable = scrollHeight > clientHeight;
+      
+      if (isScrollable) {
+        const isAtTop = scrollTop <= 0;
+        const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
+        
+        // Prevent page scroll when scrolling within bounds
+        if ((!isAtTop && e.deltaY < 0) || (!isAtBottom && e.deltaY > 0)) {
+          e.stopPropagation();
+        } else {
+          // At boundaries, still prevent page scroll briefly to avoid jarring
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }
+    };
+
+    const container = scrollContainerRef.current;
+    if (container && isVisible) {
+      container.addEventListener('wheel', handleWheel, { passive: false });
+      return () => {
+        container.removeEventListener('wheel', handleWheel);
+      };
+    }
+  }, [isVisible]);
 
   // Don't render tooltip if no content
   if (!content || content.trim() === '') {
@@ -83,13 +117,19 @@ export const SimpleTooltip: React.FC<SimpleTooltipProps> = ({
         positionStrategy="fixed"
         border="1px solid #e2e8f0"
         float={true}
-        clickable={false}
+        clickable={true}
         role="tooltip"
         afterShow={() => setIsVisible(true)} 
         afterHide={() => setIsVisible(false)}
-      >
-        <div className="simple-tooltip-content text-sm leading-relaxed" 
-             style={{ maxHeight: maxHeight, overflowY: 'auto' }}>
+      >        <div 
+          ref={scrollContainerRef}
+          className="simple-tooltip-content text-sm leading-relaxed" 
+          style={{ maxHeight: maxHeight, overflowY: 'auto' }}
+          onMouseEnter={(e) => {
+            // Ensure tooltip stays open when hovering over scrollable content
+            e.stopPropagation();
+          }}
+        >
           {isVisible ? (
             <Suspense fallback={
               <div className="simple-tooltip-content-loading flex items-center justify-center min-h-[60px]">
