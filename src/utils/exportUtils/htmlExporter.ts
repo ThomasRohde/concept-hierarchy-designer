@@ -6,7 +6,21 @@ import { markdownToHtmlSync } from '../markdownUtils.js';
 /**
  * Creates a standalone HTML representation of the capability card
  * @param nodes All nodes in the tree
- * @param currentNodeId The ID of the current node to create a capability card for
+      <div class="capability-card">
+      <!-- Shared scrollable container for both current capability and children -->
+      <div class="capability-scrollable-container">
+        <!-- Current Capability -->
+        <div class="capability-section current-section">
+          <div class="capability-tile capability-current">
+            <div class="capability-name">${current.name}</div>
+            <div class="capability-description">${markdownToHtmlSync(current.description || 'No description')}</div>
+          </div>
+        </div>
+          
+        <!-- Children Capabilities -->
+        ${kids.length > 0 ? `
+        <div class="capability-section">
+          <div class="children-row">`rentNodeId The ID of the current node to create a capability card for
  * @returns HTML string representation of the capability card
  */
 const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): string => {
@@ -60,18 +74,26 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
     .header p {
       color: #718096;
     }
-    
-    .capability-card {
+      .capability-card {
       padding: 20px;
-    }    .capability-section {
-      margin-bottom: 40px;
-    }    .capability-section.current-section {
-      margin-bottom: 30px;
+    }
+    
+    .capability-scrollable-container {
       overflow-x: auto;
+      width: 100%;
+      padding-bottom: 15px; /* Add some padding at the bottom for scrollbar */
+    }
+    
+    .capability-section {
+      margin-bottom: 40px;
+    }    
+    
+    .capability-section.current-section {
+      margin-bottom: 30px;
     }
     
     .overflow-x-container {
-      overflow-x: auto;
+      /* Remove overflow-x: auto from here as well */
       width: 100%;
     }
     
@@ -194,33 +216,28 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
     }    .children-row {
       display: flex;
       gap: 20px;
-      overflow-x: auto;
-      overflow-y: visible;
+      /* Remove overflow-x: auto since it's handled by the parent container */
+      overflow-y: visible; 
       padding-bottom: 15px;
       width: 100%;
       min-width: max-content;
     }
-    
-    /* Apply the same scrollbar styling to both the children-row and current-section */
-    .children-row::-webkit-scrollbar,
-    .capability-section.current-section::-webkit-scrollbar {
+      /* Apply scrollbar styling to the shared container */
+    .capability-scrollable-container::-webkit-scrollbar {
       height: 8px;
     }
     
-    .children-row::-webkit-scrollbar-track,
-    .capability-section.current-section::-webkit-scrollbar-track {
+    .capability-scrollable-container::-webkit-scrollbar-track {
       background: #f1f1f1;
       border-radius: 4px;
     }
     
-    .children-row::-webkit-scrollbar-thumb,
-    .capability-section.current-section::-webkit-scrollbar-thumb {
+    .capability-scrollable-container::-webkit-scrollbar-thumb {
       background: #c1c1c1;
       border-radius: 4px;
     }
     
-    .children-row::-webkit-scrollbar-thumb:hover,
-    .capability-section.current-section::-webkit-scrollbar-thumb:hover {
+    .capability-scrollable-container::-webkit-scrollbar-thumb:hover {
       background: #a8a8a8;
     }.child-column {
       display: flex;
@@ -357,9 +374,9 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
               ` : ''}
             </div>
             `;
-          }).join('')}
-        </div>
+          }).join('')}        </div>
       </div>      ` : ''}
+      </div>
     </div>
     
     <footer>
@@ -401,12 +418,10 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
           card.classList.add('has-overflow');
         }
       });
-      
-      // Set current capability width to match children row width
+        // Set current capability width to match children row width
       const updateCurrentNodeWidth = () => {
         const childrenRow = document.querySelector('.children-row');
         const currentCapabilityTile = document.querySelector('.capability-current');
-        const currentCapabilitySection = document.querySelector('.capability-section.current-section');
         
         if (childrenRow && currentCapabilityTile) {
           // Calculate total width of children row content
@@ -425,12 +440,6 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
           // Set the current capability width to match the children row width
           currentCapabilityTile.style.width = totalWidth + 'px';
           currentCapabilityTile.style.minWidth = totalWidth + 'px';
-          
-          // Ensure the parent container has the same scrolling behavior
-          if (currentCapabilitySection) {
-            currentCapabilitySection.style.overflowX = 'auto';
-            currentCapabilitySection.style.marginBottom = '30px';
-          }
         }
       };
       
@@ -440,23 +449,8 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
       // Update width on resize
       window.addEventListener('resize', updateCurrentNodeWidth);
       
-      // Update width when scrolling horizontally (for consistent experience)
-      const childrenRow = document.querySelector('.children-row');
-      if (childrenRow) {
-        childrenRow.addEventListener('scroll', function() {
-          const currentCapabilitySection = document.querySelector('.capability-section.current-section');
-          if (currentCapabilitySection) {
-            currentCapabilitySection.scrollLeft = this.scrollLeft;
-          }
-        });
-        
-        const currentCapabilitySection = document.querySelector('.capability-section.current-section');
-        if (currentCapabilitySection) {
-          currentCapabilitySection.addEventListener('scroll', function() {
-            childrenRow.scrollLeft = this.scrollLeft;
-          });
-        }
-      }
+      // No need for scroll event listeners since we now have a single scrollable container
+      // that naturally handles both elements
     });
   </script>
 </body>
