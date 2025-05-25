@@ -48,39 +48,79 @@ const CapabilityCard: React.FC<CapabilityCardProps> = ({
           />
         </div>        {/* Level N+1 and N+2 - Children with their grandchildren below */}
         {kids.length > 0 && (
-          <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${Math.min(kids.length, cols)}, 1fr)`, gridTemplateRows: 'auto 1fr' }}>
-            {kids.map((kid) => {
-              const kidGrandchildren = index.children.get(kid.id) ?? [];
-              return (
-                <div key={kid.id} className="flex flex-col gap-3 h-full">
-                  {/* Child node - fixed height */}
-                  <div className="flex-shrink-0">
-                    <CapabilityTile 
-                      node={kid} 
-                      variant="child"
-                      onClick={() => onNodeClick?.(kid.id)}
-                    />
-                  </div>
-                  
-                  {/* Grandchildren of this child - takes remaining space */}
-                  <div className="flex-grow">
-                    {kidGrandchildren.length > 0 && (
-                      <div className="flex flex-col gap-2">
-                        {kidGrandchildren.map((grandkid) => (
-                          <CapabilityTile 
-                            key={grandkid.id} 
-                            node={grandkid} 
-                            variant="grandchild"
-                            onClick={() => onNodeClick?.(grandkid.id)}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </div>
+          <>
+            {/* Children row */}
+            <div 
+              className="grid gap-4" 
+              style={{ 
+                gridTemplateColumns: `repeat(${Math.min(kids.length, cols)}, 1fr)`
+              }}
+            >
+              {kids.map((kid) => (
+                <div key={`child-${kid.id}`} className="min-h-0">
+                  <CapabilityTile 
+                    node={kid} 
+                    variant="child"
+                    onClick={() => onNodeClick?.(kid.id)}
+                  />
                 </div>
+              ))}
+            </div>
+
+            {/* Grandchildren rows */}
+            {(() => {
+              // Collect all grandchildren with their parent info
+              const allGrandchildren = kids.flatMap((kid) => {
+                const kidGrandchildren = index.children.get(kid.id) ?? [];
+                return kidGrandchildren.map((grandkid) => ({
+                  ...grandkid,
+                  parentIndex: kids.findIndex(k => k.id === kid.id)
+                }));
+              });
+
+              if (allGrandchildren.length === 0) return null;
+
+              // Find the maximum number of grandchildren for any child
+              const maxGrandchildrenPerParent = Math.max(
+                ...kids.map(kid => (index.children.get(kid.id) ?? []).length)
               );
-            })}
-          </div>
+
+              // Create rows for grandchildren
+              const grandchildrenRows = [];
+              for (let rowIndex = 0; rowIndex < maxGrandchildrenPerParent; rowIndex++) {
+                grandchildrenRows.push(
+                  <div 
+                    key={`grandchildren-row-${rowIndex}`}
+                    className="grid gap-4 mt-3"
+                    style={{ 
+                      gridTemplateColumns: `repeat(${Math.min(kids.length, cols)}, 1fr)`
+                    }}
+                  >
+                    {kids.map((kid, kidIndex) => {
+                      const kidGrandchildren = index.children.get(kid.id) ?? [];
+                      const grandchild = kidGrandchildren[rowIndex];
+                      
+                      return (
+                        <div key={`grandchild-${kid.id}-${rowIndex}`} className="min-h-0">
+                          {grandchild ? (
+                            <CapabilityTile 
+                              node={grandchild} 
+                              variant="grandchild"
+                              onClick={() => onNodeClick?.(grandchild.id)}
+                            />
+                          ) : (
+                            <div className="h-full" /> // Empty space to maintain grid
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              }
+
+              return grandchildrenRows;
+            })()}
+          </>
         )}
       </div>
     </div>

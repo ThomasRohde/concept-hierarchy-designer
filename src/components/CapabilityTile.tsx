@@ -47,8 +47,7 @@ const CapabilityTile: React.FC<CapabilityTileProps> = ({
   };  return (
     <div
       className={`
-        rounded-lg border transition-all duration-200 flex flex-col
-        ${variant === 'child' ? 'h-auto' : 'h-full'}
+        rounded-lg border transition-all duration-200 flex flex-col h-full
         ${getVariantClasses()}
         ${onClick ? 'cursor-pointer hover:shadow-lg hover:scale-105' : ''}
         ${span ? 'col-span-full' : ''}
