@@ -98,12 +98,12 @@ const CapabilityCard: React.FC<CapabilityCardProps> = ({
 
               // Create rows for grandchildren with horizontal scrolling
               const grandchildrenRows = [];
-              for (let rowIndex = 0; rowIndex < maxGrandchildrenPerParent; rowIndex++) {
-                grandchildrenRows.push(
+              for (let rowIndex = 0; rowIndex < maxGrandchildrenPerParent; rowIndex++) {                grandchildrenRows.push(
                   <div 
                     key={`grandchildren-row-${rowIndex}`}
-                    className="overflow-x-auto mt-3"
-                  >                    <div 
+                    className="mt-3"
+                  >
+                    <div 
                       className={`flex gap-4 pb-2 ${kids.length <= 4 ? 'w-full' : ''}`}
                       style={kids.length <= 4 ? {} : { minWidth: 'fit-content' }}
                     >
@@ -135,7 +135,11 @@ const CapabilityCard: React.FC<CapabilityCardProps> = ({
                 );
               }
 
-              return grandchildrenRows;
+              return (
+                <div className="overflow-x-auto">
+                  {grandchildrenRows}
+                </div>
+              );
             })()}
           </>
         )}
