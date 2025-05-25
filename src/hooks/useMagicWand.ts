@@ -132,12 +132,14 @@ export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult =
 
   const createPrompt = useCallback(() => {
     return createNewPrompt();
-  }, []);
-
-  const generateMagicWandPrompt = useCallback(async (selectedNode: NodeData, promptId?: string) => {
+  }, []);  const generateMagicWandPrompt = useCallback(async (selectedNode: NodeData, promptId?: string) => {
+    // Get the most current active prompt ID from localStorage to avoid stale state
+    const currentActivePromptId = getActivePrompt().id;
+    const currentActivePrompt = promptCollection.prompts.find(p => p.id === currentActivePromptId) || promptCollection.prompts[0];
+    
     const selectedPrompt = promptId 
-      ? promptCollection.prompts.find(p => p.id === promptId) || activePrompt
-      : activePrompt;
+      ? promptCollection.prompts.find(p => p.id === promptId) || currentActivePrompt
+      : currentActivePrompt;
 
     // Update usage count
     updatePromptUsage(selectedPrompt.id);
@@ -217,10 +219,9 @@ Generate your response below:`;
       updateMagicWandStats(true, 0);
     } catch (err) {
       console.error("Failed to copy AI prompt to clipboard:", err);
-      toast.error("Failed to copy AI prompt. Check permissions (HTTPS/localhost) or see console for details.");
-      updateMagicWandStats(false, 0);
+      toast.error("Failed to copy AI prompt. Check permissions (HTTPS/localhost) or see console for details.");      updateMagicWandStats(false, 0);
     }
-  }, [nodes, promptCollection, activePrompt]);
+  }, [nodes, promptCollection, activePromptId]);
 
   return {
     generateMagicWandPrompt,
