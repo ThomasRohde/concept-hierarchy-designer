@@ -65,14 +65,20 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
       padding: 20px;
     }    .capability-section {
       margin-bottom: 40px;
+    }    .capability-section.current-section {
+      margin-bottom: 30px;
+      overflow-x: auto;
     }
     
-    .capability-section.current-section {
-      margin-bottom: 30px;
-    }    .capability-section.current-section .capability-tile {
+    .overflow-x-container {
+      overflow-x: auto;
+      width: 100%;
+    }
+    
+    .capability-section.current-section .capability-tile {
       display: block;
-      width: max-content;
-      min-width: 100%;
+      width: 100%;
+      min-width: fit-content;
     }
       .section-title {
       font-size: 20px;
@@ -195,23 +201,28 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
       min-width: max-content;
     }
     
-    .children-row::-webkit-scrollbar {
+    /* Apply the same scrollbar styling to both the children-row and current-section */
+    .children-row::-webkit-scrollbar,
+    .capability-section.current-section::-webkit-scrollbar {
       height: 8px;
     }
     
-    .children-row::-webkit-scrollbar-track {
+    .children-row::-webkit-scrollbar-track,
+    .capability-section.current-section::-webkit-scrollbar-track {
       background: #f1f1f1;
       border-radius: 4px;
     }
     
-    .children-row::-webkit-scrollbar-thumb {
+    .children-row::-webkit-scrollbar-thumb,
+    .capability-section.current-section::-webkit-scrollbar-thumb {
       background: #c1c1c1;
       border-radius: 4px;
     }
     
-    .children-row::-webkit-scrollbar-thumb:hover {
+    .children-row::-webkit-scrollbar-thumb:hover,
+    .capability-section.current-section::-webkit-scrollbar-thumb:hover {
       background: #a8a8a8;
-    }    .child-column {
+    }.child-column {
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -314,9 +325,11 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
     </div>
       <div class="capability-card">      <!-- Current Capability -->
       <div class="capability-section current-section">
-        <div class="capability-tile capability-current">
-          <div class="capability-name">${current.name}</div>
-          <div class="capability-description">${markdownToHtmlSync(current.description || 'No description')}</div>
+        <div class="overflow-x-container">
+          <div class="capability-tile capability-current">
+            <div class="capability-name">${current.name}</div>
+            <div class="capability-description">${markdownToHtmlSync(current.description || 'No description')}</div>
+          </div>
         </div>
       </div>
         <!-- Children Capabilities -->
@@ -369,8 +382,7 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
         cardElement.classList.add('expanded');
         button.textContent = 'Collapse';
       }
-    }
-      // Check for overflow on page load and set current capability width
+    }    // Check for overflow and set current capability width to match children row
     document.addEventListener('DOMContentLoaded', function() {
       // Check overflow for child cards
       const childCards = document.querySelectorAll('.capability-child');
@@ -391,22 +403,59 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
       });
       
       // Set current capability width to match children row width
-      const childrenRow = document.querySelector('.children-row');
-      const currentCapabilityTile = document.querySelector('.capability-current');
+      const updateCurrentNodeWidth = () => {
+        const childrenRow = document.querySelector('.children-row');
+        const currentCapabilityTile = document.querySelector('.capability-current');
+        const currentCapabilitySection = document.querySelector('.capability-section.current-section');
+        
+        if (childrenRow && currentCapabilityTile) {
+          // Calculate total width of children row content
+          const childColumns = childrenRow.querySelectorAll('.child-column');
+          const gap = 20; // gap between columns
+          let totalWidth = 0;
+          
+          childColumns.forEach(column => {
+            totalWidth += column.offsetWidth;
+          });
+          
+          if (childColumns.length > 1) {
+            totalWidth += (childColumns.length - 1) * gap; // add gaps between columns
+          }
+          
+          // Set the current capability width to match the children row width
+          currentCapabilityTile.style.width = totalWidth + 'px';
+          currentCapabilityTile.style.minWidth = totalWidth + 'px';
+          
+          // Ensure the parent container has the same scrolling behavior
+          if (currentCapabilitySection) {
+            currentCapabilitySection.style.overflowX = 'auto';
+            currentCapabilitySection.style.marginBottom = '30px';
+          }
+        }
+      };
       
-      if (childrenRow && currentCapabilityTile) {
-        // Calculate total width of children row content
-        const childColumns = childrenRow.querySelectorAll('.child-column');
-        const gap = 20; // gap between columns
-        let totalWidth = 0;
-        
-        childColumns.forEach(column => {
-          totalWidth += column.offsetWidth;
+      // Update width initially
+      updateCurrentNodeWidth();
+      
+      // Update width on resize
+      window.addEventListener('resize', updateCurrentNodeWidth);
+      
+      // Update width when scrolling horizontally (for consistent experience)
+      const childrenRow = document.querySelector('.children-row');
+      if (childrenRow) {
+        childrenRow.addEventListener('scroll', function() {
+          const currentCapabilitySection = document.querySelector('.capability-section.current-section');
+          if (currentCapabilitySection) {
+            currentCapabilitySection.scrollLeft = this.scrollLeft;
+          }
         });
-        totalWidth += (childColumns.length - 1) * gap; // add gaps between columns
         
-        // Set the current capability width to match
-        currentCapabilityTile.style.width = totalWidth + 'px';
+        const currentCapabilitySection = document.querySelector('.capability-section.current-section');
+        if (currentCapabilitySection) {
+          currentCapabilitySection.addEventListener('scroll', function() {
+            childrenRow.scrollLeft = this.scrollLeft;
+          });
+        }
       }
     });
   </script>
