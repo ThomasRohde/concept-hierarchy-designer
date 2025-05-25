@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, ArrowLeft } from 'lucide-react';
+import { X, ArrowLeft, ArrowUp } from 'lucide-react';
 import { NodeData } from '../types';
 import { Button } from './ui/Button';
 import CapabilityCard from './CapabilityCard';
@@ -18,15 +18,18 @@ const CapabilityCardModal: React.FC<CapabilityCardModalProps> = ({
   nodes,
   currentNodeId,
   onNavigateToNode
-}) => {
-  if (!isOpen) return null;
+}) => {  if (!isOpen) return null;  const currentNode = nodes.find(n => n.id === currentNodeId);
+  const parentNode = currentNode?.parent ? nodes.find(n => n.id === currentNode.parent) : null;
 
-  const currentNode = nodes.find(n => n.id === currentNodeId);
+  const handleNavigateToParent = () => {
+    if (parentNode && onNavigateToNode) {
+      onNavigateToNode(parentNode.id);
+    }
+  };
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl w-[98vw] h-[90vh] max-w-none flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+        {/* Header */}        <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <Button
               variant="ghost"
@@ -36,7 +39,30 @@ const CapabilityCardModal: React.FC<CapabilityCardModalProps> = ({
               aria-label="Back to tree view"
             >
               <ArrowLeft className="w-5 h-5" />
+            </Button>            {/* Always show up button for debugging - TODO: remove this and uncomment the conditional */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleNavigateToParent}
+              className="text-gray-500 hover:text-gray-700"
+              aria-label="Navigate to parent capability"
+              title={parentNode ? `Go to parent: ${parentNode.name}` : 'No parent (root node)'}
+              disabled={!parentNode}
+            >
+              <ArrowUp className="w-5 h-5" />
             </Button>
+            {/* {parentNode && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleNavigateToParent}
+                className="text-gray-500 hover:text-gray-700"
+                aria-label="Navigate to parent capability"
+                title={`Go to parent: ${parentNode.name}`}
+              >
+                <ArrowUp className="w-5 h-5" />
+              </Button>
+            )} */}
             <div>
               <h2 className="text-xl font-semibold text-gray-800">
                 Capability Card
