@@ -54,22 +54,3 @@ export function calculateColumns(width: number, minCardWidth: number = 200): num
 export function calculateGrandchildColumns(width: number, minCardWidth: number = 160): number {
   return Math.max(2, Math.floor(width / minCardWidth));
 }
-
-/**
- * Get maturity color based on score (1-5 scale)
- */
-export function getMaturityColor(score: number): string {
-  if (score <= 1) return 'bg-red-500';
-  if (score <= 2) return 'bg-orange-500';
-  if (score <= 3) return 'bg-yellow-500';
-  if (score <= 4) return 'bg-green-500';
-  return 'bg-blue-500';
-}
-
-/**
- * Calculate average maturity score
- */
-export function getAverageMaturity(maturity?: { people: number; process: number; data: number; tech: number }): number {
-  if (!maturity) return 0;
-  return (maturity.people + maturity.process + maturity.data + maturity.tech) / 4;
-}

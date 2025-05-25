@@ -12,27 +12,14 @@ This plan outlines the implementation approach for adding BIZBOK-style capabilit
 ## Technical Requirements
 
 ### Data Model Extensions
-1. Extend the existing `NodeData` interface to support additional capability card fields:
+1. ~~Extend the existing `NodeData` interface to support additional capability card fields~~ (REMOVED - CapabilityCardData type was removed as it's not needed):
    ```typescript
-   interface CapabilityCardData extends NodeData {
-     outcomes?: string[];
-     keyMetrics?: {
-       customer?: string[];
-       process?: string[];
-       learning?: string[];
-       finance?: string[];
-     };
-     source?: string;
-     people?: string[];
-     process?: string[];
-     technology?: string[];
-     maturity?: {
-       people: number; // 1-5 scale
-       process: number;
-       data: number;
-       tech: number;
-     };
-     strategyAlignment?: string[];
+   // CapabilityCardData interface was removed - using basic NodeData instead
+   interface NodeData {
+     id: string;
+     name: string;
+     description: string;
+     parent: string | null;
    }
    ```
 

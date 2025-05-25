@@ -50,7 +50,7 @@
 - Context-aware display (only shows when appropriate)
 
 🎯 **Data Support:**
-- Extended CapabilityCardData interface with BIZBOK fields
+- ~~Extended CapabilityCardData interface with BIZBOK fields~~ (REMOVED - not needed)
 - Utility functions for data processing and layout
 - Proper TypeScript support and error handling
 
