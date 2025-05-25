@@ -27,11 +27,15 @@ const EditNodeModal: React.FC<EditNodeModalProps> = ({ isOpen, onClose, onSave, 
       setDescription('');
     }
   }, [isOpen, nodeToEdit]);
-
   // Handle RETURN key for submission
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+      if (event.key === 'Enter') {
+        // Allow normal Enter behavior in textarea
+        if (event.target instanceof HTMLTextAreaElement) {
+          return;
+        }
+        
         event.preventDefault();
         handleSave();
       }
@@ -87,14 +91,12 @@ const EditNodeModal: React.FC<EditNodeModalProps> = ({ isOpen, onClose, onSave, 
             placeholder="Enter concept description"
             rows={3}          />
         </div>
-      </div>
-      <div className="mt-4 text-xs text-gray-500 text-center">
-        Tip: Press Ctrl+Enter to save, or ESC to cancel
-      </div>      <div className="mt-6 flex justify-end space-x-2">
+      </div>      <div className="mt-4 text-xs text-gray-500 text-center">
+        Tip: Press Enter to save, or ESC to cancel
+      </div><div className="mt-6 flex justify-end space-x-2">
         <Button variant="outline" onClick={onClose} title="Cancel (ESC)">
           Cancel
-        </Button>
-        <Button onClick={handleSave} title="Save Changes (Ctrl+Enter)">
+        </Button>        <Button onClick={handleSave} title="Save Changes (Enter)">
           Save Changes
         </Button>
       </div>

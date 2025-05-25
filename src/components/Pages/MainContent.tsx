@@ -15,6 +15,7 @@ import SaveTreeButton from "../SaveTreeButton";
 import TreeControls from "../TreeControls";
 import VirtualizedTree from "../VirtualizedTree";
 import { useClipboardActions } from "../../hooks/useClipboardActions";
+import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
 import { useMagicWand } from "../../hooks/useMagicWand";
 import { useTreeContext } from "../../context/TreeContext";
 import { CapabilityCardProvider } from "../../context/CapabilityCardContext";
@@ -30,8 +31,9 @@ const renderTreeRecursive = (
     parentId: string | null,
     depth: number,
     collapsedSet: Set<string>,
-    nodeRowProps: Omit<React.ComponentProps<typeof NodeRow>, "node" | "depth" | "isCollapsed" | "hasChildren">,
-    nodeMap?: Map<string, NodeData>
+    nodeRowProps: Omit<React.ComponentProps<typeof NodeRow>, "node" | "depth" | "isCollapsed" | "hasChildren" | "isFocused">,
+    nodeMap?: Map<string, NodeData>,
+    focusedNodeId?: string | null
 ): React.ReactNode[] => {
     const elements: React.ReactNode[] = [];
 
@@ -52,13 +54,14 @@ const renderTreeRecursive = (
                 depth={depth}
                 isCollapsed={isCollapsed}
                 hasChildren={hasChildren}
+                isFocused={focusedNodeId === node.id}
                 {...nodeRowProps}
             />
         );
 
         // If not collapsed and has children, recursively render its children
         if (!isCollapsed && hasChildren) {
-            elements.push(...renderTreeRecursive(nodes, node.id, depth + 1, collapsedSet, nodeRowProps, nodeMap));
+            elements.push(...renderTreeRecursive(nodes, node.id, depth + 1, collapsedSet, nodeRowProps, nodeMap, focusedNodeId));
         }
     });
 
@@ -342,12 +345,40 @@ const MainContent: React.FC = () => {
     const handleOpenEditNodeModal = useCallback((node: NodeData) => {
         setEditingNode(node);
         setIsEditNodeModalOpen(true);
-    }, []);
-
-    const handleCloseEditNodeModal = useCallback(() => {
+    }, []);    const handleCloseEditNodeModal = useCallback(() => {
         setIsEditNodeModalOpen(false);
         setEditingNode(null);
-    }, []);    const handleSaveEditedNode = useCallback(
+    }, []);
+
+    // Keyboard navigation integration
+    const { focusedNodeId, setFocusedNodeId } = useKeyboardNavigation({
+        nodes,
+        collapsed,
+        onToggleCollapse: (nodeId: string) => {
+            setCollapsed((prev) => {
+                const next = new Set(prev);
+                if (next.has(nodeId)) {
+                    next.delete(nodeId);
+                } else {
+                    next.add(nodeId);
+                }
+                return next;
+            });
+        },
+        onSelectNode: (nodeId: string) => {
+            setFocusedNodeId(nodeId);
+            // Optionally scroll focused node into view
+            setTimeout(() => {
+                const element = document.querySelector(`[data-node-id="${nodeId}"]`);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }, 50);
+        },
+        onEditNode: handleOpenEditNodeModal
+    });
+
+    const handleSaveEditedNode = useCallback(
         (nodeId: string, newName: string, newDescription: string) => {
             setNodes((currentNodes) => {
                 return currentNodes.map((node) => {
@@ -400,7 +431,7 @@ const MainContent: React.FC = () => {
             copyToClipboard(node, nodes);
         },
         [copyToClipboard, nodes]
-    );    const nodeRowProps: Omit<React.ComponentProps<typeof NodeRow>, "node" | "depth" | "isCollapsed" | "hasChildren"> = {
+    );    const nodeRowProps: Omit<React.ComponentProps<typeof NodeRow>, "node" | "depth" | "isCollapsed" | "hasChildren" | "isFocused"> = {
         toggleCollapse,
         moveNode,
         onAddNewChild: openAddChildModal,
@@ -409,12 +440,12 @@ const MainContent: React.FC = () => {
         onMagicWand: generateMagicWandPrompt,
         onDeleteNode: openDeleteConfirmationModal,
         onEditNode: handleOpenEditNodeModal,
-        onViewCapabilityCard: handleOpenCapabilityCard,    };    return (
+        onViewCapabilityCard: handleOpenCapabilityCard,
+        onFocus: setFocusedNodeId,
+    };return (
         <CapabilityCardProvider onOpenCapabilityCard={handleOpenCapabilityCard}>
-            <>
-                <div className="flex justify-between items-center px-2 sm:px-4 mb-2">
-                <div className="flex flex-nowrap items-center gap-2">
-                    <TreeControls
+            <>                <div className="flex justify-between items-center px-2 sm:px-4 mb-2">
+                <div className="flex flex-nowrap items-center gap-2">                    <TreeControls
                         onExpandAll={handleExpandAll}
                         onCollapseAll={handleCollapseAll}
                         onOpenMagicWandSettings={handleOpenMagicWandSettings}
@@ -444,16 +475,15 @@ const MainContent: React.FC = () => {
             ) : (                <div className="p-2 space-y-0.5 flex flex-col flex-grow overflow-hidden">                    
                     <div className="flex-grow overflow-y-auto overflow-x-hidden w-full min-w-0" ref={treeContainerRef}>
                         <AnimatePresence>
-                            {nodes.length > 100 ? (
-                                <VirtualizedTree
+                            {nodes.length > 100 ? (                                <VirtualizedTree
                                     nodes={nodes}
                                     collapsed={collapsed}
                                     nodeRowProps={nodeRowProps}
                                     height={containerHeight || 500}
                                     width={containerWidth || 1000}
-                                />
-                            ) : (
-                                renderTreeRecursive(nodes, null, 0, collapsed, nodeRowProps, nodeMap)
+                                    focusedNodeId={focusedNodeId}
+                                />) : (
+                                renderTreeRecursive(nodes, null, 0, collapsed, nodeRowProps, nodeMap, focusedNodeId)
                             )}
                         </AnimatePresence>
                     </div>

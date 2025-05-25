@@ -9,6 +9,7 @@ interface VirtualizedTreeProps {
   nodeRowProps: any;
   height: number;
   width: number;
+  focusedNodeId?: string | null;
 }
 
 const VirtualizedTree: React.FC<VirtualizedTreeProps> = ({ 
@@ -16,8 +17,9 @@ const VirtualizedTree: React.FC<VirtualizedTreeProps> = ({
   collapsed, 
   nodeRowProps,
   height,
-  width
-}) => {  // Flatten the tree structure for virtualization
+  width,
+  focusedNodeId
+}) => {// Flatten the tree structure for virtualization
   const flattenedTree = useMemo(() => {
     const flattened: { node: NodeData; depth: number; isCollapsed: boolean; hasChildren: boolean }[] = [];
     
@@ -52,13 +54,13 @@ const VirtualizedTree: React.FC<VirtualizedTreeProps> = ({
     const { node, depth, isCollapsed, hasChildren } = flattenedTree[index];
     
     return (
-      <div style={style}>
-        <NodeRow
+      <div style={style}>        <NodeRow
           key={node.id}
           node={node}
           depth={depth}
           isCollapsed={isCollapsed}
           hasChildren={hasChildren}
+          isFocused={focusedNodeId === node.id}
           {...nodeRowProps}
         />
       </div>

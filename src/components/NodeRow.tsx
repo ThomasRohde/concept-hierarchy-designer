@@ -1,5 +1,15 @@
 import { motion } from "framer-motion";
-import { ChevronDown, ChevronRight, ClipboardPaste, Copy, FileEdit, PlusSquare, Trash2, Wand2, CreditCard } from "lucide-react";
+import {
+    ChevronDown,
+    ChevronRight,
+    ClipboardPaste,
+    Copy,
+    FileEdit,
+    PlusSquare,
+    Trash2,
+    Wand2,
+    CreditCard,
+} from "lucide-react";
 import React, { useEffect } from "react";
 import { DragSourceMonitor, useDrag, useDrop } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
@@ -23,6 +33,9 @@ export interface NodeRowProps {
     onDeleteNode: (nodeId: string) => void;
     onEditNode: (node: NodeData) => void;
     onViewCapabilityCard?: (node: NodeData) => void;
+    // Keyboard navigation props
+    isFocused?: boolean;
+    onFocus?: (nodeId: string) => void;
 }
 
 const NodeRow: React.FC<NodeRowProps> = ({
@@ -39,6 +52,8 @@ const NodeRow: React.FC<NodeRowProps> = ({
     onDeleteNode,
     onEditNode,
     onViewCapabilityCard,
+    isFocused = false,
+    onFocus,
 }) => {
     const [{ isDragging }, drag, preview] = useDrag({
         type: DND_ITEM_TYPE,
@@ -73,12 +88,16 @@ const NodeRow: React.FC<NodeRowProps> = ({
         e.stopPropagation();
         onDeleteNode(node.id);
     };
-
     const handleEdit = (e: React.MouseEvent) => {
         e.stopPropagation();
         onEditNode(node);
     };
-
+    const handleClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (onFocus) {
+            onFocus(node.id);
+        }
+    };
     return (
         <motion.div
             ref={(el) => {
@@ -87,9 +106,26 @@ const NodeRow: React.FC<NodeRowProps> = ({
             }}
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 4 }}            className={`group flex items-center justify-between h-10 sm:h-8 rounded-lg hover:bg-gray-200/80 transition-colors duration-150 ${
+            exit={{ opacity: 0, y: 4 }}
+            data-node-id={node.id}
+            tabIndex={0}
+            onClick={handleClick}
+            onFocus={() => onFocus?.(node.id)}
+            onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    onEditNode(node);
+                } else if (e.key === " ") {
+                    e.preventDefault();
+                    handleClick(e as any);
+                }
+            }}            className={`group flex items-center justify-between h-10 sm:h-8 rounded-lg transition-colors duration-150 focus:outline-none ${
                 isDragging ? "shadow-lg dragging" : "shadow-sm"
-            } ${isDropTarget ? "drop-target-active" : "bg-white"} mb-1 mr-1 sm:mx-2 relative w-full overflow-hidden`}
+            } ${isDropTarget ? "drop-target-active" : ""} ${
+                isFocused
+                    ? "!bg-gray-50 !border !border-gray-300"
+                    : "bg-white hover:bg-gray-200/80"
+            } mb-1 mr-1 sm:mx-2 relative w-full overflow-hidden`}
             style={{
                 paddingRight: "0.5rem",
                 cursor: isDragging ? "grabbing" : "grab",
@@ -123,9 +159,11 @@ const NodeRow: React.FC<NodeRowProps> = ({
                             <div className="w-4 h-4" />
                         </div>
                     )}
-                </div>                {/* Only render tooltip when not dragging */}
+                </div>{" "}
+                {/* Only render tooltip when not dragging */}
                 <MarkdownTooltip content={node.description || ""} isPinnable={true}>
-                    {" "}                    <span
+                    {" "}
+                    <span
                         className={`font-medium text-gray-800 text-sm select-none truncate block ${
                             isDragging ? "opacity-0" : ""
                         } ${
@@ -148,7 +186,9 @@ const NodeRow: React.FC<NodeRowProps> = ({
                     // Hide completely on mobile when not hovered for better layout
                     "group-hover:relative"
                 }`}
-            >                <Button
+            >
+                {" "}
+                <Button
                     variant="ghost"
                     size="icon"
                     className="p-0.5 sm:p-1"
@@ -185,7 +225,8 @@ const NodeRow: React.FC<NodeRowProps> = ({
                     title="Magic Wand (AI)"
                 >
                     <Wand2 className="w-4 h-4" />
-                </Button><Button
+                </Button>
+                <Button
                     variant="ghost"
                     size="icon"
                     className="p-0.5 sm:p-1"
@@ -197,7 +238,8 @@ const NodeRow: React.FC<NodeRowProps> = ({
                     title="Copy to Clipboard"
                 >
                     <Copy className="w-4 h-4" />
-                </Button>{" "}                <Button
+                </Button>{" "}
+                <Button
                     variant="ghost"
                     size="icon"
                     className="p-0.5 sm:p-1"
@@ -209,7 +251,8 @@ const NodeRow: React.FC<NodeRowProps> = ({
                     title="Paste as Child"
                 >
                     <ClipboardPaste className="w-4 h-4" />
-                </Button>{" "}                <Button
+                </Button>{" "}
+                <Button
                     variant="ghost"
                     size="icon"
                     className="p-0.5 sm:p-1"
@@ -221,7 +264,8 @@ const NodeRow: React.FC<NodeRowProps> = ({
                     title="Add New Child"
                 >
                     <PlusSquare className="w-4 h-4" />
-                </Button>{" "}                <Button
+                </Button>{" "}
+                <Button
                     variant="ghost"
                     size="icon"
                     className="p-0.5 sm:p-1"
@@ -246,6 +290,7 @@ export default React.memo(NodeRow, (prevProps, nextProps) => {
         prevProps.node.description === nextProps.node.description &&
         prevProps.depth === nextProps.depth &&
         prevProps.isCollapsed === nextProps.isCollapsed &&
-        prevProps.hasChildren === nextProps.hasChildren
+        prevProps.hasChildren === nextProps.hasChildren &&
+        prevProps.isFocused === nextProps.isFocused
     );
 });
