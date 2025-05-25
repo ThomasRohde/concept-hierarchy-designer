@@ -110,16 +110,16 @@ const NodeRow: React.FC<NodeRowProps> = ({
             data-node-id={node.id}
             tabIndex={0}
             onClick={handleClick}
-            onFocus={() => onFocus?.(node.id)}
-            onKeyDown={(e) => {
+            onFocus={() => onFocus?.(node.id)}            onKeyDown={(e) => {
                 if (e.key === "Enter") {
                     e.preventDefault();
+                    e.stopPropagation(); // Prevent the event from bubbling up to global listeners
                     onEditNode(node);
                 } else if (e.key === " ") {
                     e.preventDefault();
                     handleClick(e as any);
                 }
-            }}            className={`group flex items-center justify-between h-10 sm:h-8 rounded-lg transition-colors duration-150 focus:outline-none ${
+            }}className={`group flex items-center justify-between h-10 sm:h-8 rounded-lg transition-colors duration-150 focus:outline-none ${
                 isDragging ? "shadow-lg dragging" : "shadow-sm"
             } ${isDropTarget ? "drop-target-active" : ""} ${
                 isFocused

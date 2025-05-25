@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { NodeData } from '../types';
 import { Button } from './ui/Button';
@@ -25,8 +25,18 @@ const EditNodeModal: React.FC<EditNodeModalProps> = ({ isOpen, onClose, onSave, 
       // Reset when modal is closed or no node is being edited
       setName('');
       setDescription('');
+    }  }, [isOpen, nodeToEdit]);
+
+  const handleSave = useCallback(() => {
+    if (!nodeToEdit) return;
+    if (name.trim() === '') {
+      toast.error('Node name cannot be empty.');
+      return;
     }
-  }, [isOpen, nodeToEdit]);
+    onSave(nodeToEdit.id, name, description);
+    onClose();
+  }, [nodeToEdit, name, description, onSave, onClose]);
+
   // Handle RETURN key for submission
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -47,17 +57,7 @@ const EditNodeModal: React.FC<EditNodeModalProps> = ({ isOpen, onClose, onSave, 
         document.removeEventListener('keydown', handleKeyDown);
       };
     }
-  }, [isOpen, name, description, nodeToEdit]);
-
-  const handleSave = () => {
-    if (!nodeToEdit) return;
-    if (name.trim() === '') {
-      toast.error('Node name cannot be empty.');
-      return;
-    }
-    onSave(nodeToEdit.id, name, description);
-    onClose();
-  };
+  }, [isOpen, handleSave]);
 
   if (!nodeToEdit) return null; // Or some loading/error state if preferred while nodeToEdit is null but isOpen is true
 
