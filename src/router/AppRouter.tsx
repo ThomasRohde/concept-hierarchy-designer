@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import Layout from '../components/Layout/Layout';
 import AboutPage from '../components/Pages/AboutPage';
 import HomePage from '../components/Pages/HomePage';
+import AdminPage from '../components/Pages/AdminPage';
 import { TreeProvider } from '../context/TreeContext';
 import { Button } from '../components/ui/Button';
 
@@ -28,14 +29,17 @@ const router = createBrowserRouter([
     path: '/',
     element: <Layout />,
     errorElement: <ErrorBoundary />,
-    children: [
-      {
+    children: [      {
         index: true,
         element: <HomePage />
       },
       {
         path: 'about',
         element: <AboutPage />
+      },
+      {
+        path: 'admin',
+        element: <AdminPage />
       },
       {
         path: '*',

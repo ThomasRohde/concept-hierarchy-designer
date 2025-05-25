@@ -252,3 +252,58 @@ export const clearSavedData = (): void => {
     console.error('Error clearing saved data:', error);
   }
 };
+
+/**
+ * Track feature usage for analytics
+ */
+export const trackFeatureUsage = (feature: string): void => {
+  try {
+    const analytics = getAppAnalytics();
+    if (analytics.featureUsage[feature] !== undefined) {
+      analytics.featureUsage[feature]++;
+      saveAppAnalytics(analytics);
+    }
+  } catch (error) {
+    console.error('Error tracking feature usage:', error);
+  }
+};
+
+/**
+ * Get app analytics data
+ */
+export const getAppAnalytics = (): any => {
+  try {
+    const stored = localStorage.getItem(getPrefixedKey('app-analytics'));
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error('Error loading app analytics:', error);
+  }
+
+  return {
+    firstLaunch: new Date(),
+    totalSessions: 1,
+    lastSessionStart: new Date(),
+    featureUsage: {
+      treeCreated: 0,
+      treeLoaded: 0,
+      treeSaved: 0,
+      nodesAdded: 0,
+      nodesDeleted: 0,
+      capabilityCardsOpened: 0,
+      exportUsed: 0,
+    },
+  };
+};
+
+/**
+ * Save app analytics data
+ */
+export const saveAppAnalytics = (analytics: any): void => {
+  try {
+    localStorage.setItem(getPrefixedKey('app-analytics'), JSON.stringify(analytics));
+  } catch (error) {
+    console.error('Error saving app analytics:', error);
+  }
+};

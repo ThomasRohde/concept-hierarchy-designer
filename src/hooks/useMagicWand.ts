@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { NodeData } from '../types';
 import { getChildren, getParent } from '../utils/treeUtils';
+import { updateMagicWandStats } from '../utils/adminUtils';
 
 // LocalStorage key for guidelines
 export const STORAGE_KEY = 'magic-wand-guidelines';
@@ -208,14 +209,18 @@ If the Current Node is "Machine Learning Algorithms", a MECE breakdown might be:
 Generate your response below:`;
 
     // Combine all parts to create the full prompt
-    const fullPrompt = markdownContext + promptHeader + outputFormatInstructions;
-
-    try {
+    const fullPrompt = markdownContext + promptHeader + outputFormatInstructions;    try {
       await navigator.clipboard.writeText(fullPrompt);
       toast.success(`Enhanced AI prompt for "${selectedNode.name}" copied! This prompt uses MECE principles for optimal concept generation.`);
+      
+      // Track magic wand usage - successful call (clipboard copy succeeded)
+      updateMagicWandStats(true, 0);
     } catch (err) {
       console.error("Failed to copy AI prompt to clipboard:", err);
       toast.error("Failed to copy AI prompt. Check permissions (HTTPS/localhost) or see console for details.");
+      
+      // Track failed magic wand usage
+      updateMagicWandStats(false, 0);
     }
   }, [nodes, guidelines]);
 

@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { toast } from 'react-hot-toast';
 import { NodeData } from '../types';
 import { genId } from '../utils/treeUtils';
+import { trackFeatureUsage } from '../utils/storageUtils';
 
 interface UseClipboardActionsProps {
   setNodes: React.Dispatch<React.SetStateAction<NodeData[]>>;
@@ -28,7 +29,6 @@ export const useClipboardActions = ({ setNodes, setCollapsed }: UseClipboardActi
     
     return result;
   }, []);
-
   const copyToClipboard = useCallback(async (nodeToCopy: NodeData, allNodes: NodeData[]) => {
     try {
       // Get the node and all its descendants from the current nodes array
@@ -36,6 +36,9 @@ export const useClipboardActions = ({ setNodes, setCollapsed }: UseClipboardActi
       const nodeJson = JSON.stringify(nodeTree, null, 2);
       await navigator.clipboard.writeText(nodeJson);
       toast.success(`"${nodeToCopy.name}" and its children copied to clipboard!`);
+      
+      // Track export usage since copying is a form of export
+      trackFeatureUsage('exportUsed');
     } catch (err) {
       console.error("Failed to copy to clipboard:", err);
       toast.error("Failed to copy to clipboard. Make sure you've granted clipboard permissions and are using HTTPS/localhost. See console for details.");
@@ -97,9 +100,7 @@ export const useClipboardActions = ({ setNodes, setCollapsed }: UseClipboardActi
       // Add the new nodes to the existing nodes array
       setNodes(currentNodes => {
         return [...currentNodes, ...nodesToPaste];
-      });
-
-      // Auto-expand the parent node where content was pasted
+      });      // Auto-expand the parent node where content was pasted
       setCollapsed((prev) => {
         const next = new Set(prev);
         next.delete(targetParentNode.id); 
@@ -107,6 +108,9 @@ export const useClipboardActions = ({ setNodes, setCollapsed }: UseClipboardActi
       });
       
       toast.success("Content pasted successfully as child/children!");
+      
+      // Track nodes added via paste
+      trackFeatureUsage('nodesAdded');
 
     } catch (err) {
       console.error("Failed to paste from clipboard:", err);

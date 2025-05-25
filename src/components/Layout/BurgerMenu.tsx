@@ -53,10 +53,10 @@ const BurgerMenu: React.FC<BurgerMenuProps> = ({ className = '' }) => {
       visibility: 'visible' as const,
       transition: { duration: 0.3 }
     }
-  };
-  const menuItems = [
+  };  const menuItems = [
     { label: 'Home', path: '/' },
-    { label: 'About', path: '/about' }
+    { label: 'About', path: '/about' },
+    { label: 'Admin', path: '/admin' }
     // Note: We're using relative paths here since React Router's Link component 
     // automatically handles the base path from the router configuration
   ];

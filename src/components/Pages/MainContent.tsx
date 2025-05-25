@@ -22,6 +22,7 @@ import { CapabilityCardProvider } from "../../context/CapabilityCardContext";
 import { NodeData } from "../../types";
 import { saveTreeAsJson, validateNodeData } from "../../utils/exportUtils";
 import { genId } from "../../utils/treeUtils";
+import { trackFeatureUsage } from "../../utils/storageUtils";
 
 // Function to render nodes recursively in the flat structure
 
@@ -221,9 +222,7 @@ const MainContent: React.FC = () => {
     const handleCloseAddChildModal = useCallback(() => {
         setIsAddChildModalOpen(false);
         setAddingChildToParentNode(null);
-    }, []);
-
-    const handleSaveNewChild = useCallback(
+    }, []);    const handleSaveNewChild = useCallback(
         (name: string, description: string) => {
             if (!addingChildToParentNode) return;
 
@@ -246,6 +245,9 @@ const MainContent: React.FC = () => {
             });
 
             handleCloseAddChildModal();
+            
+            // Track node addition
+            trackFeatureUsage('nodesAdded');
         },
         [addingChildToParentNode, handleCloseAddChildModal]
     );
@@ -271,9 +273,7 @@ const MainContent: React.FC = () => {
     const handleCloseConfirmDeleteModal = useCallback(() => {
         setIsConfirmDeleteModalOpen(false);
         setNodeToDelete(null);
-    }, []);
-
-    const executeDeleteNode = useCallback(() => {
+    }, []);    const executeDeleteNode = useCallback(() => {
         if (!nodeToDelete) return;
 
         // Function to get all descendant IDs of a node
@@ -295,6 +295,9 @@ const MainContent: React.FC = () => {
         setNodes((currentNodes) => currentNodes.filter((node) => !nodeIdsToDelete.includes(node.id)));
 
         handleCloseConfirmDeleteModal();
+        
+        // Track node deletion
+        trackFeatureUsage('nodesDeleted');
     }, [nodeToDelete, handleCloseConfirmDeleteModal, nodes]);
 
     const handleOpenNewTreeModal = useCallback(() => {
@@ -303,9 +306,7 @@ const MainContent: React.FC = () => {
 
     const handleCloseNewTreeModal = useCallback(() => {
         setIsNewTreeModalOpen(false);
-    }, []);
-
-    const handleCreateNewTree = useCallback(
+    }, []);    const handleCreateNewTree = useCallback(
         (name: string, description: string) => {
             // Create a single root node with no parent
             const newRoot: NodeData = {
@@ -319,11 +320,12 @@ const MainContent: React.FC = () => {
             setNodes([newRoot]);
             setCollapsed(new Set());
             handleCloseNewTreeModal();
+            
+            // Track tree creation
+            trackFeatureUsage('treeCreated');
         },
         [handleCloseNewTreeModal]
-    );
-
-    const handleLoadTree = useCallback(async (loadedData: any) => {
+    );    const handleLoadTree = useCallback(async (loadedData: any) => {
         setIsLoading(true);
         try {
             // Add a small delay to show loading state for large trees
@@ -333,6 +335,9 @@ const MainContent: React.FC = () => {
                 setNodes(loadedData);
                 setCollapsed(new Set());
                 toast.success("Tree loaded successfully");
+                
+                // Track tree loading
+                trackFeatureUsage('treeLoaded');
             } else {
                 toast.error("Invalid tree data format");
             }
@@ -391,12 +396,13 @@ const MainContent: React.FC = () => {
             handleCloseEditNodeModal();
         },
         [handleCloseEditNodeModal]
-    );
-
-    // Capability Card Modal Handlers
+    );    // Capability Card Modal Handlers
     const handleOpenCapabilityCard = useCallback((node: NodeData) => {
         setCapabilityCardNodeId(node.id);
         setIsCapabilityCardOpen(true);
+        
+        // Track capability card usage
+        trackFeatureUsage('capabilityCardsOpened');
     }, []);
 
     const handleCloseCapabilityCard = useCallback(() => {
@@ -453,11 +459,14 @@ const MainContent: React.FC = () => {
                     />
                 </div>
                 <div className="flex flex-nowrap items-center gap-2">
-                    <NewTreeButton onClick={handleOpenNewTreeModal} disabled={isLoading} />
-                    <SaveTreeButton
+                    <NewTreeButton onClick={handleOpenNewTreeModal} disabled={isLoading} />                    <SaveTreeButton
                         onSave={(fileName) => {
                             saveTreeAsJson(nodes, fileName || "concept-hierarchy");
                             toast.success("Concept hierarchy saved as JSON");
+                            
+                            // Track export usage
+                            trackFeatureUsage('exportUsed');
+                            trackFeatureUsage('treeSaved');
                         }}
                         disabled={isLoading}
                     />
