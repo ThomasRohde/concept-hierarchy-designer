@@ -43,17 +43,18 @@ const CapabilityCard: React.FC<CapabilityCardProps> = ({
           />
         </div>        {/* Level N+1 and N+2 - Children with their grandchildren below */}
         {kids.length > 0 && (
-          <>
-            {/* Children row with horizontal scrolling */}
+          <>            {/* Children row with responsive layout */}
             <div className="overflow-x-auto">
               <div 
-                className="flex gap-4 pb-2"
-                style={{ 
-                  minWidth: 'fit-content'
-                }}
+                className={`flex gap-4 pb-2 ${kids.length <= 4 ? 'w-full' : ''}`}
+                style={kids.length <= 4 ? {} : { minWidth: 'fit-content' }}
               >
                 {kids.map((kid) => (
-                  <div key={`child-${kid.id}`} className="flex-shrink-0" style={{ width: '220px' }}>
+                  <div 
+                    key={`child-${kid.id}`} 
+                    className={kids.length <= 4 ? "flex-1" : "flex-shrink-0"} 
+                    style={kids.length <= 4 ? { minWidth: '200px' } : { width: '220px' }}
+                  >
                     <CapabilityTile 
                       node={kid} 
                       variant="child"
@@ -62,7 +63,7 @@ const CapabilityCard: React.FC<CapabilityCardProps> = ({
                   </div>
                 ))}
               </div>
-            </div>            {/* Grandchildren rows */}
+            </div>{/* Grandchildren rows */}
             {(() => {
               // Collect all grandchildren with their parent info
               const allGrandchildren = kids.flatMap((kid) => {
@@ -87,18 +88,20 @@ const CapabilityCard: React.FC<CapabilityCardProps> = ({
                   <div 
                     key={`grandchildren-row-${rowIndex}`}
                     className="overflow-x-auto mt-3"
-                  >
-                    <div 
-                      className="flex gap-4 pb-2"
-                      style={{ 
-                        minWidth: 'fit-content'
-                      }}
-                    >                      {kids.map((kid) => {
+                  >                    <div 
+                      className={`flex gap-4 pb-2 ${kids.length <= 4 ? 'w-full' : ''}`}
+                      style={kids.length <= 4 ? {} : { minWidth: 'fit-content' }}
+                    >
+                      {kids.map((kid) => {
                         const kidGrandchildren = index.children.get(kid.id) ?? [];
                         const grandchild = kidGrandchildren[rowIndex];
                         
                         return (
-                          <div key={`grandchild-${kid.id}-${rowIndex}`} className="flex-shrink-0" style={{ width: '220px' }}>
+                          <div 
+                            key={`grandchild-${kid.id}-${rowIndex}`} 
+                            className={kids.length <= 4 ? "flex-1" : "flex-shrink-0"} 
+                            style={kids.length <= 4 ? { minWidth: '200px' } : { width: '220px' }}
+                          >
                             {grandchild ? (
                               <CapabilityTile 
                                 node={grandchild} 
