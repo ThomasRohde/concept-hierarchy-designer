@@ -39,10 +39,12 @@ const PromptsPageWrapper: React.FC = () => {
       ...promptCollection, 
       prompts: updatedPrompts,
       activePromptId: activePrompt?.id || promptCollection.activePromptId
-    });
-  };const handlePromptSelect = (promptId: string) => {
+    });  };  const handlePromptSelect = (promptId: string) => {
+    // Update the global active prompt (this handles all state updates)
     setActivePrompt(promptId);
   };
+
+  const currentActivePromptId = activePrompt?.id || promptCollection.activePromptId || null;
 
   return (
     <PromptsPage
@@ -50,7 +52,7 @@ const PromptsPageWrapper: React.FC = () => {
       onPromptSave={handlePromptSave}
       onPromptDelete={handlePromptDelete}
       onPromptSelect={handlePromptSelect}
-      activePromptId={activePrompt?.id || null}
+      activePromptId={currentActivePromptId}
     />
   );
 };

@@ -17,8 +17,7 @@ interface PromptsPageProps {
 type SortOption = 'name' | 'lastUsed' | 'usageCount' | 'category';
 
 export const PromptsPage: React.FC<PromptsPageProps> = ({
-  prompts,
-  onPromptSave,
+  prompts,  onPromptSave,
   onPromptDelete,
   onPromptSelect,
   activePromptId,
@@ -300,9 +299,7 @@ export const PromptsPage: React.FC<PromptsPageProps> = ({
               {prompt.lastUsed && (
                 <div>Last used: {prompt.lastUsed.toLocaleDateString()}</div>
               )}
-            </div>
-
-            {/* Actions */}
+            </div>            {/* Actions */}
             <div className="flex gap-2">
               <Button
                 onClick={() => onPromptSelect(prompt.id)}

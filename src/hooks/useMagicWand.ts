@@ -37,9 +37,9 @@ export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult =
     const active = getActivePrompt();
     return active.id;
   });
-
-  // Get the active prompt
-  const activePrompt = promptCollection.prompts.find(p => p.id === activePromptId) || promptCollection.prompts[0];
+  // Get the active prompt - use activePromptId first, fallback to collection's activePromptId
+  const effectiveActivePromptId = activePromptId || promptCollection.activePromptId;
+  const activePrompt = promptCollection.prompts.find(p => p.id === effectiveActivePromptId) || promptCollection.prompts[0];
 
   // Effect to sync with localStorage changes from other components
   useEffect(() => {
@@ -108,27 +108,28 @@ export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult =
     savePromptCollection(collection);
     
     // If the collection has a different active prompt ID, update local state
-    if (collection.activePromptId && collection.activePromptId !== activePromptId) {
+    if (collection.activePromptId) {
       setActivePromptIdState(collection.activePromptId);
       setActivePromptId(collection.activePromptId);
     }
     
     // Emit custom event to notify other hook instances
     window.dispatchEvent(new CustomEvent('promptCollectionChanged'));
-  }, [activePromptId]);  const setActivePrompt = useCallback((promptId: string) => {
+  }, []);  const setActivePrompt = useCallback((promptId: string) => {
+    // Update both local state and collection atomically
     setActivePromptIdState(promptId);
     setActivePromptId(promptId);
-    
-    // Also update the collection's activePromptId to keep everything in sync
+      // Update the collection's activePromptId synchronously first
     setPromptCollection(currentCollection => {
       const updatedCollection = { ...currentCollection, activePromptId: promptId };
       savePromptCollection(updatedCollection);
+      
+      // Emit custom event to notify other hook instances
+      window.dispatchEvent(new CustomEvent('promptCollectionChanged'));
+      
       return updatedCollection;
     });
-    
-    // Emit custom event to notify other hook instances
-    window.dispatchEvent(new CustomEvent('promptCollectionChanged'));
-  }, []);
+  }, [activePromptId, promptCollection.activePromptId]);
 
   const createPrompt = useCallback(() => {
     return createNewPrompt();
