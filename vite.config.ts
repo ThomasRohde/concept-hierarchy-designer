@@ -2,9 +2,9 @@ import path from 'path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-export default defineConfig(({ command }) => {
-    // Use relative paths for preview and dev, absolute path for production build
-    const base = command === 'build' ? '/concept-hierarchy-designer/' : './';
+export default defineConfig(({ command, mode }) => {
+    // Use absolute path only for production deployment, relative paths for preview and dev
+    const base = mode === 'production' ? '/concept-hierarchy-designer/' : './';
     
     return {
       plugins: [react()],
