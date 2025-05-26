@@ -196,10 +196,62 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
       color: #3182ce;
       text-decoration: underline;
     }
-    
-    .capability-description a:hover {
+      .capability-description a:hover {
       color: #2c5282;
-    }    .children-row {
+    }
+    
+    .capability-description table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 8px 0;
+      font-size: 13px;
+    }
+    
+    .capability-description th,
+    .capability-description td {
+      border: 1px solid #e2e8f0;
+      padding: 6px 8px;
+      text-align: left;
+    }
+    
+    .capability-description th {
+      background-color: #f7fafc;
+      font-weight: 600;
+    }
+    
+    .capability-description tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    
+    .capability-description hr {
+      border: none;
+      height: 1px;
+      background-color: #e2e8f0;
+      margin: 12px 0;
+    }
+    
+    .capability-description blockquote {
+      border-left: 4px solid #cbd5e0;
+      margin: 8px 0;
+      padding: 0 12px;
+      color: #4a5568;
+      font-style: italic;
+    }
+    
+    .capability-description ul,
+    .capability-description ol {
+      margin: 6px 0;
+      padding-left: 20px;
+    }
+    
+    .capability-description li {
+      margin: 2px 0;
+    }
+    
+    .capability-description del {
+      text-decoration: line-through;
+      color: #718096;
+    }.children-row {
       display: flex;
       gap: 20px;
       /* Remove overflow-x: auto since it's handled by the parent container */
