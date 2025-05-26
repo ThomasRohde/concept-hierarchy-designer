@@ -26,16 +26,21 @@ const TreeControls: React.FC<TreeControlsProps> = ({
     createPrompt
   } = useMagicWand({ nodes });
   const [isPromptEditorOpen, setIsPromptEditorOpen] = useState(false);  const handlePromptSelect = (promptId: string) => {
-    // Update the global active prompt (this handles all state updates)
-    setActivePrompt(promptId);
+    // Use setTimeout to defer the state update to prevent setState during render
+    setTimeout(() => {
+      setActivePrompt(promptId);
+    }, 0);
   };
 
   const handleOpenPromptEditor = () => {
     setIsPromptEditorOpen(true);
   };  const handleCreateNewPrompt = () => {
-    const newPrompt = createPrompt();
-    setActivePrompt(newPrompt.id);
-    setIsPromptEditorOpen(true);
+    // Use setTimeout to defer the state update to prevent setState during render
+    setTimeout(() => {
+      const newPrompt = createPrompt();
+      setActivePrompt(newPrompt.id);
+      setIsPromptEditorOpen(true);
+    }, 0);
   };
   const handlePromptSave = (prompt: any) => {
     const updatedPrompts = promptCollection.prompts.map(p => 

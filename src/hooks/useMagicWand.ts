@@ -40,16 +40,20 @@ export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult =
   // Get the active prompt - use activePromptId first, fallback to collection's activePromptId
   const effectiveActivePromptId = activePromptId || promptCollection.activePromptId;
   const activePrompt = promptCollection.prompts.find(p => p.id === effectiveActivePromptId) || promptCollection.prompts[0];
-
   // Effect to sync with localStorage changes from other components
   useEffect(() => {
     const handleStorageChange = () => {
-      const updatedCollection = loadPromptCollection();
-      const updatedActivePrompt = getActivePrompt();
-      
-      setPromptCollection(updatedCollection);
-      setActivePromptIdState(updatedActivePrompt.id);
-    };    // Listen for localStorage changes from other tabs/windows
+      // Use setTimeout to defer state updates until after render
+      setTimeout(() => {
+        const updatedCollection = loadPromptCollection();
+        const updatedActivePrompt = getActivePrompt();
+        
+        setPromptCollection(updatedCollection);
+        setActivePromptIdState(updatedActivePrompt.id);
+      }, 0);
+    };
+
+    // Listen for localStorage changes from other tabs/windows
     window.addEventListener('storage', handleStorageChange);
     
     // Listen for custom prompt change events (for same-tab updates)
@@ -57,12 +61,13 @@ export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult =
       handleStorageChange();
     };
     
-    window.addEventListener('promptCollectionChanged', handlePromptChange);    return () => {
+    window.addEventListener('promptCollectionChanged', handlePromptChange);
+
+    return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('promptCollectionChanged', handlePromptChange);
     };
   }, []);
-
   // Legacy migration effect
   useEffect(() => {
     const legacyGuidelines = localStorage.getItem(LEGACY_STORAGE_KEY);
@@ -84,26 +89,31 @@ export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult =
       // Add to collection if not already present
       const existingCustom = promptCollection.prompts.find(p => p.id === 'legacy-custom');
       if (!existingCustom) {
-        const updatedCollection = {
-          ...promptCollection,
-          prompts: [...promptCollection.prompts, customPrompt]
-        };        setPromptCollection(updatedCollection);
-        savePromptCollection(updatedCollection);
-        
-        // Set as active prompt
-        setActivePromptId(customPrompt.id);
-        setActivePromptIdState(customPrompt.id);
-        
-        // Emit custom event to notify other hook instances
-        window.dispatchEvent(new CustomEvent('promptCollectionChanged'));
-        
-        toast.success('Your custom guidelines have been migrated to the new prompt system!');
+        // Use setTimeout to defer state updates until after render
+        setTimeout(() => {
+          const updatedCollection = {
+            ...promptCollection,
+            prompts: [...promptCollection.prompts, customPrompt]
+          };
+          
+          setPromptCollection(updatedCollection);
+          savePromptCollection(updatedCollection);
+          
+          // Set as active prompt
+          setActivePromptId(customPrompt.id);
+          setActivePromptIdState(customPrompt.id);
+          
+          // Emit custom event to notify other hook instances
+          window.dispatchEvent(new CustomEvent('promptCollectionChanged'));
+          
+          toast.success('Your custom guidelines have been migrated to the new prompt system!');
+        }, 0);
       }
 
       // Remove legacy storage
       localStorage.removeItem(LEGACY_STORAGE_KEY);
     }
-  }, []);  const updatePromptCollection = useCallback((collection: PromptCollection) => {
+  }, [promptCollection]);const updatePromptCollection = useCallback((collection: PromptCollection) => {
     setPromptCollection(collection);
     savePromptCollection(collection);
     
@@ -120,19 +130,23 @@ export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult =
     setActivePromptIdState(promptId);
     setActivePromptId(promptId);
   }, []);
-
   // Effect to update collection when activePromptId changes
   useEffect(() => {
     if (activePromptId !== promptCollection.activePromptId) {
-      setPromptCollection(currentCollection => {
-        const updatedCollection = { ...currentCollection, activePromptId };
-        savePromptCollection(updatedCollection);
-        
-        // Emit custom event to notify other hook instances
-        window.dispatchEvent(new CustomEvent('promptCollectionChanged'));
-        
-        return updatedCollection;
-      });
+      // Use a timeout to prevent updating state during render
+      const timeoutId = setTimeout(() => {
+        setPromptCollection(currentCollection => {
+          const updatedCollection = { ...currentCollection, activePromptId };
+          savePromptCollection(updatedCollection);
+          
+          // Emit custom event to notify other hook instances
+          window.dispatchEvent(new CustomEvent('promptCollectionChanged'));
+          
+          return updatedCollection;
+        });
+      }, 0);
+      
+      return () => clearTimeout(timeoutId);
     }
   }, [activePromptId, promptCollection.activePromptId]);
 
@@ -145,22 +159,22 @@ export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult =
     
     const selectedPrompt = promptId 
       ? promptCollection.prompts.find(p => p.id === promptId) || currentActivePrompt
-      : currentActivePrompt;
-
-    // Update usage count
+      : currentActivePrompt;    // Update usage count
     updatePromptUsage(selectedPrompt.id);
     
-    // Update local state to reflect usage
-    const updatedCollection = {
-      ...promptCollection,
-      prompts: promptCollection.prompts.map(p => 
-        p.id === selectedPrompt.id 
-          ? { ...p, usageCount: (p.usageCount || 0) + 1 }
-          : p
-      )
-    };
-    setPromptCollection(updatedCollection);
-    savePromptCollection(updatedCollection);
+    // Update local state to reflect usage - defer to prevent setState during render
+    setTimeout(() => {
+      const updatedCollection = {
+        ...promptCollection,
+        prompts: promptCollection.prompts.map(p => 
+          p.id === selectedPrompt.id 
+            ? { ...p, usageCount: (p.usageCount || 0) + 1 }
+            : p
+        )
+      };
+      setPromptCollection(updatedCollection);
+      savePromptCollection(updatedCollection);
+    }, 0);
 
     // Build the context
     let markdownContext = "# Context for Generating New Concepts\n\n";
