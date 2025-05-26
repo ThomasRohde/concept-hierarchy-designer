@@ -103,7 +103,7 @@ export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult =
       // Remove legacy storage
       localStorage.removeItem(LEGACY_STORAGE_KEY);
     }
-  }, [promptCollection]);  const updatePromptCollection = useCallback((collection: PromptCollection) => {
+  }, []);  const updatePromptCollection = useCallback((collection: PromptCollection) => {
     setPromptCollection(collection);
     savePromptCollection(collection);
     
@@ -116,19 +116,24 @@ export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult =
     // Emit custom event to notify other hook instances
     window.dispatchEvent(new CustomEvent('promptCollectionChanged'));
   }, []);  const setActivePrompt = useCallback((promptId: string) => {
-    // Update both local state and collection atomically
+    // Update local state first
     setActivePromptIdState(promptId);
     setActivePromptId(promptId);
-      // Update the collection's activePromptId synchronously first
-    setPromptCollection(currentCollection => {
-      const updatedCollection = { ...currentCollection, activePromptId: promptId };
-      savePromptCollection(updatedCollection);
-      
-      // Emit custom event to notify other hook instances
-      window.dispatchEvent(new CustomEvent('promptCollectionChanged'));
-      
-      return updatedCollection;
-    });
+  }, []);
+
+  // Effect to update collection when activePromptId changes
+  useEffect(() => {
+    if (activePromptId !== promptCollection.activePromptId) {
+      setPromptCollection(currentCollection => {
+        const updatedCollection = { ...currentCollection, activePromptId };
+        savePromptCollection(updatedCollection);
+        
+        // Emit custom event to notify other hook instances
+        window.dispatchEvent(new CustomEvent('promptCollectionChanged'));
+        
+        return updatedCollection;
+      });
+    }
   }, [activePromptId, promptCollection.activePromptId]);
 
   const createPrompt = useCallback(() => {
