@@ -34,6 +34,80 @@ export const DEFAULT_GENERATION_GUIDELINES = `## Core Principles
 
 // Default prompts that ship with the application
 export const DEFAULT_PROMPTS: Prompt[] = [
+  /* 1. Top-level capability prompt */
+  {
+    id: 'bcm-first-level',
+    name: 'BCM - First Level',
+    description: 'Generates the 6-12 highest-level, enterprise-wide business capabilities',
+    content: `## Core Principles
+
+### 1. Enterprise-Wide Abstraction
+   - Deliver a **mutually exclusive, collectively exhaustive** (MECE) view of what the organisation does.
+   - Limit output to 6-12 singular-noun capabilities for executive digestibility.
+
+### 2. Naming & Scope
+   - Use concise, singular **nouns** (≤ 3 words); no verbs, gerunds or org-unit labels.
+   - Each capability must be implementation-agnostic and stable for 3-5 years.
+
+### 3. Pattern Guidance
+   - Choose one clustering approach only (e.g., Value-Chain phases, Industry Domains, or Customer/Product/Operations/Support).
+   - Ensure no overlaps and no gaps across the selected pattern.
+
+### 4. Output Specifications
+   - **Number:** 6-12 capabilities
+   - **Name:** Title-case nouns
+   - **Description:** 15-35 words defining purpose and boundaries
+   - Format each capability as:  
+     \`<Capability Name>: <Description>\`
+
+### 5. Quality Gates
+   - Perform an overlap check across all proposed capabilities.
+   - Confirm collective coverage of enterprise mission and strategy.`,
+    createdAt: new Date('2025-05-26'),
+    lastModified: new Date('2025-05-26'),
+    isDefault: true,
+    category: 'business',
+    tags: ['business', 'capability', 'bcm', 'level1'],
+    usageCount: 0,
+  },
+
+  /* 2. Deeper-level capability prompt (Level 2+) */
+  {
+    id: 'bcm-default',
+    name: 'BCM - Default',
+    description: 'Guidelines for decomposing any parent capability into consistent lower-level children',
+    content: `## Core Principles
+
+### 1. Capability Decomposition
+   - Each child refines the **what** of its parent while remaining MECE with its siblings.
+   - Target 3-7 children for balance between clarity and completeness.
+
+### 2. Naming & Consistency
+   - Keep noun-based names; add qualifying adjectives (e.g., "Customer Data Management").
+   - Maintain uniform granularity across all siblings.
+
+### 3. Decomposition Patterns
+   - Select **one** pattern per parent (e.g., life-cycle, object sub-types, channel, region, enabler vs. performer).
+   - Do **not** mix patterns within the same sibling set.
+
+### 4. Output Specifications
+   - **Number:** 3-7 child capabilities
+   - **Name:** ≤ 4 words, noun-based
+   - **Description:** 10-40 words covering purpose, scope and boundaries
+   - Format:  
+     \`<Child Capability Name>: <Description>\`
+
+### 5. Quality Standards
+   - Check for sibling overlap and gaps.
+   - Verify traceability to parent and usability for mapping processes, data or systems.`,
+    createdAt: new Date('2025-05-26'),
+    lastModified: new Date('2025-05-26'),
+    isDefault: true,
+    category: 'business',
+    tags: ['business', 'capability', 'bcm', 'default'],
+    usageCount: 0,
+  },
+  /* 3. MECE Framework (Default) */
   {
     id: 'default-mece',
     name: 'MECE Framework (Default)',
