@@ -34,13 +34,13 @@
   - [x] 1.5 Add PWA meta tags to index.html
   - [x] 1.6 Test PWA installability in supported browsers
 
-- [ ] 2.0 Offline Storage & Caching Implementation
-  - [ ] 2.1 Create IndexedDB wrapper utility for offline data storage
-  - [ ] 2.2 Implement service worker with Workbox for asset caching
-  - [ ] 2.3 Add runtime caching strategies for API calls
-  - [ ] 2.4 Create offline queue system for pending changes
-  - [ ] 2.5 Migrate existing localStorage data to IndexedDB
-  - [ ] 2.6 Add fallback mechanisms for when IndexedDB is unavailable
+- [x] 2.0 Offline Storage & Caching Implementation
+  - [x] 2.1 Create IndexedDB wrapper utility for offline data storage
+  - [x] 2.2 Implement service worker with Workbox for asset caching
+  - [x] 2.3 Add runtime caching strategies for API calls
+  - [x] 2.4 Create offline queue system for pending changes
+  - [x] 2.5 Migrate existing localStorage data to IndexedDB
+  - [x] 2.6 Add fallback mechanisms for when IndexedDB is unavailable
 
 - [ ] 3.0 Background Sync & Conflict Resolution
   - [ ] 3.1 Implement background sync service worker registration
