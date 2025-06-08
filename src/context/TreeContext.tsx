@@ -26,8 +26,7 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isInitializing, setIsInitializing] = useState<boolean>(true);
   const [nodes, setNodes] = useState<NodeData[]>([]);
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());  // Track auto-save debouncing
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  // Custom setter function that saves to local storage automatically with debouncing
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);  // Custom setter function that saves to storage automatically with debouncing
   const handleSetNodes = useCallback((newNodes: React.SetStateAction<NodeData[]>) => {
     setNodes(prev => {
       const nextNodes = typeof newNodes === 'function' ? newNodes(prev) : newNodes;
@@ -40,10 +39,14 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Only save if there's a meaningful change
       if (JSON.stringify(prev) !== JSON.stringify(nextNodes)) {
         // Debounce save operation by 1 second
-        saveTimeoutRef.current = setTimeout(() => {
-          console.log('Saving model to localStorage:', { nodeCount: nextNodes.length });
-          const saveResult = saveTreeToLocalStorage(nextNodes);
-          console.log('Save result:', saveResult);
+        saveTimeoutRef.current = setTimeout(async () => {
+          console.log('Saving model to storage:', { nodeCount: nextNodes.length });
+          try {
+            const saveResult = await saveTreeToLocalStorage(nextNodes);
+            console.log('Save result:', saveResult);
+          } catch (error) {
+            console.error('Error saving tree data:', error);
+          }
         }, 1000);
       }
       
@@ -75,10 +78,10 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           console.error('Error accessing localStorage directly:', e);
         }
         
-        // Try loading from local storage using our utility
+        // Try loading from storage using our utility
         console.log('Attempting to load data from localStorage...');
-        const storedNodes = loadTreeFromLocalStorage();
-        const storedCollapsed = loadCollapsedNodesFromLocalStorage();
+        const storedNodes = await loadTreeFromLocalStorage();
+        const storedCollapsed = await loadCollapsedNodesFromLocalStorage();
         
         console.log('Loading results:', { 
           storedNodesFound: Boolean(storedNodes), 
@@ -91,7 +94,7 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         
         if (storedNodes && storedNodes.length > 0) {
           // Use stored data if available
-          console.log('Using stored data from localStorage');
+          console.log('Using stored data from storage');
           setNodes(storedNodes);
           setCollapsed(storedCollapsed);
         } else {
@@ -100,8 +103,8 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           const initialData = createInitialData();
           setNodes(initialData);
           // Also save this initial data to storage immediately
-          console.log('Saving initial data to localStorage');
-          saveTreeToLocalStorage(initialData);
+          console.log('Saving initial data to storage');
+          await saveTreeToLocalStorage(initialData);
         }
       } catch (error) {
         console.error("Error initializing data:", error);
@@ -110,7 +113,7 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setNodes(initialData);
         // Try to save this initial data to storage
         try {
-          saveTreeToLocalStorage(initialData);
+          await saveTreeToLocalStorage(initialData);
         } catch (e) {
           console.error("Failed to save initial data:", e);
         }
