@@ -1,8 +1,8 @@
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import './index.css'; // Add this if you have index.css for global styles
+import './index.css';
+import { registerServiceWorker } from './pwa';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -15,4 +15,5 @@ root.render(
     <App />
   </React.StrictMode>
 );
-    
+
+registerServiceWorker();
