@@ -6,6 +6,7 @@ import {
   saveData, 
   loadData 
 } from './offlineStorage';
+import { updateTreeModelMetadata } from './storageUtils';
 import { GitHubGistService, Gist } from '../services/githubGistService';
 import { GitHubAuthService } from '../services/githubAuthService';
 import { TreeModel } from '../types';
@@ -131,6 +132,21 @@ export class SyncManager {
     console.log('📋 SyncManager: Model name:', model.name);
     console.log('📋 SyncManager: Gist ID:', gistId);
     console.log('📋 SyncManager: Model nodes count:', model.nodes.length);
+    
+    // Check for existing pending sync operations for this model to prevent duplicates
+    const existingQueue = await getQueue();
+    const existingSyncItems = existingQueue.filter(item => 
+      item.type === 'SYNC' && 
+      item.modelId === model.id &&
+      item.action === action
+    ) as SyncQueueItem[];
+    
+    if (existingSyncItems.length > 0) {
+      console.log('⚠️ SyncManager: Duplicate sync operation detected for model:', model.id, 'action:', action);
+      console.log('⚠️ SyncManager: Existing items in queue:', existingSyncItems.length);
+      console.log('⚠️ SyncManager: Skipping duplicate operation');
+      return;
+    }
     
     const item: SyncQueueItem = {
       type: 'SYNC',
@@ -279,13 +295,22 @@ export class SyncManager {
       const gist = await GitHubGistService.createGist(model, model.isPublic);
       console.log('✅ SyncManager: Gist created successfully:', gist.id, gist.html_url);
       
-      // CRITICAL: Update the model with the new gist information
-      model.gistId = gist.id;
-      model.gistUrl = gist.html_url;
+      // CRITICAL: Update the TreeModel metadata with gist information
+      const updateSuccess = await updateTreeModelMetadata({
+        gistId: gist.id,
+        gistUrl: gist.html_url,
+        version: model.version + 1
+      });
       
-      // Save the updated model back to storage
-      await saveData('currentTreeModel', model);
-      console.log('💾 SyncManager: Updated model saved with gist info');
+      if (updateSuccess) {
+        console.log('💾 SyncManager: TreeModel metadata updated with gist info');
+      } else {
+        console.warn('⚠️ SyncManager: Failed to update TreeModel metadata, falling back to direct save');
+        // Fallback to direct save
+        model.gistId = gist.id;
+        model.gistUrl = gist.html_url;
+        await saveData('currentTreeModel', model);
+      }
       
       return {
         success: true,
@@ -326,10 +351,20 @@ export class SyncManager {
       const updatedGist = await GitHubGistService.updateGist(gistId, model, existingGist);
       console.log('✅ SyncManager: Gist updated successfully:', updatedGist.id);
       
-      // Update the model with current gist information
-      model.gistId = updatedGist.id;
-      model.gistUrl = updatedGist.html_url;
-      await saveData('currentTreeModel', model);
+      // Update the TreeModel metadata with current gist information
+      const updateSuccess = await updateTreeModelMetadata({
+        gistId: updatedGist.id,
+        gistUrl: updatedGist.html_url,
+        version: model.version + 1
+      });
+      
+      if (!updateSuccess) {
+        console.warn('⚠️ SyncManager: Failed to update TreeModel metadata after gist update, using fallback');
+        // Fallback to direct save
+        model.gistId = updatedGist.id;
+        model.gistUrl = updatedGist.html_url;
+        await saveData('currentTreeModel', model);
+      }
       
       return {
         success: true,
@@ -343,10 +378,19 @@ export class SyncManager {
       if (error instanceof Error && (error.message.includes('404') || error.message.includes('Not Found'))) {
         console.log('🗑️ SyncManager: Gist appears deleted, clearing local reference and creating new one');
         
-        // Clear the gist ID from the model
-        model.gistId = undefined;
-        model.gistUrl = undefined;
-        await saveData('currentTreeModel', model);
+        // Clear the gist metadata from TreeModel
+        const clearSuccess = await updateTreeModelMetadata({
+          gistId: undefined,
+          gistUrl: undefined
+        });
+        
+        if (!clearSuccess) {
+          console.warn('⚠️ SyncManager: Failed to clear gist metadata, using fallback');
+          // Fallback to direct save
+          model.gistId = undefined;
+          model.gistUrl = undefined;
+          await saveData('currentTreeModel', model);
+        }
         
         // Try to create a new gist instead
         return await this.createGist(model);

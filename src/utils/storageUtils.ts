@@ -1,4 +1,4 @@
-import { NodeData } from '../types';
+import { NodeData, TreeModel, PromptCollection } from '../types';
 import { toast } from 'react-hot-toast';
 import { saveData, loadData, DB_NAME, DB_VERSION } from './offlineStorage';
 import { openDB } from 'idb';
@@ -11,7 +11,7 @@ const LAST_SAVED_KEY = 'concept-hierarchy-last-saved';
 
 
 /**
- * Saves the concept hierarchy tree to IndexedDB
+ * Saves nodes while preserving existing TreeModel metadata (including gist ID)
  * @param nodes The concept hierarchy nodes to save
  * @returns boolean indicating success
  */
@@ -24,8 +24,66 @@ export const saveTreeToLocalStorage = async (nodes: NodeData[]): Promise<boolean
   try {
     const timestamp = new Date().toISOString();
     
-    await saveData(STORAGE_KEY, nodes);
+    // Load existing TreeModel to preserve gist metadata
+    let existingModel: TreeModel | null = null;
+    try {
+      existingModel = await loadData('currentTreeModel');
+      console.log('🔄 saveTreeToLocalStorage: Preserving gist metadata from existing model:', {
+        gistId: existingModel?.gistId,
+        gistUrl: existingModel?.gistUrl,
+        version: existingModel?.version
+      });
+    } catch (error) {
+      console.log('🔄 saveTreeToLocalStorage: No existing TreeModel found, creating new one');
+    }
+
+    // Get current prompts
+    let prompts: PromptCollection = { prompts: [], activePromptId: null };
+    try {
+      const storedPrompts = await loadData('promptCollection');
+      if (storedPrompts) {
+        prompts = storedPrompts;
+      }
+    } catch (error) {
+      console.warn('Could not load prompts, using default:', error);
+    }
+
+    // Create/update TreeModel with preserved gist metadata
+    const now = new Date();
+    const modelId = existingModel?.id || `tree_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    const treeModel: TreeModel = {
+      id: modelId,
+      name: existingModel?.name || 'My Concept Hierarchy',
+      description: existingModel?.description || 'A concept hierarchy created with the Concept Hierarchy Designer',
+      nodes: nodes,
+      prompts: prompts,
+      createdAt: existingModel?.createdAt || now,
+      lastModified: now,
+      version: (existingModel?.version || 0) + 1,
+      // CRITICAL: Preserve gist metadata
+      gistId: existingModel?.gistId,
+      gistUrl: existingModel?.gistUrl,
+      category: existingModel?.category || 'personal',
+      tags: existingModel?.tags || [],
+      author: existingModel?.author,
+      license: existingModel?.license || 'MIT',
+      isPublic: existingModel?.isPublic || false,
+    };
+
+    console.log('🔄 saveTreeToLocalStorage: Saving TreeModel with preserved gist metadata:', {
+      id: treeModel.id,
+      gistId: treeModel.gistId,
+      gistUrl: treeModel.gistUrl,
+      nodeCount: treeModel.nodes.length,
+      version: treeModel.version
+    });
+
+    // Save both legacy format and TreeModel format
+    await saveData(STORAGE_KEY, nodes); // Legacy compatibility
+    await saveData('currentTreeModel', treeModel); // Primary TreeModel storage
     await saveData(LAST_SAVED_KEY, timestamp);
+    
     return true;
   } catch (error) {
     console.error('Error saving tree data:', error);
@@ -55,14 +113,45 @@ export const saveCollapsedNodesToLocalStorage = async (collapsedNodes: Set<strin
 };
 
 /**
- * Loads the concept hierarchy tree from IndexedDB
+ * Loads the concept hierarchy tree from IndexedDB, preferring TreeModel data
  * @returns The stored concept hierarchy nodes, or null if none exists
  */
 export const loadTreeFromLocalStorage = async (): Promise<NodeData[] | null> => {
   try {
+    // First try to load from TreeModel (primary source with gist metadata)
+    try {
+      const treeModel = await loadData('currentTreeModel');
+      if (treeModel && treeModel.nodes && Array.isArray(treeModel.nodes) && treeModel.nodes.length > 0) {
+        console.log('🔄 loadTreeFromLocalStorage: Loaded nodes from TreeModel with gist metadata:', {
+          gistId: treeModel.gistId,
+          gistUrl: treeModel.gistUrl,
+          nodeCount: treeModel.nodes.length,
+          version: treeModel.version
+        });
+        
+        const isValid = treeModel.nodes.every((node: any) => 
+          node &&
+          typeof node === 'object' &&
+          typeof node.id === 'string' &&
+          typeof node.name === 'string' &&
+          typeof node.description === 'string' &&
+          (node.parent === null || typeof node.parent === 'string')
+        );
+        
+        if (isValid) {
+          return treeModel.nodes;
+        }
+      }
+    } catch (error) {
+      console.log('🔄 loadTreeFromLocalStorage: No TreeModel found, falling back to legacy storage');
+    }
+
+    // Fallback to legacy storage format
     const data = await loadData(STORAGE_KEY);
     
     if (data && Array.isArray(data) && data.length > 0) {
+      console.log('🔄 loadTreeFromLocalStorage: Loaded nodes from legacy storage');
+      
       // Validate the data structure
       const isValid = data.every(node => 
         node &&
@@ -130,9 +219,68 @@ export const clearSavedData = async (): Promise<void> => {
     await tx.store.delete(STORAGE_KEY);
     await tx.store.delete(COLLAPSED_NODES_KEY);
     await tx.store.delete(LAST_SAVED_KEY);
+    await tx.store.delete('currentTreeModel'); // Also clear TreeModel data
     await tx.done;
   } catch (error) {
     console.error('Error clearing saved data:', error);
+  }
+};
+
+/**
+ * Get the current TreeModel with all metadata (including gist ID)
+ * @returns Promise resolving to TreeModel or null if none exists
+ */
+export const getCurrentTreeModel = async (): Promise<TreeModel | null> => {
+  try {
+    const treeModel = await loadData('currentTreeModel');
+    if (treeModel && typeof treeModel === 'object' && treeModel.id) {
+      console.log('🔄 getCurrentTreeModel: Retrieved TreeModel with gist metadata:', {
+        id: treeModel.id,
+        gistId: treeModel.gistId,
+        gistUrl: treeModel.gistUrl,
+        version: treeModel.version,
+        nodeCount: treeModel.nodes?.length
+      });
+      return treeModel;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error loading current TreeModel:', error);
+    return null;
+  }
+};
+
+/**
+ * Update TreeModel metadata without changing nodes
+ * @param updates Partial TreeModel data to update
+ * @returns Promise resolving to boolean indicating success
+ */
+export const updateTreeModelMetadata = async (updates: Partial<TreeModel>): Promise<boolean> => {
+  try {
+    const existingModel = await getCurrentTreeModel();
+    if (!existingModel) {
+      console.warn('Cannot update TreeModel metadata: no existing model found');
+      return false;
+    }
+
+    const updatedModel: TreeModel = {
+      ...existingModel,
+      ...updates,
+      lastModified: new Date(), // Always update timestamp
+    };
+
+    console.log('🔄 updateTreeModelMetadata: Updating metadata:', {
+      id: updatedModel.id,
+      gistId: updatedModel.gistId,
+      gistUrl: updatedModel.gistUrl,
+      version: updatedModel.version
+    });
+
+    await saveData('currentTreeModel', updatedModel);
+    return true;
+  } catch (error) {
+    console.error('Error updating TreeModel metadata:', error);
+    return false;
   }
 };
 

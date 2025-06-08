@@ -73,9 +73,11 @@ export const resetDatabase = async (): Promise<void> => {
   }
 };
 
-const getDB = async (): Promise<IDBPDatabase<OfflineDB>> => {
+const getDB = async (retryCount = 0): Promise<IDBPDatabase<OfflineDB>> => {
+  const MAX_RETRIES = 3;
+  
   if (!dbPromise) {
-    console.log(`Opening IndexedDB database: ${DB_NAME} (version ${DB_VERSION})`);
+    console.log(`Opening IndexedDB database: ${DB_NAME} (version ${DB_VERSION}) - attempt ${retryCount + 1}`);
     
     try {
       dbPromise = openDB<OfflineDB>(DB_NAME, DB_VERSION, {
@@ -134,6 +136,15 @@ const getDB = async (): Promise<IDBPDatabase<OfflineDB>> => {
         console.log('Available stores:', Array.from(db.objectStoreNames));
         db.close();
         dbPromise = null;
+        
+        // Retry with database reset if this is not the last attempt
+        if (retryCount < MAX_RETRIES) {
+          console.log(`Attempting database reset and retry (${retryCount + 1}/${MAX_RETRIES})`);
+          await resetDatabase();
+          await new Promise(resolve => setTimeout(resolve, 100)); // Brief delay
+          return getDB(retryCount + 1);
+        }
+        
         throw new Error('Database is missing required object stores');
       }
       
@@ -141,6 +152,14 @@ const getDB = async (): Promise<IDBPDatabase<OfflineDB>> => {
     } catch (err) {
       console.error('Failed to open IndexedDB', err);
       dbPromise = null;
+      
+      // Retry if it's a database structure issue and we haven't exceeded max retries
+      if (retryCount < MAX_RETRIES && (err as Error).message.includes('missing required object stores')) {
+        console.log(`Retrying database initialization (${retryCount + 1}/${MAX_RETRIES})`);
+        await new Promise(resolve => setTimeout(resolve, 200 * (retryCount + 1))); // Exponential backoff
+        return getDB(retryCount + 1);
+      }
+      
       throw err;
     }
   }

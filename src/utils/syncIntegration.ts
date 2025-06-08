@@ -1,6 +1,7 @@
 import { NodeData, TreeModel, PromptCollection } from '../types';
 import { SyncManager } from './syncManager';
 import { loadData, saveData } from './offlineStorage';
+import { getCurrentTreeModel } from './storageUtils';
 
 /**
  * Converts the current tree structure to a TreeModel for syncing
@@ -16,12 +17,17 @@ export const convertNodesToTreeModel = async (
   console.log('🔄 convertNodesToTreeModel: Description override:', description);
   
   // Try to load existing model metadata or create new
-  let existingModel: TreeModel | null = null;
-  try {
-    existingModel = await loadData('currentTreeModel');
-    console.log('🔄 convertNodesToTreeModel: Loaded existing model:', existingModel?.id, existingModel?.gistId);
-  } catch (error) {
-    console.warn('⚠️ convertNodesToTreeModel: Failed to load existing tree model:', error);
+  const existingModel = await getCurrentTreeModel();
+  if (existingModel) {
+    console.log('🔄 convertNodesToTreeModel: Loaded existing TreeModel with preserved metadata:', {
+      id: existingModel.id,
+      gistId: existingModel.gistId,
+      gistUrl: existingModel.gistUrl,
+      version: existingModel.version,
+      hasGistId: Boolean(existingModel.gistId)
+    });
+  } else {
+    console.log('🔄 convertNodesToTreeModel: No existing TreeModel found, creating new one');
   }
 
   // Get current prompts collection
@@ -58,6 +64,14 @@ export const convertNodesToTreeModel = async (
     license: existingModel?.license || 'MIT',
     isPublic: existingModel?.isPublic || false,
   };
+
+  console.log('🔄 convertNodesToTreeModel: GistId assignment check:', {
+    existingGistId: existingModel?.gistId,
+    newModelGistId: treeModel.gistId,
+    preserved: existingModel?.gistId === treeModel.gistId,
+    existingGistUrl: existingModel?.gistUrl,
+    newModelGistUrl: treeModel.gistUrl
+  });
 
   console.log('🔄 convertNodesToTreeModel: Created tree model:', {
     id: treeModel.id,
@@ -114,9 +128,23 @@ export const syncCurrentTreeToGitHub = async (
 
     if (treeModel.gistId && !options?.forceCreate) {
       console.log('🔗 syncIntegration: Updating existing gist:', treeModel.gistId);
+      console.log('🔗 syncIntegration: Model details for UPDATE:', {
+        id: treeModel.id,
+        gistId: treeModel.gistId,
+        gistUrl: treeModel.gistUrl,
+        version: treeModel.version,
+        forceCreate: options?.forceCreate
+      });
       await syncManager.enqueueSync('UPDATE', treeModel, treeModel.gistId);
     } else {
       console.log('🔗 syncIntegration: Creating new gist');
+      console.log('🔗 syncIntegration: Reasons for CREATE:', {
+        hasGistId: Boolean(treeModel.gistId),
+        gistIdValue: treeModel.gistId,
+        forceCreate: Boolean(options?.forceCreate),
+        modelId: treeModel.id,
+        modelVersion: treeModel.version
+      });
       await syncManager.enqueueSync('CREATE', treeModel);
     }
 
@@ -180,7 +208,7 @@ export const getTreeSyncStatus = async (): Promise<{
   pendingChanges: boolean;
 }> => {
   try {
-    const existingModel = await loadData('currentTreeModel');
+    const existingModel = await getCurrentTreeModel();
     const syncManager = SyncManager.getInstance();
     const status = syncManager.getStatus();
 
