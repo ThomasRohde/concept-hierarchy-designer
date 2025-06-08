@@ -212,3 +212,56 @@ export const clearQueue = async (): Promise<void> => {
   await tx.done;
 };
 
+// Model management functions
+export const saveModel = async (model: any): Promise<void> => {
+  if (!isIndexedDBSupported()) {
+    throw new Error('IndexedDB is not supported in this environment');
+  }
+  const db = await getDB();
+  await db.put('data', model, `model_${model.id}`);
+};
+
+export const getModel = async (modelId: string): Promise<any | null> => {
+  if (!isIndexedDBSupported()) {
+    throw new Error('IndexedDB is not supported in this environment');
+  }
+  const db = await getDB();
+  const value = await db.get('data', `model_${modelId}`);
+  return value !== undefined ? value : null;
+};
+
+export const getModelSummary = async (): Promise<any[]> => {
+  if (!isIndexedDBSupported()) {
+    throw new Error('IndexedDB is not supported in this environment');
+  }
+  const db = await getDB();
+  const allKeys = await db.getAllKeys('data');
+  const modelKeys = allKeys.filter(key => key.toString().startsWith('model_'));
+  
+  const summaries = [];
+  for (const key of modelKeys) {
+    const model = await db.get('data', key);
+    if (model && model.id) {
+      summaries.push({
+        id: model.id,
+        name: model.name,
+        description: model.description,
+        nodeCount: model.nodes ? model.nodes.length : 0,
+        createdAt: new Date(model.createdAt),
+        lastModified: new Date(model.lastModified),
+        author: model.author
+      });
+    }
+  }
+  
+  return summaries.sort((a, b) => b.lastModified.getTime() - a.lastModified.getTime());
+};
+
+export const deleteModel = async (modelId: string): Promise<void> => {
+  if (!isIndexedDBSupported()) {
+    throw new Error('IndexedDB is not supported in this environment');
+  }
+  const db = await getDB();
+  await db.delete('data', `model_${modelId}`);
+};
+

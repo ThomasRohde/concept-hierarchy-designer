@@ -12,6 +12,7 @@ import { SyncButton } from '../SyncButton';
 import { PWAFallback } from '../PWAFallback';
 import { SyncLoadingOverlay } from '../SyncLoadingOverlay';
 import { GitHubAuthStatus } from '../GitHubAuthStatus';
+import { LoadModelButton } from '../LoadModelButton';
 
 const Layout: React.FC = () => {
   return (
@@ -30,6 +31,7 @@ const Layout: React.FC = () => {
               </div>
               <div className="flex items-center gap-2">
                 <GitHubAuthStatus />
+                <LoadModelButton />
                 <OfflineIndicator />
                 <SyncButton variant="compact" />
                 <InstallPrompt />
