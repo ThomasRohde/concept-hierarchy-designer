@@ -42,28 +42,20 @@
   - [ ] 2.5 Migrate existing localStorage data to IndexedDB
   - [ ] 2.6 Add fallback mechanisms for when IndexedDB is unavailable
 
-- [ ] 3.0 Authentication System Integration
-  - [ ] 3.1 Install and configure authentication library (Firebase Auth)
-  - [ ] 3.2 Create authentication service with OAuth and email link support
-  - [ ] 3.3 Implement AuthContext for managing user state
-  - [ ] 3.4 Create useAuth hook for authentication operations
-  - [ ] 3.5 Add login/logout UI components
-  - [ ] 3.6 Handle authentication persistence across app restarts
+- [ ] 3.0 Background Sync & Conflict Resolution
+  - [ ] 3.1 Implement background sync service worker registration
+  - [ ] 3.2 Create cloud sync service for data synchronization
+  - [ ] 3.3 Build sync manager for orchestrating local/cloud data
+  - [ ] 3.4 Implement conflict resolution for simultaneous edits
+  - [ ] 3.5 Add retry logic for failed sync operations
+  - [ ] 3.6 Create sync status tracking and reporting
+  - [ ] 3.7 Handle sync operations across multiple devices/tabs
 
-- [ ] 4.0 Background Sync & Conflict Resolution
-  - [ ] 4.1 Implement background sync service worker registration
-  - [ ] 4.2 Create cloud sync service for data synchronization
-  - [ ] 4.3 Build sync manager for orchestrating local/cloud data
-  - [ ] 4.4 Implement conflict resolution for simultaneous edits
-  - [ ] 4.5 Add retry logic for failed sync operations
-  - [ ] 4.6 Create sync status tracking and reporting
-  - [ ] 4.7 Handle sync operations across multiple devices/tabs
-
-- [ ] 5.0 User Interface Enhancements for PWA
-  - [ ] 5.1 Create PWA install prompt component
-  - [ ] 5.2 Add offline/online status indicator
-  - [ ] 5.3 Implement manual sync trigger button
-  - [ ] 5.4 Create network status monitoring hook
-  - [ ] 5.5 Add sync context for managing sync state across components
-  - [ ] 5.6 Implement graceful degradation for unsupported browsers
-  - [ ] 5.7 Add loading states and feedback for sync operations
+- [ ] 4.0 User Interface Enhancements for PWA
+  - [ ] 4.1 Create PWA install prompt component
+  - [ ] 4.2 Add offline/online status indicator
+  - [ ] 4.3 Implement manual sync trigger button
+  - [ ] 4.4 Create network status monitoring hook
+  - [ ] 4.5 Add sync context for managing sync state across components
+  - [ ] 4.6 Implement graceful degradation for unsupported browsers
+  - [ ] 4.7 Add loading states and feedback for sync operations
