@@ -42,12 +42,12 @@
   - [x] 2.5 Migrate existing localStorage data to IndexedDB
   - [x] 2.6 Add fallback mechanisms for when IndexedDB is unavailable
 
-- [ ] 3.0 GitHub PAT Authentication & Security
-  - [ ] 3.1 Create GitHub PAT input modal with validation UI
-  - [ ] 3.2 Implement GitHub API authentication and PAT validation
-  - [ ] 3.3 Store GitHub PAT securely in IndexedDB with encryption
-  - [ ] 3.4 Add PAT management (update, remove, test connection)
-  - [ ] 3.5 Create authentication status indicator in UI
+- [x] 3.0 GitHub PAT Authentication & Security
+  - [x] 3.1 Create GitHub PAT input modal with validation UI
+  - [x] 3.2 Implement GitHub API authentication and PAT validation
+  - [x] 3.3 Store GitHub PAT securely in IndexedDB with encryption
+  - [x] 3.4 Add PAT management (update, remove, test connection)
+  - [x] 3.5 Create authentication status indicator in UI
 
 - [ ] 4.0 GitHub Gist API Integration & Naming
   - [ ] 4.1 Design and implement Gist naming scheme (ch-[id]-[slug].json)

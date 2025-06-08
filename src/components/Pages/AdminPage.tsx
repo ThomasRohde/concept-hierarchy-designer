@@ -24,6 +24,7 @@ import {
   formatNumber 
 } from '../../utils/adminUtils';
 import DatabaseDebugger from '../DatabaseDebugger';
+import { GitHubAuthStatus } from '../GitHubAuthStatus';
 
 const AdminPage: React.FC = () => {
   const { nodes } = useTreeContext();
@@ -388,6 +389,26 @@ const AdminPage: React.FC = () => {
           </CardContent>
         </Card>      </motion.div>
       
+      {/* GitHub Authentication Section */}
+      <motion.div variants={itemVariants}>
+        <Card className="border-purple-300 bg-gradient-to-r from-purple-50 to-violet-50">
+          <CardHeader className="bg-gradient-to-r from-purple-100 to-violet-100 border-b border-purple-200">
+            <div className="flex items-center gap-3 justify-center">
+              <div className="p-2 bg-purple-200 rounded-full">
+                <Shield className="h-6 w-6 text-purple-700" />
+              </div>
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-purple-700">GitHub Authentication</h2>
+                <p className="text-purple-600 text-sm">Manage GitHub sync credentials</p>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-8">
+            <GitHubAuthStatus showFullStatus={true} />
+          </CardContent>
+        </Card>
+      </motion.div>
+
       {/* Database Diagnostics Section */}
       <motion.div variants={itemVariants}>
         <Card className="border-blue-300 bg-gradient-to-r from-blue-50 to-indigo-50">

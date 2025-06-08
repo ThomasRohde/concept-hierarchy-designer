@@ -11,6 +11,7 @@ import { OfflineIndicator } from '../OfflineIndicator';
 import { SyncButton } from '../SyncButton';
 import { PWAFallback } from '../PWAFallback';
 import { SyncLoadingOverlay } from '../SyncLoadingOverlay';
+import { GitHubAuthStatus } from '../GitHubAuthStatus';
 
 const Layout: React.FC = () => {
   return (
@@ -28,6 +29,7 @@ const Layout: React.FC = () => {
                 <div className="text-xl sm:text-2xl font-bold">Concept Hierarchy Designer</div>
               </div>
               <div className="flex items-center gap-2">
+                <GitHubAuthStatus />
                 <OfflineIndicator />
                 <SyncButton />
                 <InstallPrompt />
