@@ -42,20 +42,40 @@
   - [x] 2.5 Migrate existing localStorage data to IndexedDB
   - [x] 2.6 Add fallback mechanisms for when IndexedDB is unavailable
 
-- [ ] 3.0 Background Sync & Conflict Resolution
-  - [ ] 3.1 Implement background sync service worker registration
-  - [ ] 3.2 Create cloud sync service for data synchronization
-  - [ ] 3.3 Build sync manager for orchestrating local/cloud data
-  - [ ] 3.4 Implement conflict resolution for simultaneous edits
-  - [ ] 3.5 Add retry logic for failed sync operations
-  - [ ] 3.6 Create sync status tracking and reporting
-  - [ ] 3.7 Handle sync operations across multiple devices/tabs
+- [ ] 3.0 GitHub PAT Authentication & Security
+  - [ ] 3.1 Create GitHub PAT input modal with validation UI
+  - [ ] 3.2 Implement GitHub API authentication and PAT validation
+  - [ ] 3.3 Store GitHub PAT securely in IndexedDB with encryption
+  - [ ] 3.4 Add PAT management (update, remove, test connection)
+  - [ ] 3.5 Create authentication status indicator in UI
 
-- [x] 4.0 User Interface Enhancements for PWA
-  - [x] 4.1 Create PWA install prompt component
-  - [x] 4.2 Add offline/online status indicator
-  - [x] 4.3 Implement manual sync trigger button
-  - [x] 4.4 Create network status monitoring hook
-  - [x] 4.5 Add sync context for managing sync state across components
-  - [x] 4.6 Implement graceful degradation for unsupported browsers
-  - [x] 4.7 Add loading states and feedback for sync operations
+- [ ] 4.0 GitHub Gist API Integration & Naming
+  - [ ] 4.1 Design and implement Gist naming scheme (ch-[id]-[slug].json)
+  - [ ] 4.2 Create GitHub Gist API service wrapper
+  - [ ] 4.3 Implement Gist CRUD operations (create, read, update, delete)
+  - [ ] 4.4 Add model ID generation and slug utilities
+  - [ ] 4.5 Implement Gist metadata management (description, categories)
+
+- [ ] 5.0 Sync Manager & Conflict Resolution
+  - [ ] 5.1 Build sync manager for orchestrating local/Gist data flow
+  - [ ] 5.2 Implement conflict detection using timestamps and versions
+  - [ ] 5.3 Create conflict resolution UI for user decisions
+  - [ ] 5.4 Add automatic sync triggers (on save, periodic, manual)
+  - [ ] 5.5 Handle offline queue for pending sync operations
+  - [ ] 5.6 Add retry logic for failed GitHub API operations
+
+- [ ] 6.0 Sync Status & User Experience
+  - [ ] 6.1 Create sync status tracking and reporting system
+  - [ ] 6.2 Add sync progress indicators and loading states
+  - [ ] 6.3 Implement sync history and activity log
+  - [ ] 6.4 Create manual sync trigger buttons and shortcuts
+  - [ ] 6.5 Add sync settings and preferences management
+
+- [x] 7.0 User Interface Enhancements for PWA
+  - [x] 7.1 Create PWA install prompt component
+  - [x] 7.2 Add offline/online status indicator
+  - [x] 7.3 Implement manual sync trigger button
+  - [x] 7.4 Create network status monitoring hook
+  - [x] 7.5 Add sync context for managing sync state across components
+  - [x] 7.6 Implement graceful degradation for unsupported browsers
+  - [x] 7.7 Add loading states and feedback for sync operations
