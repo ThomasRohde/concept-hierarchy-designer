@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 import { registerServiceWorker } from './pwa';
+import { migrateLocalStorageToIndexedDB } from './utils/offlineStorage';
+
+// Migrate any existing data stored in localStorage to IndexedDB for offline use
+migrateLocalStorageToIndexedDB();
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -17,3 +21,4 @@ root.render(
 );
 
 registerServiceWorker();
+
