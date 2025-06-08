@@ -1,5 +1,5 @@
 import { checkDatabase, logStorageState } from './dbDiagnostic';
-import { migrateLocalStorageToIndexedDB, saveData, loadData } from './offlineStorage';
+import { saveData, loadData } from './offlineStorage';
 
 /**
  * Run this function to diagnose and fix IndexedDB issues
@@ -15,15 +15,7 @@ export const runDatabaseDiagnostic = async () => {
   console.log('--- CHECKING INDEXEDDB CURRENT STATE ---');
   await checkDatabase();
   
-  // 3. Run migration from localStorage to IndexedDB
-  console.log('--- RUNNING MIGRATION ---');
-  await migrateLocalStorageToIndexedDB();
-  
-  // 4. Check IndexedDB state after migration
-  console.log('--- CHECKING INDEXEDDB STATE AFTER MIGRATION ---');
-  await checkDatabase();
-  
-  // 5. Test saving and loading data
+  // 3. Test saving and loading data
   console.log('--- TESTING SAVE/LOAD OPERATIONS ---');
   const testData = { test: true, timestamp: Date.now() };
   

@@ -3,11 +3,8 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 import { registerServiceWorker } from './pwa';
-import { migrateLocalStorageToIndexedDB, DB_NAME } from './utils/offlineStorage';
+import { DB_NAME } from './utils/offlineStorage';
 import { checkDatabase } from './utils/dbDiagnostic';
-
-// Migrate any existing data stored in localStorage to IndexedDB for offline use
-migrateLocalStorageToIndexedDB();
 
 const rootElement = document.getElementById('root');
 

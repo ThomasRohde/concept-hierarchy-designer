@@ -1,10 +1,9 @@
 import { NodeData } from '../types';
-import { getPrefixedKey } from './storagePrefix';
 import { toast } from 'react-hot-toast';
 
 // Storage keys for tracking admin-related data
-const MAGIC_WAND_STATS_KEY = getPrefixedKey('magic-wand-stats');
-const APP_ANALYTICS_KEY = getPrefixedKey('app-analytics');
+const MAGIC_WAND_STATS_KEY = 'magic-wand-stats';
+const APP_ANALYTICS_KEY = 'app-analytics';
 
 // Interfaces for admin statistics
 export interface TreeStatistics {

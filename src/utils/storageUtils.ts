@@ -1,90 +1,17 @@
 import { NodeData } from '../types';
 import { toast } from 'react-hot-toast';
-import { getPrefixedKey } from './storagePrefix';
 import { saveData, loadData, DB_NAME, DB_VERSION } from './offlineStorage';
 import { openDB } from 'idb';
 
-// Base key names
-const BASE_STORAGE_KEY = 'concept-hierarchy-data';
-const BASE_COLLAPSED_NODES_KEY = 'concept-hierarchy-collapsed-nodes';
-const BASE_LAST_SAVED_KEY = 'concept-hierarchy-last-saved';
+// Storage key names
+const STORAGE_KEY = 'concept-hierarchy-data';
+const COLLAPSED_NODES_KEY = 'concept-hierarchy-collapsed-nodes';
+const LAST_SAVED_KEY = 'concept-hierarchy-last-saved';
 
-// Get prefixed keys to avoid conflicts with HMR in development
-const STORAGE_KEY = getPrefixedKey(BASE_STORAGE_KEY);
-const COLLAPSED_NODES_KEY = getPrefixedKey(BASE_COLLAPSED_NODES_KEY);
-const LAST_SAVED_KEY = getPrefixedKey(BASE_LAST_SAVED_KEY);
+
 
 /**
- * Tests if localStorage is available and working
- * @returns boolean indicating if localStorage is available
- */
-const isLocalStorageAvailable = (): boolean => {
-  try {
-    const testKey = '__test_storage__';
-    localStorage.setItem(testKey, 'test');
-    const result = localStorage.getItem(testKey) === 'test';
-    localStorage.removeItem(testKey);
-    return result;
-  } catch (e) {
-    return false;
-  }
-};
-
-/**
- * Debug function to log all localStorage keys and their values
- * Call this from the browser console: import('./utils/storageUtils.js').then(m => m.debugLocalStorage())
- */
-export const debugLocalStorage = (): void => {
-  console.group('LocalStorage Debug');
-  
-  try {
-    console.log('Storage available:', isLocalStorageAvailable());
-    console.log('Using prefixed keys:');
-    console.log('- Data key:', STORAGE_KEY);
-    console.log('- Collapsed nodes key:', COLLAPSED_NODES_KEY);
-    
-    console.log('Current localStorage contents:');    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      try {
-        if (key) {
-          const value = localStorage.getItem(key);
-          if (value) {
-            console.log(`${key}:`, value.length > 100 ? 
-              `${value.substring(0, 100)}... (${value.length} chars)` : value);
-          } else {
-            console.log(`${key}: <null or empty value>`);
-          }
-        }
-      } catch (e) {
-        console.error(`Error reading key ${key}:`, e);
-      }
-    }
-    
-    // Check specifically for our data
-    const modelData = localStorage.getItem(STORAGE_KEY);
-    if (modelData) {
-      try {
-        const parsed = JSON.parse(modelData);
-        console.log('Model data parsed successfully:', { 
-          length: parsed.length,
-          isArray: Array.isArray(parsed),
-          firstItem: parsed[0]
-        });
-      } catch (e) {
-        console.error('Error parsing model data:', e);
-      }
-    } else {
-      console.log('No model data found with key:', STORAGE_KEY);
-    }
-  } catch (e) {
-    console.error('Error in debugLocalStorage:', e);
-  }
-  
-  console.groupEnd();
-};
-
-/**
- * Saves the concept hierarchy tree to IndexedDB (with localStorage fallback)
+ * Saves the concept hierarchy tree to IndexedDB
  * @param nodes The concept hierarchy nodes to save
  * @returns boolean indicating success
  */
@@ -95,48 +22,17 @@ export const saveTreeToLocalStorage = async (nodes: NodeData[]): Promise<boolean
   }
 
   try {
-    // Save timestamp of last successful save
     const timestamp = new Date().toISOString();
-    
     console.log('Saving tree data, nodes count:', nodes.length);
     
-    // Try to save to IndexedDB first
-    try {
-      await saveData(BASE_STORAGE_KEY, nodes);
-      await saveData(BASE_LAST_SAVED_KEY, timestamp);
-      console.log('Tree data successfully saved to IndexedDB');
-      return true;
-    } catch (idbError) {
-      console.error('Error saving to IndexedDB, falling back to localStorage:', idbError);
-      
-      // Fallback to localStorage if IndexedDB fails
-      if (!isLocalStorageAvailable()) {
-        console.error('localStorage not available for saving');
-        return false;
-      }
-      
-      // Convert to string first to catch stringification errors
-      const nodesJson = JSON.stringify(nodes);
-      
-      // Store the data
-      localStorage.setItem(STORAGE_KEY, nodesJson);
-      localStorage.setItem(LAST_SAVED_KEY, timestamp);
-      
-      // Verify the save worked by reading back a small piece
-      const verificationCheck = localStorage.getItem(STORAGE_KEY);
-      if (!verificationCheck) {
-        console.error('Verification failed: Could not read back saved data');
-        return false;
-      }
-      
-      return true;
-    }
+    await saveData(STORAGE_KEY, nodes);
+    await saveData(LAST_SAVED_KEY, timestamp);
+    console.log('Tree data successfully saved to IndexedDB');
+    return true;
   } catch (error) {
-    // Handle storage errors
     console.error('Error saving tree data:', error);
     
     if (error instanceof DOMException && error.name === 'QuotaExceededError') {
-      // Storage quota exceeded - could show a notification to the user
       toast.error('Storage limit exceeded. Your concept model is too large for browser storage.');
     }
     
@@ -145,25 +41,15 @@ export const saveTreeToLocalStorage = async (nodes: NodeData[]): Promise<boolean
 };
 
 /**
- * Saves the collapsed nodes state to IndexedDB (with localStorage fallback)
+ * Saves the collapsed nodes state to IndexedDB
  * @param collapsedNodes Set of collapsed node IDs
  * @returns Promise resolving to boolean indicating success
  */
 export const saveCollapsedNodesToLocalStorage = async (collapsedNodes: Set<string>): Promise<boolean> => {
   try {
     const collapsedArray = [...collapsedNodes];
-    
-    // Try to save to IndexedDB first
-    try {
-      await saveData(BASE_COLLAPSED_NODES_KEY, collapsedArray);
-      return true;
-    } catch (idbError) {
-      console.error('Error saving collapsed nodes to IndexedDB, falling back to localStorage:', idbError);
-      
-      // Fallback to localStorage
-      localStorage.setItem(COLLAPSED_NODES_KEY, JSON.stringify(collapsedArray));
-      return true;
-    }
+    await saveData(COLLAPSED_NODES_KEY, collapsedArray);
+    return true;
   } catch (error) {
     console.error('Error saving collapsed nodes:', error);
     return false;
@@ -171,86 +57,24 @@ export const saveCollapsedNodesToLocalStorage = async (collapsedNodes: Set<strin
 };
 
 /**
- * Loads the concept hierarchy tree from IndexedDB (with localStorage fallback)
+ * Loads the concept hierarchy tree from IndexedDB
  * @returns The stored concept hierarchy nodes, or null if none exists
  */
 export const loadTreeFromLocalStorage = async (): Promise<NodeData[] | null> => {
   try {
-    console.log('Loading tree data from storage...');
+    console.log('Loading tree data from IndexedDB...');
+    const data = await loadData(STORAGE_KEY);
     
-    // Try IndexedDB first
-    try {
-      console.log('Attempting to load from IndexedDB...');
-      const idbData = await loadData(BASE_STORAGE_KEY);
-      
-      if (idbData) {
-        console.log('Data found in IndexedDB:', {
-          isArray: Array.isArray(idbData),
-          length: Array.isArray(idbData) ? idbData.length : 'not an array',
-          firstItem: Array.isArray(idbData) && idbData.length > 0 ? idbData[0] : null
-        });
-        
-        // Validate the data structure
-        if (Array.isArray(idbData) && idbData.length > 0) {
-          // More detailed validation
-          const isValid = idbData.every(node => 
-            node &&
-            typeof node === 'object' &&
-            typeof node.id === 'string' &&
-            typeof node.name === 'string' &&
-            typeof node.description === 'string' &&
-            (node.parent === null || typeof node.parent === 'string')
-          );
-          
-          if (isValid) {
-            console.log('Valid data found in IndexedDB, returning', idbData.length, 'nodes');
-            return idbData;
-          }
-        }
-        console.warn('Invalid data structure found in IndexedDB');
-      }
-    } catch (idbError) {
-      console.error('Error loading from IndexedDB, falling back to localStorage:', idbError);
-    }
-    
-    // Fallback to localStorage
-    console.log('Falling back to localStorage...');
-    
-    // First check if localStorage is available
-    if (!isLocalStorageAvailable()) {
-      console.error('localStorage not available for loading');
-      return null;
-    }
-    
-    const storedData = localStorage.getItem(STORAGE_KEY);
-    
-    // Debug what we actually got from storage
-    console.log('Raw localStorage content:', {
-      key: STORAGE_KEY,
-      hasData: Boolean(storedData),
-      dataLength: storedData?.length,
-      firstChars: storedData?.substring(0, 50)
-    });
-    
-    if (!storedData) {
-      console.log('No stored data found in localStorage');
-      return null;
-    }
-    
-    try {
-      // Parse the JSON data
-      const parsedData = JSON.parse(storedData);
-      
-      console.log('Parsed localStorage content:', {
-        isArray: Array.isArray(parsedData),
-        length: parsedData?.length,
-        firstItem: parsedData?.[0]
+    if (data) {
+      console.log('Data found in IndexedDB:', {
+        isArray: Array.isArray(data),
+        length: Array.isArray(data) ? data.length : 'not an array',
+        firstItem: Array.isArray(data) && data.length > 0 ? data[0] : null
       });
       
       // Validate the data structure
-      if (Array.isArray(parsedData) && parsedData.length > 0) {
-        // More detailed validation
-        const isValid = parsedData.every(node => 
+      if (Array.isArray(data) && data.length > 0) {
+        const isValid = data.every(node => 
           node &&
           typeof node === 'object' &&
           typeof node.id === 'string' &&
@@ -260,20 +84,15 @@ export const loadTreeFromLocalStorage = async (): Promise<NodeData[] | null> => 
         );
         
         if (isValid) {
-          console.log('Valid data found in localStorage, returning', parsedData.length, 'nodes');
-          return parsedData;
-        } else {
-          console.error('Invalid data structure found in localStorage');
-          return null;
+          console.log('Valid data found, returning', data.length, 'nodes');
+          return data;
         }
-      } else {
-        console.error('Not an array or empty array found in localStorage');
-        return null;
       }
-    } catch (parseError) {
-      console.error('Error parsing JSON from localStorage:', parseError);
-      return null;
+      console.warn('Invalid data structure found');
     }
+    
+    console.log('No stored data found');
+    return null;
   } catch (error) {
     console.error('Error loading tree data:', error);
     return null;
@@ -281,31 +100,16 @@ export const loadTreeFromLocalStorage = async (): Promise<NodeData[] | null> => 
 };
 
 /**
- * Loads the collapsed nodes state from IndexedDB (with localStorage fallback)
+ * Loads the collapsed nodes state from IndexedDB
  * @returns Promise resolving to Set of collapsed node IDs, or empty set if none exists
  */
 export const loadCollapsedNodesFromLocalStorage = async (): Promise<Set<string>> => {
   try {
-    // Try IndexedDB first
-    try {
-      const idbData = await loadData(BASE_COLLAPSED_NODES_KEY);
-      
-      if (idbData && Array.isArray(idbData) && idbData.every(id => typeof id === 'string')) {
-        console.log('Loaded collapsed nodes from IndexedDB:', idbData.length);
-        return new Set<string>(idbData);
-      }
-    } catch (idbError) {
-      console.error('Error loading collapsed nodes from IndexedDB, falling back to localStorage:', idbError);
-    }
+    const data = await loadData(COLLAPSED_NODES_KEY);
     
-    // Fallback to localStorage
-    const storedData = localStorage.getItem(COLLAPSED_NODES_KEY);
-    if (!storedData) return new Set<string>();
-    
-    const parsedData = JSON.parse(storedData);
-    if (Array.isArray(parsedData) && parsedData.every(id => typeof id === 'string')) {
-      console.log('Loaded collapsed nodes from localStorage:', parsedData.length);
-      return new Set<string>(parsedData);
+    if (data && Array.isArray(data) && data.every(id => typeof id === 'string')) {
+      console.log('Loaded collapsed nodes:', data.length);
+      return new Set<string>(data);
     }
     return new Set<string>();
   } catch (error) {
@@ -320,18 +124,11 @@ export const loadCollapsedNodesFromLocalStorage = async (): Promise<Set<string>>
  */
 export const getLastSavedTimestamp = async (): Promise<string | null> => {
   try {
-    // Try IndexedDB first
-    try {
-      const timestamp = await loadData(BASE_LAST_SAVED_KEY);
-      if (timestamp && typeof timestamp === 'string') {
-        return timestamp;
-      }
-    } catch (idbError) {
-      console.error('Error getting last saved timestamp from IndexedDB, falling back to localStorage:', idbError);
+    const timestamp = await loadData(LAST_SAVED_KEY);
+    if (timestamp && typeof timestamp === 'string') {
+      return timestamp;
     }
-    
-    // Fallback to localStorage
-    return localStorage.getItem(LAST_SAVED_KEY);
+    return null;
   } catch (error) {
     console.error('Error getting last saved timestamp:', error);
     return null;
@@ -339,30 +136,16 @@ export const getLastSavedTimestamp = async (): Promise<string | null> => {
 };
 
 /**
- * Clear all saved concept hierarchy data from browser storage
+ * Clear all saved concept hierarchy data from IndexedDB
  */
 export const clearSavedData = async (): Promise<void> => {
   try {
-    // Clear from IndexedDB
-    try {
-      const db = await openDB(DB_NAME, DB_VERSION);
-      const tx = db.transaction('data', 'readwrite');
-      await tx.store.delete(BASE_STORAGE_KEY);
-      await tx.store.delete(BASE_COLLAPSED_NODES_KEY);
-      await tx.store.delete(BASE_LAST_SAVED_KEY);
-      await tx.done;
-    } catch (idbError) {
-      console.error('Error clearing data from IndexedDB:', idbError);
-    }
-    
-    // Also clear from localStorage as a backup
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(COLLAPSED_NODES_KEY);
-      localStorage.removeItem(LAST_SAVED_KEY);
-    } catch (lsError) {
-      console.error('Error clearing data from localStorage:', lsError);
-    }
+    const db = await openDB(DB_NAME, DB_VERSION);
+    const tx = db.transaction('data', 'readwrite');
+    await tx.store.delete(STORAGE_KEY);
+    await tx.store.delete(COLLAPSED_NODES_KEY);
+    await tx.store.delete(LAST_SAVED_KEY);
+    await tx.done;
   } catch (error) {
     console.error('Error clearing saved data:', error);
   }
@@ -388,7 +171,7 @@ export const trackFeatureUsage = (feature: string): void => {
  */
 export const getAppAnalytics = (): any => {
   try {
-    const stored = localStorage.getItem(getPrefixedKey('app-analytics'));
+    const stored = localStorage.getItem('app-analytics');
     if (stored) {
       return JSON.parse(stored);
     }
@@ -417,7 +200,7 @@ export const getAppAnalytics = (): any => {
  */
 export const saveAppAnalytics = (analytics: any): void => {
   try {
-    localStorage.setItem(getPrefixedKey('app-analytics'), JSON.stringify(analytics));
+    localStorage.setItem('app-analytics', JSON.stringify(analytics));
   } catch (error) {
     console.error('Error saving app analytics:', error);
   }

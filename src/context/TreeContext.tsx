@@ -25,8 +25,12 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isInitializing, setIsInitializing] = useState<boolean>(true);
   const [nodes, setNodes] = useState<NodeData[]>([]);
-  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());  // Track auto-save debouncing
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);  // Custom setter function that saves to storage automatically with debouncing
+  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
+  
+  // Track auto-save debouncing
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Custom setter function that saves to storage automatically with debouncing
   const handleSetNodes = useCallback((newNodes: React.SetStateAction<NodeData[]>) => {
     setNodes(prev => {
       const nextNodes = typeof newNodes === 'function' ? newNodes(prev) : newNodes;
@@ -61,7 +65,9 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       saveCollapsedNodesToLocalStorage(nextCollapsed);
       return nextCollapsed;
     });
-  }, []);  // Initialize app with data
+  }, []);
+  
+  // Initialize app with data
   useEffect(() => {
     const initializeApp = async () => {
       setIsInitializing(true);
@@ -152,19 +158,7 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [nodes, collapsed]);  // Save the current state when it changes
-  useEffect(() => {
-    if (nodes.length > 0 && !isInitializing && !isLoading) {
-      console.log('Auto-saving due to node state change:', nodes.length, 'nodes');
-      saveTreeToLocalStorage(nodes);
-    }
-  }, [nodes, isInitializing, isLoading]);
-  
-  useEffect(() => {
-    if (!isInitializing && !isLoading) {
-      saveCollapsedNodesToLocalStorage(collapsed);
-    }
-  }, [collapsed, isInitializing, isLoading]);
+  }, [nodes, collapsed]);
 
   return (
     <TreeContext.Provider value={{
