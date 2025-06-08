@@ -3,8 +3,70 @@ import { SyncManager } from './syncManager';
 import { loadData, saveData } from './offlineStorage';
 import { getCurrentTreeModel } from './storageUtils';
 
-// Global sync lock to prevent concurrent sync operations that could create duplicate gists
-let syncInProgress = false;
+// Robust sync lock system to prevent concurrent sync operations that could create duplicate gists
+interface SyncLockEntry {
+  timestamp: number;
+  requestId: string;
+  operation: string;
+}
+
+// Global sync lock map that persists across component re-executions
+const syncLocks = new Map<string, SyncLockEntry>();
+const SYNC_LOCK_TIMEOUT = 30000; // 30 seconds timeout for abandoned locks
+
+// Generate unique request ID for tracking
+const generateRequestId = (): string => {
+  return `sync_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+};
+
+// Clean up expired sync locks
+const cleanupExpiredLocks = (): void => {
+  const now = Date.now();
+  for (const [key, lock] of syncLocks.entries()) {
+    if (now - lock.timestamp > SYNC_LOCK_TIMEOUT) {
+      console.log(`🧹 Cleaning up expired sync lock: ${key} (${lock.requestId})`);
+      syncLocks.delete(key);
+    }
+  }
+};
+
+// Check if sync operation is already in progress for a specific tree
+const isSyncInProgress = (treeId: string): boolean => {
+  cleanupExpiredLocks();
+  return syncLocks.has(treeId);
+};
+
+// Acquire sync lock for a specific tree
+const acquireSyncLock = (treeId: string, operation: string): string => {
+  cleanupExpiredLocks();
+  
+  if (syncLocks.has(treeId)) {
+    const existingLock = syncLocks.get(treeId)!;
+    throw new Error(`Sync already in progress for tree ${treeId} (${existingLock.requestId})`);
+  }
+  
+  const requestId = generateRequestId();
+  const lock: SyncLockEntry = {
+    timestamp: Date.now(),
+    requestId,
+    operation
+  };
+  
+  syncLocks.set(treeId, lock);
+  console.log(`🔒 Acquired sync lock for tree ${treeId}: ${requestId} (${operation})`);
+  return requestId;
+};
+
+// Release sync lock for a specific tree
+const releaseSyncLock = (treeId: string, requestId: string): void => {
+  const lock = syncLocks.get(treeId);
+  if (lock && lock.requestId === requestId) {
+    syncLocks.delete(treeId);
+    console.log(`🔓 Released sync lock for tree ${treeId}: ${requestId}`);
+  } else {
+    console.warn(`⚠️ Attempted to release non-existent or mismatched sync lock for tree ${treeId}: ${requestId}`);
+  }
+};
 
 /**
  * Converts the current tree structure to a TreeModel for syncing
@@ -113,25 +175,50 @@ export const syncCurrentTreeToGitHub = async (
   console.log('🔗 syncIntegration: Nodes count:', nodes.length);
   console.log('🔗 syncIntegration: Options:', options);
   
-  // Prevent concurrent sync operations to avoid duplicate gist creation
-  if (syncInProgress) {
-    console.log('⚠️ syncIntegration: Sync already in progress, skipping duplicate request');
-    return {
-      success: false,
-      error: 'Sync operation already in progress. Please wait for it to complete.'
-    };
-  }
-  
-  syncInProgress = true;
-  
+  // First convert nodes to get the tree model ID for locking
+  let treeModel: TreeModel;
   try {
-    console.log('🔗 syncIntegration: Converting nodes to tree model...');
-    const treeModel = await convertNodesToTreeModel(
+    console.log('🔗 syncIntegration: Converting nodes to tree model for lock acquisition...');
+    treeModel = await convertNodesToTreeModel(
       nodes,
       options?.name,
       options?.description
     );
-    console.log('🔗 syncIntegration: Tree model created:', treeModel.id, 'gistId:', treeModel.gistId);
+    console.log('🔗 syncIntegration: Tree model created for locking:', treeModel.id);
+  } catch (error) {
+    console.error('❌ syncIntegration: Failed to create tree model for locking:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to prepare tree model'
+    };
+  }
+  
+  // Determine operation type for lock tracking
+  const operation = (treeModel.gistId && !options?.forceCreate) ? 'UPDATE' : 'CREATE';
+  
+  // Prevent concurrent sync operations using robust per-tree locking
+  if (isSyncInProgress(treeModel.id)) {
+    console.log('⚠️ syncIntegration: Sync already in progress for tree:', treeModel.id);
+    return {
+      success: false,
+      error: 'Sync operation already in progress for this tree. Please wait for it to complete.'
+    };
+  }
+  
+  // Acquire sync lock with unique request ID
+  let requestId: string;
+  try {
+    requestId = acquireSyncLock(treeModel.id, operation);
+  } catch (error) {
+    console.log('⚠️ syncIntegration: Failed to acquire sync lock:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to acquire sync lock'
+    };
+  }
+  
+  try {
+    console.log(`🔗 syncIntegration: Processing sync with request ID: ${requestId}`);
 
     if (options?.isPublic !== undefined) {
       treeModel.isPublic = options.isPublic;
@@ -147,7 +234,8 @@ export const syncCurrentTreeToGitHub = async (
         gistId: treeModel.gistId,
         gistUrl: treeModel.gistUrl,
         version: treeModel.version,
-        forceCreate: options?.forceCreate
+        forceCreate: options?.forceCreate,
+        requestId
       });
       await syncManager.enqueueSync('UPDATE', treeModel, treeModel.gistId);
     } else {
@@ -157,7 +245,8 @@ export const syncCurrentTreeToGitHub = async (
         gistIdValue: treeModel.gistId,
         forceCreate: Boolean(options?.forceCreate),
         modelId: treeModel.id,
-        modelVersion: treeModel.version
+        modelVersion: treeModel.version,
+        requestId
       });
       await syncManager.enqueueSync('CREATE', treeModel);
     }
@@ -166,25 +255,24 @@ export const syncCurrentTreeToGitHub = async (
     const status = syncManager.getStatus();
     console.log('🔗 syncIntegration: Sync manager status:', status);
     if (status.isOnline) {
-      console.log('🔗 syncIntegration: Triggering manual sync...');
+      console.log(`🔗 syncIntegration: Triggering manual sync for request ${requestId}...`);
       await syncManager.manualSync();
     } else {
       console.log('⚠️ syncIntegration: Offline, sync queued for later');
     }
 
     const finalResult = { success: true, gistId: treeModel.gistId };
-    console.log('✅ syncIntegration: Sync completed, result:', finalResult);
+    console.log(`✅ syncIntegration: Sync completed for request ${requestId}, result:`, finalResult);
     return finalResult;
   } catch (error) {
-    console.error('❌ syncIntegration: Failed to sync tree to GitHub:', error);
+    console.error(`❌ syncIntegration: Failed to sync tree to GitHub (request ${requestId}):`, error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown sync error'
     };
   } finally {
-    // Always release the sync lock
-    syncInProgress = false;
-    console.log('🔓 syncIntegration: Sync lock released');
+    // Always release the sync lock with the correct request ID
+    releaseSyncLock(treeModel.id, requestId);
   }
 };
 
