@@ -3,6 +3,9 @@ import { SyncManager } from './syncManager';
 import { loadData, saveData } from './offlineStorage';
 import { getCurrentTreeModel } from './storageUtils';
 
+// Global sync lock to prevent concurrent sync operations that could create duplicate gists
+let syncInProgress = false;
+
 /**
  * Converts the current tree structure to a TreeModel for syncing
  */
@@ -110,6 +113,17 @@ export const syncCurrentTreeToGitHub = async (
   console.log('🔗 syncIntegration: Nodes count:', nodes.length);
   console.log('🔗 syncIntegration: Options:', options);
   
+  // Prevent concurrent sync operations to avoid duplicate gist creation
+  if (syncInProgress) {
+    console.log('⚠️ syncIntegration: Sync already in progress, skipping duplicate request');
+    return {
+      success: false,
+      error: 'Sync operation already in progress. Please wait for it to complete.'
+    };
+  }
+  
+  syncInProgress = true;
+  
   try {
     console.log('🔗 syncIntegration: Converting nodes to tree model...');
     const treeModel = await convertNodesToTreeModel(
@@ -167,6 +181,10 @@ export const syncCurrentTreeToGitHub = async (
       success: false,
       error: error instanceof Error ? error.message : 'Unknown sync error'
     };
+  } finally {
+    // Always release the sync lock
+    syncInProgress = false;
+    console.log('🔓 syncIntegration: Sync lock released');
   }
 };
 
