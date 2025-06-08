@@ -29,6 +29,7 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   
   // Track auto-save debouncing
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const collapsedSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Custom setter function that saves to storage automatically with debouncing
   const handleSetNodes = useCallback((newNodes: React.SetStateAction<NodeData[]>) => {
@@ -42,27 +43,35 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       // Only save if there's a meaningful change
       if (JSON.stringify(prev) !== JSON.stringify(nextNodes)) {
-        // Debounce save operation by 1 second
+        // Debounce save operation by 2 seconds for better performance
         saveTimeoutRef.current = setTimeout(async () => {
-          console.log('Saving model to storage:', { nodeCount: nextNodes.length });
           try {
-            const saveResult = await saveTreeToLocalStorage(nextNodes);
-            console.log('Save result:', saveResult);
+            await saveTreeToLocalStorage(nextNodes);
           } catch (error) {
             console.error('Error saving tree data:', error);
           }
-        }, 1000);
+        }, 2000);
       }
       
       return nextNodes;
     });
   }, []);
 
-  // Custom setter function for collapsed nodes that saves to local storage automatically
+  // Custom setter function for collapsed nodes that saves to local storage automatically with debouncing
   const handleSetCollapsed = useCallback((newCollapsed: React.SetStateAction<Set<string>>) => {
     setCollapsed(prev => {
       const nextCollapsed = typeof newCollapsed === 'function' ? newCollapsed(prev) : newCollapsed;
-      saveCollapsedNodesToLocalStorage(nextCollapsed);
+      
+      // Clear any pending timeout
+      if (collapsedSaveTimeoutRef.current) {
+        clearTimeout(collapsedSaveTimeoutRef.current);
+      }
+      
+      // Debounce collapsed nodes save by 500ms
+      collapsedSaveTimeoutRef.current = setTimeout(() => {
+        saveCollapsedNodesToLocalStorage(nextCollapsed);
+      }, 500);
+      
       return nextCollapsed;
     });
   }, []);
@@ -138,8 +147,10 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // If there's a pending save, clear it and save immediately
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
-        console.log('Saving on unmount:', { nodeCount: nodes.length });
         saveTreeToLocalStorage(nodes);
+      }
+      if (collapsedSaveTimeoutRef.current) {
+        clearTimeout(collapsedSaveTimeoutRef.current);
         saveCollapsedNodesToLocalStorage(collapsed);
       }
     };
@@ -150,8 +161,10 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const handleBeforeUnload = () => {
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
-        console.log('Saving on window close:', { nodeCount: nodes.length });
         saveTreeToLocalStorage(nodes);
+      }
+      if (collapsedSaveTimeoutRef.current) {
+        clearTimeout(collapsedSaveTimeoutRef.current);
         saveCollapsedNodesToLocalStorage(collapsed);
       }
     };

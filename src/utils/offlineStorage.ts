@@ -152,16 +152,8 @@ export const saveData = async (key: string, value: any): Promise<void> => {
     throw new Error('IndexedDB is not supported in this environment');
   }
   
-  console.log(`Saving to IndexedDB, key: "${key}", value type: ${Array.isArray(value) ? 'Array' : typeof value}`);
-  if (Array.isArray(value)) {
-    console.log(`Array length: ${value.length}`);
-  } else if (typeof value === 'object' && value !== null) {
-    console.log(`Object keys: ${Object.keys(value).join(', ')}`);
-  }
-  
   const db = await getDB();
   await db.put('data', value, key);
-  console.log(`Successfully saved data to IndexedDB with key "${key}"`);
 };
 
 export const loadData = async (key: string): Promise<any | null> => {
@@ -169,22 +161,10 @@ export const loadData = async (key: string): Promise<any | null> => {
     throw new Error('IndexedDB is not supported in this environment');
   }
   
-  console.log(`Loading from IndexedDB, key: "${key}"`);
   const db = await getDB();
   const value = await db.get('data', key);
   
-  if (value !== undefined) {
-    console.log(`Found data in IndexedDB for key "${key}", type: ${Array.isArray(value) ? 'Array' : typeof value}`);
-    if (Array.isArray(value)) {
-      console.log(`Array length: ${value.length}`);
-    } else if (typeof value === 'object' && value !== null) {
-      console.log(`Object keys: ${Object.keys(value).join(', ')}`);
-    }
-    return value;
-  }
-  
-  console.log(`No data found for key "${key}"`);
-  return null;
+  return value !== undefined ? value : null;
 };
 
 export const addToQueue = async (item: OfflineQueueItem): Promise<void> => {

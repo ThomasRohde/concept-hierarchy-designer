@@ -23,11 +23,9 @@ export const saveTreeToLocalStorage = async (nodes: NodeData[]): Promise<boolean
 
   try {
     const timestamp = new Date().toISOString();
-    console.log('Saving tree data, nodes count:', nodes.length);
     
     await saveData(STORAGE_KEY, nodes);
     await saveData(LAST_SAVED_KEY, timestamp);
-    console.log('Tree data successfully saved to IndexedDB');
     return true;
   } catch (error) {
     console.error('Error saving tree data:', error);
@@ -62,36 +60,24 @@ export const saveCollapsedNodesToLocalStorage = async (collapsedNodes: Set<strin
  */
 export const loadTreeFromLocalStorage = async (): Promise<NodeData[] | null> => {
   try {
-    console.log('Loading tree data from IndexedDB...');
     const data = await loadData(STORAGE_KEY);
     
-    if (data) {
-      console.log('Data found in IndexedDB:', {
-        isArray: Array.isArray(data),
-        length: Array.isArray(data) ? data.length : 'not an array',
-        firstItem: Array.isArray(data) && data.length > 0 ? data[0] : null
-      });
-      
+    if (data && Array.isArray(data) && data.length > 0) {
       // Validate the data structure
-      if (Array.isArray(data) && data.length > 0) {
-        const isValid = data.every(node => 
-          node &&
-          typeof node === 'object' &&
-          typeof node.id === 'string' &&
-          typeof node.name === 'string' &&
-          typeof node.description === 'string' &&
-          (node.parent === null || typeof node.parent === 'string')
-        );
-        
-        if (isValid) {
-          console.log('Valid data found, returning', data.length, 'nodes');
-          return data;
-        }
+      const isValid = data.every(node => 
+        node &&
+        typeof node === 'object' &&
+        typeof node.id === 'string' &&
+        typeof node.name === 'string' &&
+        typeof node.description === 'string' &&
+        (node.parent === null || typeof node.parent === 'string')
+      );
+      
+      if (isValid) {
+        return data;
       }
-      console.warn('Invalid data structure found');
     }
     
-    console.log('No stored data found');
     return null;
   } catch (error) {
     console.error('Error loading tree data:', error);
@@ -108,7 +94,6 @@ export const loadCollapsedNodesFromLocalStorage = async (): Promise<Set<string>>
     const data = await loadData(COLLAPSED_NODES_KEY);
     
     if (data && Array.isArray(data) && data.every(id => typeof id === 'string')) {
-      console.log('Loaded collapsed nodes:', data.length);
       return new Set<string>(data);
     }
     return new Set<string>();
