@@ -49,12 +49,12 @@
   - [x] 3.4 Add PAT management (update, remove, test connection)
   - [x] 3.5 Create authentication status indicator in UI
 
-- [ ] 4.0 GitHub Gist API Integration & Naming
-  - [ ] 4.1 Design and implement Gist naming scheme (ch-[id]-[slug].json)
-  - [ ] 4.2 Create GitHub Gist API service wrapper
-  - [ ] 4.3 Implement Gist CRUD operations (create, read, update, delete)
-  - [ ] 4.4 Add model ID generation and slug utilities
-  - [ ] 4.5 Implement Gist metadata management (description, categories)
+- [x] 4.0 GitHub Gist API Integration & Naming
+  - [x] 4.1 Design and implement Gist naming scheme (ch-[id]-[slug].json)
+  - [x] 4.2 Create GitHub Gist API service wrapper
+  - [x] 4.3 Implement Gist CRUD operations (create, read, update, delete)
+  - [x] 4.4 Add model ID generation and slug utilities
+  - [x] 4.5 Implement Gist metadata management (description, categories)
 
 - [ ] 5.0 Sync Manager & Conflict Resolution
   - [ ] 5.1 Build sync manager for orchestrating local/Gist data flow
