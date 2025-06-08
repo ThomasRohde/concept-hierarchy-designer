@@ -2,7 +2,8 @@ import { useCallback } from 'react';
 import { NodeData } from '../types';
 import { 
   saveTreeToLocalStorage, 
-  loadTreeFromLocalStorage
+  loadTreeFromLocalStorage,
+  clearSavedData
 } from '../utils/storageUtils';
 
 /**
@@ -25,12 +26,12 @@ export const useAutoSave = () => {
   }, []);
 
   /**
-   * Check if the browser has data in localStorage
+   * Check if the browser has data in storage
    * @returns boolean indicating if stored data exists
    */
-  const hasStoredData = useCallback((): boolean => {
+  const hasStoredData = useCallback(async (): Promise<boolean> => {
     try {
-      const data = loadTreeFromLocalStorage();
+      const data = await loadTreeFromLocalStorage();
       return data !== null && data.length > 0;
     } catch (error) {
       console.error('Error checking for stored data:', error);
@@ -39,13 +40,12 @@ export const useAutoSave = () => {
   }, []);
 
   /**
-   * Clear all stored data from localStorage
+   * Clear all stored data from storage
    * @returns boolean indicating success
    */
-  const clearStoredData = useCallback((): boolean => {
+  const clearStoredData = useCallback(async (): Promise<boolean> => {
     try {
-      localStorage.removeItem('concept-hierarchy-data');
-      localStorage.removeItem('concept-hierarchy-collapsed-nodes');
+      await clearSavedData();
       return true;
     } catch (error) {
       console.error('Error clearing stored data:', error);

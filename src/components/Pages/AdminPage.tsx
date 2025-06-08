@@ -9,7 +9,8 @@ import {
   Download, 
   RefreshCw,
   Trash2,
-  Shield
+  Shield,
+  HardDrive
 } from 'lucide-react';
 import { Card, CardHeader, CardContent } from '../ui/Card';
 import { Button } from '../ui/Button';
@@ -22,6 +23,7 @@ import {
   formatBytes, 
   formatNumber 
 } from '../../utils/adminUtils';
+import DatabaseDebugger from '../DatabaseDebugger';
 
 const AdminPage: React.FC = () => {
   const { nodes } = useTreeContext();
@@ -383,6 +385,25 @@ const AdminPage: React.FC = () => {
                 </div>
               </div>
             )}
+          </CardContent>
+        </Card>      </motion.div>
+      
+      {/* Database Diagnostics Section */}
+      <motion.div variants={itemVariants}>
+        <Card className="border-blue-300 bg-gradient-to-r from-blue-50 to-indigo-50">
+          <CardHeader className="bg-gradient-to-r from-blue-100 to-indigo-100 border-b border-blue-200">
+            <div className="flex items-center gap-3 justify-center">
+              <div className="p-2 bg-blue-200 rounded-full">
+                <Database className="h-6 w-6 text-blue-700" />
+              </div>
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-blue-700">Database Tools</h2>
+                <p className="text-blue-600 text-sm">Troubleshoot IndexedDB issues</p>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-8">
+            <DatabaseDebugger />
           </CardContent>
         </Card>
       </motion.div>

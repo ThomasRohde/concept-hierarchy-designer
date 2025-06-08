@@ -6,6 +6,11 @@ import BurgerMenu from './BurgerMenu';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import CustomDragLayer from '../CustomDragLayer';
+import { InstallPrompt } from '../InstallPrompt';
+import { OfflineIndicator } from '../OfflineIndicator';
+import { SyncButton } from '../SyncButton';
+import { PWAFallback } from '../PWAFallback';
+import { SyncLoadingOverlay } from '../SyncLoadingOverlay';
 
 const Layout: React.FC = () => {
   return (
@@ -13,13 +18,19 @@ const Layout: React.FC = () => {
       <div className="min-h-screen p-4 sm:py-8 sm:px-4 flex flex-col items-center bg-gray-100 text-gray-900 h-screen">
         <CustomDragLayer />
         <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
+        <SyncLoadingOverlay />
+        <PWAFallback />
         <Card className="w-full max-w-5xl shadow-2xl flex flex-col flex-grow">
           <CardHeader>
-            <div className="flex items-center">
-              <BurgerMenu className="mr-2" />
-              <div className="text-xl sm:text-2xl font-bold text-center flex-grow">Concept Hierarchy Designer</div>
-              <div className="w-8">
-                {/* Empty div to balance the burger menu */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <BurgerMenu className="mr-2" />
+                <div className="text-xl sm:text-2xl font-bold">Concept Hierarchy Designer</div>
+              </div>
+              <div className="flex items-center gap-2">
+                <OfflineIndicator />
+                <SyncButton />
+                <InstallPrompt />
               </div>
             </div>
           </CardHeader>
