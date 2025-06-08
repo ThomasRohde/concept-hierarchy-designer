@@ -8,6 +8,7 @@ import { PromptsPage } from '../components/Pages/PromptsPage';
 import { useMagicWand } from '../hooks/useMagicWand';
 import { useTreeContext } from '../context/TreeContext';
 import { TreeProvider } from '../context/TreeContext';
+import { SyncProvider } from '../context/SyncContext';
 import { Button } from '../components/ui/Button';
 
 // Wrapper component for PromptsPage to provide required props
@@ -110,7 +111,9 @@ const router = createBrowserRouter([
 const AppRouter: React.FC = () => {
   return (
     <TreeProvider>
-      <RouterProvider router={router} />
+      <SyncProvider>
+        <RouterProvider router={router} />
+      </SyncProvider>
     </TreeProvider>
   );
 };

@@ -51,11 +51,11 @@
   - [ ] 3.6 Create sync status tracking and reporting
   - [ ] 3.7 Handle sync operations across multiple devices/tabs
 
-- [ ] 4.0 User Interface Enhancements for PWA
-  - [ ] 4.1 Create PWA install prompt component
-  - [ ] 4.2 Add offline/online status indicator
-  - [ ] 4.3 Implement manual sync trigger button
-  - [ ] 4.4 Create network status monitoring hook
-  - [ ] 4.5 Add sync context for managing sync state across components
-  - [ ] 4.6 Implement graceful degradation for unsupported browsers
-  - [ ] 4.7 Add loading states and feedback for sync operations
+- [x] 4.0 User Interface Enhancements for PWA
+  - [x] 4.1 Create PWA install prompt component
+  - [x] 4.2 Add offline/online status indicator
+  - [x] 4.3 Implement manual sync trigger button
+  - [x] 4.4 Create network status monitoring hook
+  - [x] 4.5 Add sync context for managing sync state across components
+  - [x] 4.6 Implement graceful degradation for unsupported browsers
+  - [x] 4.7 Add loading states and feedback for sync operations
