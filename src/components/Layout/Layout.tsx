@@ -31,7 +31,7 @@ const Layout: React.FC = () => {
               <div className="flex items-center gap-2">
                 <GitHubAuthStatus />
                 <OfflineIndicator />
-                <SyncButton />
+                <SyncButton variant="compact" />
                 <InstallPrompt />
               </div>
             </div>

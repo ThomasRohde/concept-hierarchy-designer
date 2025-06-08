@@ -92,6 +92,7 @@ const TreeControls: React.FC<TreeControlsProps> = ({
           onCreateNewPrompt={handleCreateNewPrompt}
           disabled={disabled}
         />
+
       </div>      <PromptEditor
         isOpen={isPromptEditorOpen}
         onClose={() => setIsPromptEditorOpen(false)}

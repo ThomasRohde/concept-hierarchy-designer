@@ -67,7 +67,11 @@ export class GitHubGistService {
     url: string, 
     options: RequestInit = {}
   ): Promise<T> {
+    console.log('🌐 GitHubGistService: Making request to:', url);
+    console.log('🌐 GitHubGistService: Request options:', options);
+    
     const headers = await this.getAuthHeaders();
+    console.log('🌐 GitHubGistService: Request headers prepared');
     
     const response = await fetch(url, {
       ...options,
@@ -77,20 +81,32 @@ export class GitHubGistService {
       }
     });
 
+    console.log('🌐 GitHubGistService: Response status:', response.status);
+    console.log('🌐 GitHubGistService: Response ok:', response.ok);
+
     if (!response.ok) {
       const errorText = await response.text();
+      console.log('❌ GitHubGistService: Error response:', errorText);
       throw new Error(`GitHub API error (${response.status}): ${errorText}`);
     }
 
-    return response.json();
+    const result = await response.json();
+    console.log('✅ GitHubGistService: Success response:', result);
+    return result;
   }
 
   /**
    * Creates a new Gist from a TreeModel
    */
   static async createGist(model: TreeModel, isPublic: boolean = false, author?: string): Promise<Gist> {
+    console.log('📝 GitHubGistService: Creating gist for model:', model.id);
+    console.log('📝 GitHubGistService: Public?', isPublic);
+    console.log('📝 GitHubGistService: Author:', author);
+    
     const metadata = createGistMetadata(model, author, isPublic);
     const filename = generateGistFilename(metadata.modelId, metadata.slug);
+    
+    console.log('📝 GitHubGistService: Generated filename:', filename);
     
     const gistData: CreateGistRequest = {
       description: createGistDescription(model),
@@ -109,10 +125,15 @@ export class GitHubGistService {
       }
     };
 
-    return this.makeRequest<Gist>(this.BASE_URL, {
+    console.log('📝 GitHubGistService: Prepared gist data:', gistData);
+
+    const result = await this.makeRequest<Gist>(this.BASE_URL, {
       method: 'POST',
       body: JSON.stringify(gistData)
     });
+    
+    console.log('✅ GitHubGistService: Gist created successfully:', result.id, result.html_url);
+    return result;
   }
 
   /**

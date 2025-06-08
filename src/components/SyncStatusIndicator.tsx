@@ -19,6 +19,8 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({ classN
   }, [syncManager]);
 
   const handleManualSync = () => {
+    console.log('🔄 SyncStatusIndicator: Manual sync button clicked');
+    console.log('🔄 SyncStatusIndicator: Current status:', status);
     syncManager.manualSync();
   };
 

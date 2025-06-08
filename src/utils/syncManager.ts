@@ -125,6 +125,13 @@ export class SyncManager {
     model: TreeModel,
     gistId?: string
   ): Promise<void> {
+    console.log('📋 SyncManager: Enqueuing sync item...');
+    console.log('📋 SyncManager: Action:', action);
+    console.log('📋 SyncManager: Model ID:', model.id);
+    console.log('📋 SyncManager: Model name:', model.name);
+    console.log('📋 SyncManager: Gist ID:', gistId);
+    console.log('📋 SyncManager: Model nodes count:', model.nodes.length);
+    
     const item: SyncQueueItem = {
       type: 'SYNC',
       payload: { action, model, gistId },
@@ -137,11 +144,24 @@ export class SyncManager {
       maxRetries: 3
     };
 
-    await addToQueue(item);
-    this.updatePendingCount();
+    console.log('📋 SyncManager: Created queue item:', item);
+    
+    try {
+      await addToQueue(item);
+      console.log('✅ SyncManager: Item added to queue successfully');
+    } catch (error) {
+      console.error('❌ SyncManager: Failed to add item to queue:', error);
+      throw error;
+    }
+    
+    await this.updatePendingCount();
+    console.log('📋 SyncManager: Updated pending count, new status:', this.status.pendingOperations);
     
     if (this.status.isOnline && !this.syncInProgress) {
+      console.log('📋 SyncManager: Triggering immediate queue processing...');
       this.processPendingQueue();
+    } else {
+      console.log('📋 SyncManager: Not processing queue immediately - online:', this.status.isOnline, 'syncInProgress:', this.syncInProgress);
     }
   }
 
@@ -156,13 +176,19 @@ export class SyncManager {
   }
 
   async processPendingQueue(): Promise<void> {
+    console.log('⚙️ SyncManager: Processing pending queue...');
+    console.log('⚙️ SyncManager: Sync in progress?', this.syncInProgress);
+    console.log('⚙️ SyncManager: Online?', this.status.isOnline);
+    
     if (this.syncInProgress || !this.status.isOnline) {
+      console.log('⚠️ SyncManager: Skipping queue processing (already syncing or offline)');
       return;
     }
 
     const authStatus = await GitHubAuthService.testConnection();
+    console.log('⚙️ SyncManager: Auth status:', authStatus);
     if (!authStatus.isAuthenticated) {
-      console.warn('Cannot sync: GitHub authentication required');
+      console.warn('❌ SyncManager: Cannot sync: GitHub authentication required');
       return;
     }
 
@@ -170,28 +196,35 @@ export class SyncManager {
     this.status.isSyncing = true;
     this.status.lastError = undefined;
     this.notifyListeners();
+    console.log('⚙️ SyncManager: Started sync process');
 
     try {
       const queue = await getQueue();
       const syncItems = queue.filter(item => item.type === 'SYNC') as SyncQueueItem[];
+      console.log('⚙️ SyncManager: Found', syncItems.length, 'sync items in queue');
 
       for (const item of syncItems) {
+        console.log('⚙️ SyncManager: Processing sync item:', item.action, 'for model:', item.modelId);
         try {
           const result = await this.processSyncItem(item);
+          console.log('⚙️ SyncManager: Sync item result:', result);
           
           if (result.success) {
+            console.log('✅ SyncManager: Sync item successful, removing from queue');
             await this.removeFromQueue(item);
           } else if (result.conflict) {
+            console.log('⚠️ SyncManager: Sync conflict detected, handling...');
             await this.handleConflict(result.conflict);
             await this.removeFromQueue(item);
           } else if (item.retryCount < item.maxRetries) {
+            console.log('🔄 SyncManager: Sync item failed, scheduling retry');
             await this.scheduleRetry(item);
           } else {
-            console.error(`Max retries exceeded for sync item:`, item);
+            console.error('❌ SyncManager: Max retries exceeded for sync item:', item);
             await this.removeFromQueue(item);
           }
         } catch (error) {
-          console.error('Error processing sync item:', error);
+          console.error('❌ SyncManager: Error processing sync item:', error);
           if (item.retryCount < item.maxRetries) {
             await this.scheduleRetry(item);
           } else {
@@ -201,14 +234,16 @@ export class SyncManager {
       }
 
       this.status.lastSyncTime = Date.now();
+      console.log('✅ SyncManager: Queue processing completed');
     } catch (error) {
-      console.error('Error processing sync queue:', error);
+      console.error('❌ SyncManager: Error processing sync queue:', error);
       this.status.lastError = error instanceof Error ? error.message : 'Unknown sync error';
     } finally {
       this.syncInProgress = false;
       this.status.isSyncing = false;
       await this.updatePendingCount();
       this.notifyListeners();
+      console.log('⚙️ SyncManager: Sync process finished');
     }
   }
 
@@ -239,14 +274,26 @@ export class SyncManager {
   }
 
   private async createGist(model: TreeModel): Promise<SyncResult> {
+    console.log('📝 SyncManager: Creating gist for model:', model.id);
     try {
       const gist = await GitHubGistService.createGist(model, model.isPublic);
+      console.log('✅ SyncManager: Gist created successfully:', gist.id, gist.html_url);
+      
+      // CRITICAL: Update the model with the new gist information
+      model.gistId = gist.id;
+      model.gistUrl = gist.html_url;
+      
+      // Save the updated model back to storage
+      await saveData('currentTreeModel', model);
+      console.log('💾 SyncManager: Updated model saved with gist info');
+      
       return {
         success: true,
         action: 'CREATED',
         gistId: gist.id
       };
     } catch (error) {
+      console.log('❌ SyncManager: Failed to create gist:', error);
       return {
         success: false,
         action: 'NO_CHANGE',
@@ -256,6 +303,7 @@ export class SyncManager {
   }
 
   private async updateGist(model: TreeModel, gistId?: string): Promise<SyncResult> {
+    console.log('🔄 SyncManager: Updating gist:', gistId);
     if (!gistId) {
       return { success: false, action: 'NO_CHANGE', error: 'No gist ID provided' };
     }
@@ -276,12 +324,34 @@ export class SyncManager {
       }
 
       const updatedGist = await GitHubGistService.updateGist(gistId, model, existingGist);
+      console.log('✅ SyncManager: Gist updated successfully:', updatedGist.id);
+      
+      // Update the model with current gist information
+      model.gistId = updatedGist.id;
+      model.gistUrl = updatedGist.html_url;
+      await saveData('currentTreeModel', model);
+      
       return {
         success: true,
         action: 'UPDATED',
         gistId: updatedGist.id
       };
     } catch (error) {
+      console.log('❌ SyncManager: Failed to update gist:', error);
+      
+      // Check if this is a 404 error indicating the gist was deleted
+      if (error instanceof Error && (error.message.includes('404') || error.message.includes('Not Found'))) {
+        console.log('🗑️ SyncManager: Gist appears deleted, clearing local reference and creating new one');
+        
+        // Clear the gist ID from the model
+        model.gistId = undefined;
+        model.gistUrl = undefined;
+        await saveData('currentTreeModel', model);
+        
+        // Try to create a new gist instead
+        return await this.createGist(model);
+      }
+      
       return {
         success: false,
         action: 'NO_CHANGE',
