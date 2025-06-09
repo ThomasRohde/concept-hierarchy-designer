@@ -216,7 +216,7 @@ export const saveCapabilityCardAsSvg = async (
       throw new Error('Could not extract card data from element');
     }
 
-    const { current, children, grandchildren } = nodes;
+    const { current, children } = nodes;
     
     // Calculate layout dimensions
     const cardWidth = CAPABILITY_CARD_LAYOUT.CARDS_PER_ROW.FIXED_CARD_WIDTH;
@@ -425,10 +425,15 @@ export const saveCapabilityCardAsSvg = async (
   }
 };
 
+interface CardData {
+  current: NodeData;
+  children: Array<NodeData & { grandchildren?: NodeData[] }>;
+}
+
 /**
  * Extracts structured data from the capability card DOM element
  */
-function extractCardData(element: HTMLElement) {
+function extractCardData(_element: HTMLElement): CardData | null {
   // This is a simplified extraction - in practice, you'd want to pass
   // the actual node data to the export function directly
   // For now, return null to indicate we need to refactor the calling code
