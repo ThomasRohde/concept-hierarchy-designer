@@ -59,7 +59,7 @@ const TreeControls: React.FC<TreeControlsProps> = ({
 
   return (
     <>
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex items-center gap-2">
         <Button
           onClick={onExpandAll}
           disabled={disabled}
