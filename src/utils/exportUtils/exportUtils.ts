@@ -3,7 +3,6 @@ import { saveTreeAsJson } from './jsonExporter.js';
 import { saveCapabilityCardAsHtml } from './htmlExporter.js';
 import { saveCapabilityCardAsPdf } from './pdfExporter.js';
 import { saveCapabilityCardAsSvg } from './svgExporter.js';
-import { saveCapabilityCardAsSvg as saveCapabilityCardAsSvgEnhanced } from './capabilityCardSvgExporter.js';
 import { saveCapabilityCardAsPng } from './pngExporter.js';
 
 export type ExportFormat = 'json' | 'html' | 'pdf' | 'svg' | 'svg-enhanced' | 'png';
@@ -69,19 +68,15 @@ export const exportCapabilityCard = async (
         break;
         
       case 'svg':
-        if (elementRef?.current) {
-          await saveCapabilityCardAsSvg(elementRef.current, actualFilename);
-        } else {
-          throw new Error('Element reference is required for SVG export');
-        }
+        // Use pure SVG export that doesn't require DOM element
+        const { exportCapabilityCardAsSvg } = await import('./svgExporter.js');
+        await exportCapabilityCardAsSvg(nodes, currentNodeId, actualFilename);
         break;
         
       case 'svg-enhanced':
-        if (elementRef?.current) {
-          await saveCapabilityCardAsSvgEnhanced(elementRef.current, nodes, currentNodeId, actualFilename);
-        } else {
-          throw new Error('Element reference is required for enhanced SVG export');
-        }
+        // Use the same pure SVG export for enhanced version
+        const { exportCapabilityCardAsSvg: exportEnhancedSvg } = await import('./svgExporter.js');
+        await exportEnhancedSvg(nodes, currentNodeId, actualFilename);
         break;
         
       case 'png':

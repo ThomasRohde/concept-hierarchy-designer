@@ -155,22 +155,8 @@ export const saveCapabilityCardAsSvg = async (
     background.setAttribute('fill', 'white');
     svg.appendChild(background);
     
-    // Convert the HTML to SVG using foreignObject
-    const foreignObject = document.createElementNS(svgNS, 'foreignObject');
-    foreignObject.setAttribute('width', '100%');
-    foreignObject.setAttribute('height', '100%');
-    foreignObject.setAttribute('x', '0');
-    foreignObject.setAttribute('y', '0');
-    
-    // Create a wrapper div with proper namespace
-    const wrapper = document.createElement('div');
-    wrapper.style.width = '100%';
-    wrapper.style.height = '100%';
-    wrapper.style.fontFamily = 'system-ui, -apple-system, sans-serif';
-    wrapper.appendChild(exportElement.cloneNode(true));
-    
-    foreignObject.appendChild(wrapper);
-    svg.appendChild(foreignObject);
+    // Note: This file is deprecated. Use svgExporter.ts for pure SVG export without foreignObject
+    throw new Error('This SVG exporter is deprecated. Use the pure SVG exporter instead.');
     
     // Clean up temporary container
     document.body.removeChild(tempContainer);
