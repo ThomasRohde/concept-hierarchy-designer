@@ -116,7 +116,6 @@ export const GitHubPATModal: React.FC<GitHubPATModalProps> = ({
         onClose();
       }}
       title="GitHub Authentication"
-      className="max-w-md"
     >
       <div className="space-y-4">
         {/* Current Status */}

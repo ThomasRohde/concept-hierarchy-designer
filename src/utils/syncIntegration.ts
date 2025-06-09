@@ -307,15 +307,13 @@ export const syncCurrentTreeToGitHub = async (
 /**
  * Loads a tree model from a GitHub Gist
  */
-export const loadTreeFromGitHub = async (gistId: string): Promise<{
+export const loadTreeFromGitHub = async (_gistId: string): Promise<{
   success: boolean;
   nodes?: NodeData[];
   model?: TreeModel;
   error?: string;
 }> => {
   try {
-    const syncManager = SyncManager.getInstance();
-    
     // This would typically be handled by a separate import service
     // For now, we'll indicate this feature needs implementation
     return {

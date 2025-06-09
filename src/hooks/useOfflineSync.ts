@@ -1,10 +1,7 @@
-import { useEffect } from 'react';
-import { useTreeContext } from '../context/TreeContext';
 import { useSyncContext } from '../context/SyncContext';
 
 export const useOfflineSync = () => {
-  const { nodes, collapsed } = useTreeContext();
-  const { markChanges, syncState, triggerSync } = useSyncContext();
+  const { syncState, triggerSync } = useSyncContext();
 
   // Disable sync functionality until actual cloud sync is implemented (task 3.0)
   // TODO: Enable these effects when cloud sync service is implemented

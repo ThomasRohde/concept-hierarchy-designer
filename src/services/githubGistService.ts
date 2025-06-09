@@ -1,5 +1,5 @@
 import { GitHubAuthService } from './githubAuthService';
-import { TreeModel, GistMetadata } from '../types';
+import { TreeModel } from '../types';
 import { 
   generateGistFilename, 
   createGistDescription, 

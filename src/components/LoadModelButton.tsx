@@ -14,7 +14,7 @@ import { toast } from 'react-hot-toast';
 export const LoadModelButton: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { setNodes, setCollapsed } = useTreeContext();
-  const { syncState, markChanges } = useSyncContext();
+  const { markChanges } = useSyncContext();
 
   const handleLoadModel = async (model: TreeModel) => {
     try {

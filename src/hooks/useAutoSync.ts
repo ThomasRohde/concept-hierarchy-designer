@@ -28,7 +28,7 @@ export const useAutoSync = (options: AutoSyncOptions = {}): AutoSyncHook => {
     enableSyncOnFocus = true
   } = options;
 
-  const [isAutoSyncEnabled, setIsAutoSyncEnabled] = useState(true);
+  const [isAutoSyncEnabled, setAutoSyncEnabled] = useState(true);
   const [lastSyncTime, setLastSyncTime] = useState<number | null>(null);
   const [syncInProgress, setSyncInProgress] = useState(false);
   
@@ -69,11 +69,11 @@ export const useAutoSync = (options: AutoSyncOptions = {}): AutoSyncHook => {
   };
 
   // Debounced sync on save
-  const debouncedSyncOnSave = (
+  const debouncedSyncOnSave = async (
     model: TreeModel, 
     action: 'CREATE' | 'UPDATE' | 'DELETE', 
     gistId?: string
-  ) => {
+  ): Promise<void> => {
     if (!enableSyncOnSave || !(isAutoSyncEnabled)) return;
 
     const key = `${model.id}_${action}`;
@@ -193,7 +193,7 @@ export const useAutoSync = (options: AutoSyncOptions = {}): AutoSyncHook => {
 
   return {
     isAutoSyncEnabled,
-    setAutoSyncEnabled,
+    setAutoSyncEnabled: setAutoSyncEnabled,
     triggerSync: enableSyncOnSave ? debouncedSyncOnSave : triggerSync,
     lastSyncTime,
     syncInProgress

@@ -16,7 +16,7 @@ export const SyncButton: React.FC<SyncButtonProps> = ({
   showProgress = false,
   className = ''
 }) => {
-  const { syncState, triggerSync, clearError } = useSyncContext();
+  const { syncState } = useSyncContext();
   const { nodes } = useTreeContext();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [syncStatus, setSyncStatus] = useState<{
@@ -173,7 +173,7 @@ export const SyncButton: React.FC<SyncButtonProps> = ({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
           </div>
-          {variant === 'compact' ? null : <span>{getButtonText()}</span>}
+          {variant !== 'compact' && <span>{getButtonText()}</span>}
           {showProgress && syncState.syncProgress && (
             <span className="text-xs opacity-75">
               {Math.round(syncState.syncProgress)}%
@@ -189,7 +189,7 @@ export const SyncButton: React.FC<SyncButtonProps> = ({
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          {variant === 'compact' ? null : <span>Retry</span>}
+          {variant !== 'compact' && <span>Retry</span>}
         </>
       );
     }
@@ -199,8 +199,8 @@ export const SyncButton: React.FC<SyncButtonProps> = ({
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
         </svg>
-        {variant === 'compact' ? null : <span>{getButtonText()}</span>}
-        {syncState.pendingOperations > 0 && variant !== 'icon-only' && (
+        {variant !== 'compact' && <span>{getButtonText()}</span>}
+        {syncState.pendingOperations > 0 && variant === 'default' && (
           <span className="text-xs bg-yellow-100 text-yellow-800 px-1.5 py-0.5 rounded-full">
             {syncState.pendingOperations}
           </span>
@@ -209,11 +209,6 @@ export const SyncButton: React.FC<SyncButtonProps> = ({
     );
   };
 
-  const getButtonSize = () => {
-    if (variant === 'icon-only') return 'sm';
-    if (variant === 'compact') return 'sm';
-    return 'sm';
-  };
 
   const getButtonTitle = () => {
     if (!isAuthenticated) {
@@ -237,7 +232,7 @@ export const SyncButton: React.FC<SyncButtonProps> = ({
         onClick={handleSyncClick}
         disabled={isDisabled}
         variant={syncState.syncError ? "destructive" : "outline"}
-        size={getButtonSize()}
+        size="sm"
         className={`flex items-center gap-2 ${
           variant === 'icon-only' ? 'w-9 h-9 p-0' : 
           variant === 'compact' ? 'min-w-[60px]' : 'min-w-[100px]'

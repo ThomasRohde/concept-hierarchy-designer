@@ -31,7 +31,6 @@ export interface ModelListItem {
 }
 
 const LOCAL_MODELS_KEY = 'local_models';
-const SYNC_METADATA_KEY = 'sync_metadata';
 
 export class ModelSyncService {
   /**

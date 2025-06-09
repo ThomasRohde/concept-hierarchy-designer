@@ -9,8 +9,7 @@ import {
   Download, 
   RefreshCw,
   Trash2,
-  Shield,
-  HardDrive
+  Shield
 } from 'lucide-react';
 import { Card, CardHeader, CardContent } from '../ui/Card';
 import { Button } from '../ui/Button';

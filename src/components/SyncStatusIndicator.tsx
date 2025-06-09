@@ -26,7 +26,7 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({ classN
 
   const handleResolveConflict = async (
     resolution: 'USE_LOCAL' | 'USE_REMOTE' | 'MERGE',
-    customResolutions?: Record<string, 'LOCAL' | 'REMOTE'>
+    _customResolutions?: Record<string, 'LOCAL' | 'REMOTE'>
   ) => {
     if (selectedConflict) {
       await syncManager.resolveConflict(selectedConflict.id, resolution);

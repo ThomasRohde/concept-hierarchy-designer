@@ -3,7 +3,7 @@ import { Modal } from './ui/Modal';
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
 import { SyncConflict } from '../utils/syncManager';
-import { ConflictResolver, ModelConflictAnalysis, NodeConflict, ConflictDiff } from '../utils/conflictResolver';
+import { ConflictResolver, NodeConflict, ConflictDiff } from '../utils/conflictResolver';
 
 interface ConflictResolutionModalProps {
   conflict: SyncConflict;

@@ -3,7 +3,6 @@ import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { Modal } from './ui/Modal';
 import { useSyncContext } from '../context/SyncContext';
-import { SyncManager } from '../utils/syncManager';
 
 interface SyncSettings {
   autoSyncEnabled: boolean;
