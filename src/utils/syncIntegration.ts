@@ -82,7 +82,35 @@ export const convertNodesToTreeModel = async (
   console.log('🔄 convertNodesToTreeModel: Description override:', description);
   
   // Try to load existing model metadata or create new
-  const existingModel = await getCurrentTreeModel();
+  let existingModel = await getCurrentTreeModel();
+  
+  // If no existing model found, check for persisted gist association
+  if (!existingModel) {
+    try {
+      const gistAssociation = await loadData('gistAssociation');
+      if (gistAssociation && gistAssociation.gistId) {
+        console.log('🔍 convertNodesToTreeModel: Found persisted gist association:', gistAssociation.gistId);
+        
+        // Try to fetch the gist to verify it still exists and get updated metadata
+        const { GitHubGistService } = await import('../services/githubGistService');
+        try {
+          const existingGist = await GitHubGistService.getGist(gistAssociation.gistId);
+          const remoteModel = GitHubGistService.parseGistToModel(existingGist);
+          
+          if (remoteModel) {
+            console.log('✅ convertNodesToTreeModel: Successfully retrieved model from persisted gist');
+            existingModel = remoteModel;
+          }
+        } catch (error) {
+          console.warn('⚠️ convertNodesToTreeModel: Persisted gist no longer accessible:', error);
+          // Clear invalid association
+          await saveData('gistAssociation', null);
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ convertNodesToTreeModel: Failed to check gist association:', error);
+    }
+  }
   if (existingModel) {
     console.log('🔄 convertNodesToTreeModel: Loaded existing TreeModel with preserved metadata:', {
       id: existingModel.id,
