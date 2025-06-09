@@ -36,7 +36,7 @@ const CapabilityCard: React.FC<CapabilityCardProps> = ({
       ref={containerRef} 
       className={`h-full w-full p-6 overflow-auto ${className}`}
     >      <div className="space-y-6">        {/* Level N - Current node (blue background, spans width of children) */}
-        <div className="overflow-x-auto">
+        <div>
           <div 
             className={`flex gap-4 pb-2 ${kids.length <= 4 ? 'w-full' : ''}`}
             style={kids.length <= 4 ? {} : { minWidth: 'fit-content' }}
@@ -58,7 +58,7 @@ const CapabilityCard: React.FC<CapabilityCardProps> = ({
         </div>{/* Level N+1 and N+2 - Children with their grandchildren below */}
         {kids.length > 0 && (
           <>            {/* Children row with responsive layout */}
-            <div className="overflow-x-auto">
+            <div>
               <div 
                 className={`flex gap-4 pb-2 ${kids.length <= 4 ? 'w-full' : ''}`}
                 style={kids.length <= 4 ? {} : { minWidth: 'fit-content' }}
@@ -136,7 +136,7 @@ const CapabilityCard: React.FC<CapabilityCardProps> = ({
               }
 
               return (
-                <div className="overflow-x-auto">
+                <div>
                   {grandchildrenRows}
                 </div>
               );
