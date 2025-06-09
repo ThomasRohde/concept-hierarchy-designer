@@ -3,9 +3,10 @@ import { saveTreeAsJson } from './jsonExporter.js';
 import { saveCapabilityCardAsHtml } from './htmlExporter.js';
 import { saveCapabilityCardAsPdf } from './pdfExporter.js';
 import { saveCapabilityCardAsSvg } from './svgExporter.js';
+import { saveCapabilityCardAsSvg as saveCapabilityCardAsSvgEnhanced } from './capabilityCardSvgExporter.js';
 import { saveCapabilityCardAsPng } from './pngExporter.js';
 
-export type ExportFormat = 'json' | 'html' | 'pdf' | 'svg' | 'png';
+export type ExportFormat = 'json' | 'html' | 'pdf' | 'svg' | 'svg-enhanced' | 'png';
 
 /**
  * Validates that the provided JSON data conforms to the expected NodeData structure
@@ -31,12 +32,13 @@ export const validateNodeData = (data: any): data is NodeData[] => {
  * @param currentNodeId The ID of the current node to be exported
  * @param format The export format
  * @param elementRef Optional reference to the DOM element for HTML/SVG/PNG exports
+ * @param filename Optional custom filename
  */
 export const exportCapabilityCard = async (
   nodes: NodeData[],
   currentNodeId: string,
   format: ExportFormat,
-  elementRef?: React.RefObject<HTMLElement>,
+  elementRef?: React.RefObject<HTMLElement> | { current: HTMLElement },
   filename?: string
 ) => {
   // Default filename based on node name
@@ -71,6 +73,14 @@ export const exportCapabilityCard = async (
           await saveCapabilityCardAsSvg(elementRef.current, actualFilename);
         } else {
           throw new Error('Element reference is required for SVG export');
+        }
+        break;
+        
+      case 'svg-enhanced':
+        if (elementRef?.current) {
+          await saveCapabilityCardAsSvgEnhanced(elementRef.current, nodes, currentNodeId, actualFilename);
+        } else {
+          throw new Error('Element reference is required for enhanced SVG export');
         }
         break;
         

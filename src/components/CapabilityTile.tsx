@@ -5,6 +5,7 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 import { NodeData } from '../types';
+import { getCardHeight, getCardPadding } from '../constants/capabilityCardLayout';
 
 interface CapabilityTileProps {
   node: NodeData;
@@ -12,6 +13,8 @@ interface CapabilityTileProps {
   onClick?: () => void; // Handler for when tile is clicked
   variant?: 'current' | 'child' | 'grandchild';
   className?: string; // Additional CSS classes
+  exportMode?: boolean; // Whether to use fixed heights for export
+  fixedHeight?: number; // Override height when in export mode
 }
 
 const CapabilityTile: React.FC<CapabilityTileProps> = ({ 
@@ -19,7 +22,9 @@ const CapabilityTile: React.FC<CapabilityTileProps> = ({
   span = false, 
   onClick,
   variant = 'child',
-  className = ''
+  className = '',
+  exportMode = false,
+  fixedHeight
 }) => {
   if (!node) {
     return null;
@@ -42,16 +47,35 @@ const CapabilityTile: React.FC<CapabilityTileProps> = ({
       default:
         return 'bg-white border-gray-200 shadow-sm';
     }
+  };
+
+  // Calculate styles for export mode
+  const getExportStyles = (): React.CSSProperties => {
+    if (!exportMode) return {};
+    
+    const height = fixedHeight || getCardHeight(variant);
+    const padding = getCardPadding(variant);
+    
+    return {
+      height: `${height}px`,
+      minHeight: `${height}px`,
+      maxHeight: `${height}px`,
+      padding: `${padding}px`,
+      boxSizing: 'border-box',
+      overflow: 'hidden',
+    };
   };  return (
     <div
       className={`
-        rounded-lg border transition-all duration-200 flex flex-col h-full w-full
+        rounded-lg border transition-all duration-200 flex flex-col w-full
         ${getVariantClasses()}
         ${onClick ? 'cursor-pointer hover:shadow-lg' : ''}
         ${span ? 'col-span-full' : ''}
         ${className}
-        ${variant === 'current' ? 'p-6' : variant === 'child' ? 'p-4' : 'p-3'}
+        ${exportMode ? '' : 'h-full'}
+        ${exportMode ? '' : (variant === 'current' ? 'p-6' : variant === 'child' ? 'p-4' : 'p-3')}
       `}
+      style={getExportStyles()}
       onClick={onClick}
     >
         {/* Header */}

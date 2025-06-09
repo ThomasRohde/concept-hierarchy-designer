@@ -57,8 +57,52 @@ const CapabilityCardModal: React.FC<CapabilityCardModalProps> = ({
         // Generate filename based on the node name
         const filename = currentNode?.name 
           ? `capability-card-${currentNode.name.toLowerCase().replace(/\s+/g, '-')}`
-          : 'capability-card';        // Export using the utility function
-        await exportCapabilityCard(nodes, currentNodeId, format, { current: containerElement }, filename);
+          : 'capability-card';
+        
+        // For enhanced SVG export, we need to create a temporary version with export mode
+        if (format === 'svg-enhanced') {
+          // Create a temporary container for the export version
+          const tempContainer = document.createElement('div');
+          tempContainer.style.position = 'absolute';
+          tempContainer.style.top = '-9999px';
+          tempContainer.style.left = '-9999px';
+          tempContainer.style.visibility = 'hidden';
+          tempContainer.style.pointerEvents = 'none';
+          document.body.appendChild(tempContainer);
+          
+          // Use React to render the CapabilityCard with export mode
+          // This requires dynamic import and rendering
+          const React = await import('react');
+          const ReactDOM = await import('react-dom/client');
+          const CapabilityCard = (await import('./CapabilityCard')).default;
+          
+          const root = ReactDOM.createRoot(tempContainer);
+          
+          // Render with export mode enabled
+          root.render(
+            React.createElement(CapabilityCard, {
+              nodes,
+              currentId: currentNodeId,
+              exportMode: true,
+              className: 'w-max h-auto'
+            })
+          );
+          
+          // Wait for render to complete
+          await new Promise(resolve => setTimeout(resolve, 100));
+          
+          try {
+            // Export using the enhanced SVG exporter
+            await exportCapabilityCard(nodes, currentNodeId, format, { current: tempContainer.firstElementChild as HTMLElement }, filename);
+          } finally {
+            // Clean up
+            root.unmount();
+            document.body.removeChild(tempContainer);
+          }
+        } else {
+          // Use standard export for other formats
+          await exportCapabilityCard(nodes, currentNodeId, format, { current: containerElement }, filename);
+        }
       } catch (error) {
         console.error('Export failed:', error);
         // TODO: Add error notification here
