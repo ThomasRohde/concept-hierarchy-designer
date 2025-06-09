@@ -10,9 +10,9 @@ const AboutPage: React.FC = () => {
         <section className="mb-8">
           <h2 className="text-xl font-semibold mb-3">Purpose</h2>
           <p className="text-gray-700 mb-4">
-            Concept Hierarchy Designer is a powerful tool for creating, organizing, and visualizing hierarchical knowledge structures.
+            Concept Hierarchy Designer is a powerful Progressive Web App (PWA) for creating, organizing, and visualizing hierarchical knowledge structures.
             It was developed to help researchers, educators, and knowledge workers build conceptual frameworks and knowledge maps
-            in a simple and intuitive way.
+            in a simple and intuitive way. With cloud synchronization via GitHub Gists, you can backup, share, and collaborate on your concept trees from anywhere.
           </p>
         </section>
           <section className="mb-8">
@@ -24,10 +24,15 @@ const AboutPage: React.FC = () => {
             <li>Comprehensive keyboard shortcuts for efficient navigation</li>
             <li>Unlimited depth for complex hierarchies</li>
             <li>Smart clipboard with copy/paste functionality</li>
-            <li>AI-powered suggestions with Magic Wand feature</li>
-            <li>Import and export in standard JSON format</li>
-            <li>Responsive design works on desktop and tablet</li>
+            <li>AI-powered suggestions with Magic Wand feature and multiple prompt system</li>
+            <li>GitHub Gist synchronization for backup and sharing</li>
+            <li>Offline-first PWA - works without internet connection</li>
+            <li>Background sync with conflict resolution</li>
+            <li>Secure Personal Access Token authentication with client-side encryption</li>
+            <li>Import and export in multiple formats (JSON, SVG, PNG, PDF, HTML)</li>
+            <li>Responsive design works on desktop, tablet, and mobile</li>
             <li>Optimized for performance with virtualized rendering for large hierarchies</li>
+            <li>IndexedDB storage with localStorage fallback</li>
           </ul>
         </section>
         
@@ -41,6 +46,9 @@ const AboutPage: React.FC = () => {
             <li><strong>Home/End:</strong> Jump to first or last visible node</li>
             <li><strong>Enter:</strong> Edit the currently selected node</li>
             <li><strong>Click/Tab:</strong> Select nodes for keyboard navigation</li>
+            <li><strong>Ctrl+Shift+S:</strong> Quick sync to GitHub Gist</li>
+            <li><strong>Ctrl+Enter:</strong> Submit forms in modal dialogs</li>
+            <li><strong>ESC:</strong> Close modal dialogs</li>
             <li><strong>Visual Feedback:</strong> Selected nodes are highlighted with gray background</li>
             <li><strong>Auto-scroll:</strong> Focused nodes automatically scroll into view</li>
           </ul>
@@ -53,17 +61,23 @@ const AboutPage: React.FC = () => {
           <ul className="list-disc pl-4 sm:pl-5 space-y-2">
             <li>React for component-based UI</li>
             <li>TypeScript for type safety</li>
+            <li>Vite for fast development and building</li>
             <li>Framer Motion for smooth animations</li>
             <li>React DnD for drag and drop functionality</li>
             <li>React Router for navigation</li>
             <li>Tailwind CSS for styling</li>
+            <li>Vite PWA Plugin for Progressive Web App capabilities</li>
+            <li>Workbox for service worker and caching strategies</li>
+            <li>IndexedDB for primary client-side storage</li>
+            <li>GitHub Gist API for cloud synchronization</li>
+            <li>Web Crypto API for secure token encryption</li>
           </ul>
         </section>
         
         <section className="mb-8">
-          <h2 className="text-xl font-semibold mb-3">Accessibility</h2>
+          <h2 className="text-xl font-semibold mb-3">Accessibility & PWA Features</h2>
           <p className="text-gray-700 mb-4">
-            The application is designed with accessibility in mind:
+            The application is designed with accessibility and modern web standards in mind:
           </p>
           <ul className="list-disc pl-4 sm:pl-5 space-y-2">
             <li>Full keyboard navigation support for all tree operations</li>
@@ -71,6 +85,10 @@ const AboutPage: React.FC = () => {
             <li>ARIA labels and semantic HTML for screen readers</li>
             <li>Responsive design that works across different screen sizes</li>
             <li>High contrast visual feedback for interactive elements</li>
+            <li>Progressive Web App - installable on desktop and mobile devices</li>
+            <li>Offline functionality with service worker caching</li>
+            <li>Background sync capabilities when connection is restored</li>
+            <li>Secure local storage with encryption for sensitive data</li>
           </ul>
         </section>
           <section className="mb-8">

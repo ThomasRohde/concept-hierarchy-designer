@@ -15,6 +15,8 @@ export const createInitialData = (): NodeData[] => {
   const dragDropId = genId();
   const utilsId = genId();
   const adminId = genId();
+  const cloudSyncId = genId();
+  const pwaFeaturesId = genId();
   
   // Level 2 IDs - Core System
   const treeContextId = genId();
@@ -61,6 +63,18 @@ export const createInitialData = (): NodeData[] => {
   const statisticsId = genId();
   const performanceId = genId();
   const debuggingId = genId();
+  
+  // Level 2 IDs - Cloud Sync
+  const githubIntegrationId = genId();
+  const syncManagerId = genId();
+  const authenticationId = genId();
+  const conflictResolutionId = genId();
+  
+  // Level 2 IDs - PWA Features
+  const offlineCapabilitiesId = genId();
+  const serviceWorkerIntegrationId = genId();
+  const backgroundSyncId = genId();
+  const storageEnhancementsId = genId();
   
   // Level 3 IDs - Tree Context & State Management
   const nodeArrayId = genId();
@@ -114,11 +128,27 @@ export const createInitialData = (): NodeData[] => {
   const pasteOperationsId = genId();
   const branchCopyingId = genId();
   
+  // Level 3 IDs - GitHub Integration
+  const githubAuthServiceId = genId();
+  const gistServiceId = genId();
+  const quickSyncButtonId = genId();
+  const syncControlsId = genId();
+  
+  // Level 3 IDs - Sync Management
+  const syncIntegrationId = genId();
+  const offlineQueueId = genId();
+  const metadataManagementId = genId();
+  
+  // Level 3 IDs - PWA Storage
+  const indexedDbId = genId();
+  const localStorageFallbackId = genId();
+  const encryptionId = genId();
+  
   return [    // Root Node
     {
       id: rootId,
       name: "🌳 Concept Hierarchy Designer",
-      description: "A powerful interactive tool for creating, organizing, and visualizing hierarchical concept maps using AI assistance. Built with React and TypeScript, this application provides an intuitive drag-and-drop interface for managing complex concept hierarchies with unlimited depth. The system features AI-powered content generation through the Magic Wand, comprehensive keyboard navigation, export capabilities in multiple formats, and local storage persistence. Designed for knowledge workers, researchers, educators, and anyone who needs to organize complex information into structured hierarchies.",
+      description: "A powerful Progressive Web App (PWA) for creating, organizing, and visualizing hierarchical concept maps using AI assistance. Built with React and TypeScript, this application provides an intuitive drag-and-drop interface for managing complex concept hierarchies with unlimited depth. The system features AI-powered content generation through the Magic Wand with multiple prompts, comprehensive keyboard navigation, export capabilities in multiple formats, GitHub Gist synchronization for cloud backup and sharing, offline-first functionality, and secure local storage with IndexedDB. Designed for knowledge workers, researchers, educators, and anyone who needs to organize complex information into structured hierarchies with seamless collaboration capabilities.",
       parent: null
     },
       // Level 1 - Main System Components
@@ -175,6 +205,18 @@ export const createInitialData = (): NodeData[] => {
       description: "Administrative interface providing comprehensive analytics and system management tools. Features detailed tree statistics including node counts, depth analysis, storage usage, and Magic Wand usage metrics. Includes data backup creation, hard reset functionality, and performance monitoring. Provides insights into user behavior and system usage patterns for optimization purposes.",
       parent: rootId
     },
+    {
+      id: cloudSyncId,
+      name: "☁️ Cloud Synchronization",
+      description: "Comprehensive GitHub Gist integration system providing secure cloud backup, sharing, and collaboration capabilities. Features Personal Access Token (PAT) authentication with client-side encryption, automatic background sync with offline queue, conflict resolution, and seamless integration with the tree management system. Enables users to backup their concept trees to GitHub Gists, share them with others, and synchronize across multiple devices while maintaining full offline functionality.",
+      parent: rootId
+    },
+    {
+      id: pwaFeaturesId,
+      name: "📱 Progressive Web App",
+      description: "Modern PWA implementation with offline-first architecture, service worker integration, and enhanced storage capabilities. Features installable app experience on desktop and mobile devices, background sync capabilities, IndexedDB primary storage with localStorage fallback, secure data encryption, and comprehensive caching strategies. Provides seamless offline functionality while maintaining full feature parity with online mode.",
+      parent: rootId
+    },
       // Level 2 - Core System Components
     {
       id: treeContextId,
@@ -228,8 +270,8 @@ export const createInitialData = (): NodeData[] => {
       // Level 2 - Data Management Components
     {
       id: storageId,
-      name: "💽 Local Storage System",
-      description: "Robust local storage implementation for persistent data storage with automatic saving and retrieval. Uses prefixed keys to avoid conflicts with other applications and implements versioning for data migration. Features error handling for storage quota exceeded scenarios and automatic cleanup of obsolete data. Includes backup creation before major operations.",
+      name: "💽 Enhanced Storage System",
+      description: "Advanced dual-storage implementation with IndexedDB as primary storage and localStorage fallback for maximum compatibility. Features automatic migration between storage systems, data encryption for sensitive information, versioning for schema evolution, and comprehensive error handling. Implements storage quota management, automatic cleanup, and backup creation before major operations.",
       parent: dataManagementId
     },
     {
@@ -285,7 +327,7 @@ export const createInitialData = (): NodeData[] => {
     {
       id: shortcutsId,
       name: "⚡ Keyboard Shortcuts",
-      description: "Comprehensive keyboard shortcut system covering tree navigation, modal operations, and editing functions. Features contextual shortcuts that adapt based on current application state and focused elements. Includes global shortcuts for tree operations and modal-specific shortcuts for form submission and cancellation. All shortcuts documented with tooltips and help text.",
+      description: "Comprehensive keyboard shortcut system covering tree navigation, modal operations, sync operations, and editing functions. Features contextual shortcuts that adapt based on current application state and focused elements. Includes global shortcuts for tree operations, Ctrl+Shift+S for quick GitHub sync, and modal-specific shortcuts for form submission and cancellation. All shortcuts documented with tooltips and help text.",
       parent: keyboardNavigationId
     },
     {
@@ -350,6 +392,56 @@ export const createInitialData = (): NodeData[] => {
       name: "🐛 Debugging Tools",
       description: "Development and debugging utilities including error tracking, state inspection, and performance profiling. Features comprehensive logging, error boundary implementation, and development-mode debugging aids. Includes tools for data inspection, operation tracing, and issue reproduction for effective troubleshooting.",
       parent: adminId
+    },
+      // Level 2 - Cloud Synchronization Components
+    {
+      id: githubIntegrationId,
+      name: "🔗 GitHub Integration",
+      description: "Core GitHub API integration providing Personal Access Token authentication, user profile management, and secure communication with GitHub services. Features token validation, user authentication status tracking, connection testing, and secure token storage with client-side encryption. Implements rate limiting awareness and error handling for API interactions.",
+      parent: cloudSyncId
+    },
+    {
+      id: syncManagerId,
+      name: "🔄 Sync Manager",
+      description: "Central synchronization orchestration system managing all sync operations, scheduling, and coordination between local and remote data. Features intelligent sync strategies, operation queuing, retry logic with exponential backoff, and sync status tracking. Implements sync locks to prevent concurrent operations and handles network connectivity changes.",
+      parent: cloudSyncId
+    },
+    {
+      id: authenticationId,
+      name: "🔐 Authentication System",
+      description: "Secure authentication management using GitHub Personal Access Tokens with client-side encryption and secure storage. Features token lifecycle management, validation workflows, connection testing, and user authentication status tracking. Implements Web Crypto API for secure token encryption and automatic token refresh handling.",
+      parent: cloudSyncId
+    },
+    {
+      id: conflictResolutionId,
+      name: "⚖️ Conflict Resolution",
+      description: "Intelligent conflict detection and resolution system for handling data conflicts between local and remote versions. Features automatic conflict detection based on timestamps and version numbers, user-guided resolution options (local, remote, merge), and conflict prevention strategies. Implements data preservation during conflicts and resolution history tracking.",
+      parent: cloudSyncId
+    },
+      // Level 2 - PWA Features Components
+    {
+      id: offlineCapabilitiesId,
+      name: "📶 Offline Capabilities",
+      description: "Comprehensive offline functionality ensuring full application usability without internet connection. Features offline detection, graceful degradation of cloud features, local operation queuing, and seamless transition between online/offline modes. Implements intelligent caching strategies and offline user feedback systems.",
+      parent: pwaFeaturesId
+    },
+    {
+      id: serviceWorkerIntegrationId,
+      name: "⚙️ Service Worker Integration",
+      description: "Advanced service worker implementation providing app caching, resource management, and background processing capabilities. Features Workbox integration for sophisticated caching strategies, version management, and automatic updates. Implements background sync registration and push notification infrastructure.",
+      parent: pwaFeaturesId
+    },
+    {
+      id: backgroundSyncId,
+      name: "🔄 Background Sync",
+      description: "Background synchronization system for handling offline operations and automatic sync when connectivity returns. Features operation queuing, priority-based sync scheduling, and progress tracking. Implements retry mechanisms for failed operations and intelligent batching for efficient network usage.",
+      parent: pwaFeaturesId
+    },
+    {
+      id: storageEnhancementsId,
+      name: "💾 Storage Enhancements",
+      description: "Advanced storage system with IndexedDB primary storage, localStorage fallback, and data encryption capabilities. Features automatic migration between storage systems, data compression, version management, and secure sensitive data handling. Implements storage quota management and cleanup strategies.",
+      parent: pwaFeaturesId
     },
       // Level 3 - Tree Context & State Management Details
     {
@@ -563,6 +655,69 @@ export const createInitialData = (): NodeData[] => {
       name: "🌿 Branch Copying",
       description: "Complete subtree copying preserving full hierarchical structures with all descendants and relationships. Features recursive copying algorithms and efficient bulk operations. Implements progress tracking for large branches and memory optimization.",
       parent: clipboardId
+    },
+      // Level 3 - GitHub Integration Details
+    {
+      id: githubAuthServiceId,
+      name: "🔑 GitHub Auth Service",
+      description: "Personal Access Token management service handling secure authentication with GitHub API. Features token validation, user profile retrieval, connection testing, and secure storage using Web Crypto API encryption. Implements token lifecycle management with automatic validation and refresh capabilities.",
+      parent: githubIntegrationId
+    },
+    {
+      id: gistServiceId,
+      name: "📄 Gist Service",
+      description: "GitHub Gist API integration providing create, read, update operations for concept tree storage. Features structured data serialization, metadata management, public/private gist handling, and error recovery. Implements efficient data transfer with compression and validation.",
+      parent: githubIntegrationId
+    },
+    {
+      id: quickSyncButtonId,
+      name: "⚡ Quick Sync Button",
+      description: "User interface component for one-click synchronization with visual feedback and status indicators. Features multiple display variants (default, compact, icon-only), sync progress indication, and direct GitHub link access. Implements keyboard shortcut support and accessible design.",
+      parent: githubIntegrationId
+    },
+    {
+      id: syncControlsId,
+      name: "🎛️ Sync Controls",
+      description: "Comprehensive sync interface with activity logs, history viewer, and advanced sync options. Features detailed operation tracking, conflict resolution interface, sync statistics, and manual sync triggers. Implements comprehensive user control over sync behavior and status monitoring.",
+      parent: githubIntegrationId
+    },
+      // Level 3 - Sync Management Details
+    {
+      id: syncIntegrationId,
+      name: "🔗 Sync Integration",
+      description: "Core synchronization logic coordinating between local tree data and GitHub Gist storage. Features tree model conversion, metadata preservation, version tracking, and change detection. Implements intelligent sync strategies with minimal data transfer optimization.",
+      parent: syncManagerId
+    },
+    {
+      id: offlineQueueId,
+      name: "📋 Offline Queue",
+      description: "Operation queuing system for handling sync operations when offline with automatic execution when connectivity returns. Features priority-based queuing, operation batching, retry logic, and progress tracking. Implements intelligent queue management with duplicate operation prevention.",
+      parent: syncManagerId
+    },
+    {
+      id: metadataManagementId,
+      name: "📊 Metadata Management",
+      description: "Comprehensive metadata tracking for sync operations including version numbers, timestamps, author information, and sync history. Features automatic metadata generation, conflict detection support, and sync analytics. Implements metadata preservation across sync operations.",
+      parent: syncManagerId
+    },
+      // Level 3 - PWA Storage Details
+    {
+      id: indexedDbId,
+      name: "🗄️ IndexedDB Implementation",
+      description: "Primary storage implementation using IndexedDB for reliable client-side data persistence with transaction support and schema management. Features automatic schema migration, data versioning, bulk operations, and query optimization. Implements sophisticated storage strategies for large datasets.",
+      parent: storageEnhancementsId
+    },
+    {
+      id: localStorageFallbackId,
+      name: "💾 localStorage Fallback",
+      description: "Fallback storage system using localStorage for compatibility with older browsers and storage quota limitations. Features automatic migration from localStorage to IndexedDB, data compression, and graceful degradation. Implements storage quota monitoring and cleanup strategies.",
+      parent: storageEnhancementsId
+    },
+    {
+      id: encryptionId,
+      name: "🔒 Data Encryption",
+      description: "Client-side encryption system for securing sensitive data including authentication tokens and user preferences. Features Web Crypto API integration, AES-GCM encryption, secure key management, and encrypted data storage. Implements encryption key rotation and secure data recovery mechanisms.",
+      parent: storageEnhancementsId
     }
   ];
 };
