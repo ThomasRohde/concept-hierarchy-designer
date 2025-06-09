@@ -82,7 +82,7 @@ export const InstallPrompt: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center gap-4">
             <img 
-              src="/android-chrome-192x192.png" 
+              src={`${import.meta.env.BASE_URL}android-chrome-192x192.png`}
               alt="App icon" 
               className="w-12 h-12 rounded-lg"
             />
