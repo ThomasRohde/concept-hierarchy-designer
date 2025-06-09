@@ -82,7 +82,7 @@ export const InstallPrompt: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center gap-4">
             <img 
-              src="/favicon-64x64.png" 
+              src="/android-chrome-192x192.png" 
               alt="App icon" 
               className="w-12 h-12 rounded-lg"
             />
