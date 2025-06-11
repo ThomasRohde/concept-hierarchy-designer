@@ -18,10 +18,14 @@ import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
 import { useMagicWand } from "../../hooks/useMagicWand";
 import { useTreeContext } from "../../context/TreeContext";
 import { CapabilityCardProvider } from "../../context/CapabilityCardContext";
+import { useSyncContext } from "../../context/SyncContext";
 import { NodeData } from "../../types";
 import { saveTreeAsJson, validateNodeData } from "../../utils/exportUtils";
 import { genId } from "../../utils/treeUtils";
 import { trackFeatureUsage } from "../../utils/storageUtils";
+import { GitHubAuthService } from "../../services/githubAuthService";
+import { GitHubGistService } from "../../services/githubGistService";
+import { convertNodesToTreeModel } from "../../utils/syncIntegration";
 
 // Function to render nodes recursively in the flat structure
 
@@ -70,6 +74,7 @@ const renderTreeRecursive = (
 
 const MainContent: React.FC = () => {
     const { nodes, setNodes, collapsed, setCollapsed, isLoading, setIsLoading, isInitializing } = useTreeContext();
+    const { notifyGistCreated } = useSyncContext();
 
     // Create a ref for the tree container to measure its width
     const treeContainerRef = React.useRef<HTMLDivElement>(null);
@@ -283,7 +288,7 @@ const MainContent: React.FC = () => {
     const handleCloseNewTreeModal = useCallback(() => {
         setIsNewTreeModalOpen(false);
     }, []);    const handleCreateNewTree = useCallback(
-        (name: string, description: string) => {
+        async (name: string, description: string) => {
             // Create a single root node with no parent
             const newRoot: NodeData = {
                 id: genId(),
@@ -299,6 +304,41 @@ const MainContent: React.FC = () => {
             
             // Track tree creation
             trackFeatureUsage('treeCreated');
+            
+            // Check if user is authenticated with GitHub and auto-create gist
+            try {
+                const authStatus = await GitHubAuthService.getAuthStatus();
+                if (authStatus.isAuthenticated) {
+                    // Show loading toast
+                    const loadingToast = toast.loading('Creating gist...');
+                    
+                    try {
+                        // Convert to TreeModel format
+                        const treeModel = await convertNodesToTreeModel([newRoot], name, description);
+                        
+                        // Create gist
+                        const gist = await GitHubGistService.createGist(treeModel, false); // Default to private
+                        
+                        // Notify other components that a gist was created
+                        notifyGistCreated();
+                        
+                        // Update success toast
+                        toast.success('Tree and gist created successfully!', { id: loadingToast });
+                        
+                        console.log('✅ Auto-created gist for new tree:', gist.id);
+                    } catch (gistError) {
+                        console.warn('⚠️ Failed to auto-create gist:', gistError);
+                        toast.error('Tree created, but gist creation failed', { id: loadingToast });
+                    }
+                } else {
+                    // User not authenticated, just show tree creation success
+                    toast.success('Tree created successfully!');
+                }
+            } catch (authError) {
+                console.warn('⚠️ Failed to check auth status:', authError);
+                // Still show success for tree creation
+                toast.success('Tree created successfully!');
+            }
         },
         [handleCloseNewTreeModal]
     );    const handleLoadTree = useCallback(async (loadedData: any) => {

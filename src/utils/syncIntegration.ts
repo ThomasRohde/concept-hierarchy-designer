@@ -142,8 +142,8 @@ export const convertNodesToTreeModel = async (
   // Create or update the tree model
   const treeModel: TreeModel = {
     id: modelId,
-    name: name || existingModel?.name || 'My Concept Hierarchy',
-    description: description || existingModel?.description || 'A concept hierarchy created with the Concept Hierarchy Designer',
+    name: name !== undefined ? name : (existingModel?.name || 'My Concept Hierarchy'),
+    description: description !== undefined ? description : (existingModel?.description || 'A concept hierarchy created with the Concept Hierarchy Designer'),
     nodes: nodes,
     prompts: prompts,
     createdAt: existingModel?.createdAt || now,

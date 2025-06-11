@@ -7,6 +7,7 @@ import { GitHubGistService } from '../services/githubGistService';
 import { GitHubAuthService } from '../services/githubAuthService';
 import { TreeModel } from '../types';
 import { getModelSummary, getModel } from '../utils/offlineStorage';
+import { useSyncContext } from '../context/SyncContext';
 import { Calendar, User, FileText, GitBranch, ExternalLink } from 'lucide-react';
 
 interface ModelSummary {
@@ -33,6 +34,7 @@ const LoadModelModal: React.FC<LoadModelModalProps> = ({ isOpen, onClose, onLoad
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState<'local' | 'remote'>('local');
   const [loadingModelId, setLoadingModelId] = useState<string | null>(null);
+  const { onGistCreated } = useSyncContext();
 
   useEffect(() => {
     if (isOpen) {
@@ -40,9 +42,61 @@ const LoadModelModal: React.FC<LoadModelModalProps> = ({ isOpen, onClose, onLoad
     }
   }, [isOpen]);
 
+  // Listen for gist creation events to refresh remote models
+  useEffect(() => {
+    const unsubscribe = onGistCreated(() => {
+      console.log('🔄 LoadModelModal: Gist created, refreshing remote models...');
+      if (isOpen && isAuthenticated) {
+        loadRemoteModels();
+      }
+    });
+
+    return unsubscribe;
+  }, [onGistCreated, isOpen, isAuthenticated]);
+
   const checkAuthentication = async () => {
     const pat = await GitHubAuthService.getCurrentPAT();
     setIsAuthenticated(!!pat);
+  };
+
+  const loadRemoteModels = async () => {
+    try {
+      const pat = await GitHubAuthService.getCurrentPAT();
+      if (!pat) return;
+
+      console.log('🔄 LoadModelModal: Loading remote models...');
+      const gists = await GitHubGistService.listConceptHierarchyGists();
+      
+      const remoteSummaries: ModelSummary[] = [];
+      for (const gist of gists) {
+        try {
+          // Fetch the full gist with content
+          const fullGist = await GitHubGistService.getGist(gist.id);
+          
+          const model = GitHubGistService.parseGistToModel(fullGist);
+          if (model) {
+            remoteSummaries.push({
+              id: model.id,
+              name: model.name,
+              description: model.description,
+              nodeCount: model.nodes.length,
+              createdAt: model.createdAt,
+              lastModified: model.lastModified,
+              gistUrl: gist.html_url,
+              author: model.author || gist.owner?.login
+            });
+          }
+        } catch (error) {
+          console.warn('Error fetching gist:', gist.id, error);
+        }
+      }
+      
+      setRemoteModels(remoteSummaries);
+      console.log('✅ LoadModelModal: Loaded', remoteSummaries.length, 'remote models');
+    } catch (error) {
+      console.error('Failed to load remote models:', error);
+      toast.error('Failed to load remote models');
+    }
   };
 
   const loadModels = async () => {
@@ -52,45 +106,9 @@ const LoadModelModal: React.FC<LoadModelModalProps> = ({ isOpen, onClose, onLoad
       const localSummaries = await getModelSummary();
       setLocalModels(localSummaries);
 
-      // Check GitHub authentication
+      // Check GitHub authentication and load remote models
       await checkAuthentication();
-      const pat = await GitHubAuthService.getCurrentPAT();
-      
-      if (pat) {
-        // Load remote models from GitHub Gists
-        try {
-          const gists = await GitHubGistService.listConceptHierarchyGists();
-          
-          const remoteSummaries: ModelSummary[] = [];
-          for (const gist of gists) {
-            try {
-              // Fetch the full gist with content
-              const fullGist = await GitHubGistService.getGist(gist.id);
-              
-              const model = GitHubGistService.parseGistToModel(fullGist);
-              if (model) {
-                remoteSummaries.push({
-                  id: model.id,
-                  name: model.name,
-                  description: model.description,
-                  nodeCount: model.nodes.length,
-                  createdAt: model.createdAt,
-                  lastModified: model.lastModified,
-                  gistUrl: gist.html_url,
-                  author: model.author || gist.owner?.login
-                });
-              }
-            } catch (error) {
-              console.warn('Error fetching gist:', gist.id, error);
-            }
-          }
-          
-          setRemoteModels(remoteSummaries);
-        } catch (error) {
-          console.error('Failed to load remote models:', error);
-          toast.error('Failed to load remote models');
-        }
-      }
+      await loadRemoteModels();
     } catch (error) {
       console.error('Failed to load models:', error);
       toast.error('Failed to load models');
@@ -232,6 +250,7 @@ const LoadModelModal: React.FC<LoadModelModalProps> = ({ isOpen, onClose, onLoad
       isOpen={isOpen}
       onClose={onClose}
       title="Load Model"
+      maxWidth="3xl"
     >
       <div className="space-y-4">
         {/* Tab Navigation */}
@@ -267,7 +286,7 @@ const LoadModelModal: React.FC<LoadModelModalProps> = ({ isOpen, onClose, onLoad
             <span className="ml-2 text-gray-600">Loading models...</span>
           </div>
         ) : (
-          <div className="max-h-96 overflow-y-auto">
+          <div className="max-h-48 overflow-y-auto">
             {activeTab === 'local' ? (
               localModels.length > 0 ? (
                 <div className="space-y-3">
