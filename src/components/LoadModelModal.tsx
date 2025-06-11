@@ -250,6 +250,7 @@ const LoadModelModal: React.FC<LoadModelModalProps> = ({ isOpen, onClose, onLoad
       isOpen={isOpen}
       onClose={onClose}
       title="Load Model"
+      maxWidth="3xl"
     >
       <div className="space-y-4">
         {/* Tab Navigation */}
@@ -285,7 +286,7 @@ const LoadModelModal: React.FC<LoadModelModalProps> = ({ isOpen, onClose, onLoad
             <span className="ml-2 text-gray-600">Loading models...</span>
           </div>
         ) : (
-          <div className="max-h-96 overflow-y-auto">
+          <div className="max-h-48 overflow-y-auto">
             {activeTab === 'local' ? (
               localModels.length > 0 ? (
                 <div className="space-y-3">

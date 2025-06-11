@@ -9,9 +9,19 @@ interface ModalProps {
   title: string;
   children: React.ReactNode;
   footer?: React.ReactNode;
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, footer }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, footer, maxWidth = 'lg' }) => {
+  const maxWidthClasses = {
+    sm: 'max-w-sm',
+    md: 'max-w-md', 
+    lg: 'max-w-lg',
+    xl: 'max-w-xl',
+    '2xl': 'max-w-2xl',
+    '3xl': 'max-w-3xl',
+    '4xl': 'max-w-4xl'
+  };
   // Handle ESC key to close modal
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
@@ -38,7 +48,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, footer 
       role="dialog"
     >
       <div
-        className="relative w-full max-w-lg p-4 sm:p-6 bg-white rounded-lg shadow-xl"
+        className={`relative w-full ${maxWidthClasses[maxWidth]} p-4 sm:p-6 bg-white rounded-lg shadow-xl`}
         onClick={(e) => e.stopPropagation()} 
       >
         <div className="flex items-center justify-between pb-4 border-b border-gray-200">
