@@ -234,9 +234,9 @@ export const SyncButton: React.FC<SyncButtonProps> = ({
       <Button
         onClick={handleSyncClick}
         disabled={isDisabled}
-        variant={syncState.syncError ? "destructive" : "outline"}
+        variant={syncState.syncError ? "destructive" : "ghost"}
         size="sm"
-        className={`flex items-center gap-2 ${
+        className={`flex items-center gap-2 hover:bg-gray-100 ${
           variant === 'icon-only' ? 'w-9 h-9 p-0' : 
           variant === 'compact' ? 'min-w-[60px]' : 'min-w-[100px]'
         }`}

@@ -11,11 +11,18 @@
   
   <script>
     window.onload = function() {
+      console.log('Page loaded');
       const img = document.getElementById('svg');
       const canvas = document.getElementById('canvas');
       const ctx = canvas.getContext('2d');
       
+      img.onerror = function() {
+        console.error('Failed to load SVG');
+        document.body.innerHTML = '<p>Error: Failed to load favicon.svg</p>';
+      };
+      
       img.onload = function() {
+        console.log('SVG loaded successfully');
         ctx.drawImage(img, 0, 0, 32, 32);
         
         // Display the PNG for download
