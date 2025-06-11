@@ -36,6 +36,8 @@ interface SyncContextType {
   clearActivityLog: () => void;
   getActivityLog: () => SyncActivityLog[];
   getSyncHistory: () => SyncState['syncHistory'];
+  notifyGistCreated: () => void;
+  onGistCreated: (callback: () => void) => () => void;
 }
 
 const SyncContext = createContext<SyncContextType | undefined>(undefined);
@@ -56,6 +58,9 @@ export const SyncProvider: React.FC<SyncProviderProps> = ({ children }) => {
     activityLog: [],
     syncHistory: [],
   });
+
+  // Gist creation notification system
+  const [gistCreatedCallbacks] = useState<Set<() => void>>(new Set());
 
   // Listen to SyncManager status updates
   useEffect(() => {
@@ -199,6 +204,24 @@ export const SyncProvider: React.FC<SyncProviderProps> = ({ children }) => {
   const getActivityLog = () => syncState.activityLog;
   const getSyncHistory = () => syncState.syncHistory;
 
+  const notifyGistCreated = () => {
+    console.log('🔔 SyncContext: Notifying gist creation to', gistCreatedCallbacks.size, 'listeners');
+    gistCreatedCallbacks.forEach(callback => {
+      try {
+        callback();
+      } catch (error) {
+        console.warn('Error in gist creation callback:', error);
+      }
+    });
+  };
+
+  const onGistCreated = (callback: () => void) => {
+    gistCreatedCallbacks.add(callback);
+    return () => {
+      gistCreatedCallbacks.delete(callback);
+    };
+  };
+
   const contextValue: SyncContextType = {
     syncState,
     triggerSync,
@@ -207,6 +230,8 @@ export const SyncProvider: React.FC<SyncProviderProps> = ({ children }) => {
     clearActivityLog,
     getActivityLog,
     getSyncHistory,
+    notifyGistCreated,
+    onGistCreated,
   };
 
   return (

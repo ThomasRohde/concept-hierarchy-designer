@@ -58,12 +58,21 @@ export function parseGistFilename(filename: string): { modelId: string; slug: st
 }
 
 /**
- * Creates a Gist description from model metadata
+ * Gets the root node from a nodes array
+ */
+export function getRootNode(nodes: NodeData[]): NodeData | null {
+  return nodes.find(node => node.parent === null) || null;
+}
+
+/**
+ * Creates a Gist description from model metadata, using root node name
  */
 export function createGistDescription(model: TreeModel): string {
   const nodeCount = model.nodes.length;
+  const rootNode = getRootNode(model.nodes);
+  const rootNodeName = rootNode ? rootNode.name : model.name;
   const description = model.description ? ` - ${model.description}` : '';
-  return `Concept Hierarchy: ${model.name}${description} (${nodeCount} nodes)`;
+  return `Concept Hierarchy: ${rootNodeName}${description} (${nodeCount} nodes)`;
 }
 
 /**

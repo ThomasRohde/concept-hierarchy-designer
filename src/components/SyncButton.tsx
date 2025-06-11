@@ -16,7 +16,7 @@ export const SyncButton: React.FC<SyncButtonProps> = ({
   showProgress = false,
   className = ''
 }) => {
-  const { syncState } = useSyncContext();
+  const { syncState, notifyGistCreated } = useSyncContext();
   const { nodes } = useTreeContext();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [syncStatus, setSyncStatus] = useState<{
@@ -106,6 +106,9 @@ export const SyncButton: React.FC<SyncButtonProps> = ({
         const status = await getTreeSyncStatus();
         console.log('🔄 SyncButton: Updated status:', status);
         setSyncStatus(status);
+        
+        // Notify other components that a gist was created/updated
+        notifyGistCreated();
         
         if (status.gistUrl) {
           console.log('🔗 SyncButton: Gist URL available:', status.gistUrl);
