@@ -138,6 +138,11 @@ export const SyncButton: React.FC<SyncButtonProps> = ({
     }
   };
 
+  // If we're not online or not authenticated, don't render the button at all
+  if (!syncState.isOnline || !isAuthenticated) {
+    return null;
+  }
+
   const isDisabled = !syncState.isOnline || syncState.isSyncing || isGistSyncing;
 
   const getButtonText = () => {
@@ -211,7 +216,6 @@ export const SyncButton: React.FC<SyncButtonProps> = ({
       </>
     );
   };
-
 
   const getButtonTitle = () => {
     if (!isAuthenticated) {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from './ui/Button';
 import { FolderOpen } from 'lucide-react';
 import LoadModelModal from './LoadModelModal';
@@ -14,7 +14,18 @@ import { toast } from 'react-hot-toast';
 export const LoadModelButton: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { setNodes, setCollapsed } = useTreeContext();
-  const { markChanges } = useSyncContext();
+  const { syncState, markChanges } = useSyncContext();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  // Check authentication status
+  useEffect(() => {
+    const checkAuth = async () => {
+      const authStatus = await GitHubAuthService.testConnection();
+      setIsAuthenticated(authStatus.isAuthenticated);
+    };
+    
+    checkAuth();
+  }, []);
 
   const handleLoadModel = async (model: TreeModel) => {
     try {
@@ -72,6 +83,11 @@ export const LoadModelButton: React.FC = () => {
       toast.error('Failed to load model');
     }
   };
+
+  // Only show the button if we're online with Git authentication
+  if (!syncState.isOnline || !isAuthenticated) {
+    return null;
+  }
 
   return (
     <>
