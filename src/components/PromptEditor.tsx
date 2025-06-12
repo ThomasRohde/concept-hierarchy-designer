@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, Copy, Eye, EyeOff, Tag, Calendar } from 'lucide-react';
+import { X, Save, Copy, Eye, EyeOff, Tag, Calendar, Cloud } from 'lucide-react';
 import { Prompt } from '../types';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
@@ -277,6 +277,10 @@ export const PromptEditor: React.FC<PromptEditorProps> = ({
           {editingPrompt.usageCount !== undefined && editingPrompt.usageCount > 0 && (
             <div>Used {editingPrompt.usageCount} times</div>
           )}
+          <div className="flex items-center gap-1 text-blue-600">
+            <Cloud className="w-3 h-3" />
+            Auto-syncs to all devices
+          </div>
         </div>
       </div>
 

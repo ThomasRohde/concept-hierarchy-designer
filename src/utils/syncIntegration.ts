@@ -123,16 +123,26 @@ export const convertNodesToTreeModel = async (
     console.log('🔄 convertNodesToTreeModel: No existing TreeModel found, creating new one');
   }
 
-  // Get current prompts collection
+  // Get current prompts collection from multiple sources
   let prompts: PromptCollection = { prompts: [], activePromptId: null };
   try {
-    const storedPrompts = await loadData('promptCollection');
-    if (storedPrompts) {
-      prompts = storedPrompts;
-      console.log('🔄 convertNodesToTreeModel: Loaded prompts:', prompts.prompts.length);
-    }
+    // First try to get from localStorage (current prompt storage)
+    const { loadPromptCollection } = await import('./promptUtils');
+    prompts = loadPromptCollection();
+    console.log('🔄 convertNodesToTreeModel: Loaded prompts from promptUtils:', prompts.prompts.length);
   } catch (error) {
     console.warn('⚠️ convertNodesToTreeModel: Failed to load prompts:', error);
+    
+    // Fallback to indexed DB storage
+    try {
+      const storedPrompts = await loadData('promptCollection');
+      if (storedPrompts) {
+        prompts = storedPrompts;
+        console.log('🔄 convertNodesToTreeModel: Loaded prompts from storage:', prompts.prompts.length);
+      }
+    } catch (storageError) {
+      console.warn('⚠️ convertNodesToTreeModel: Failed to load prompts from storage:', storageError);
+    }
   }
 
   const now = new Date();

@@ -3,14 +3,8 @@ import { toast } from 'react-hot-toast';
 import { NodeData, Prompt, PromptCollection } from '../types';
 import { getChildren, getParent } from '../utils/treeUtils';
 import { updateMagicWandStats } from '../utils/adminUtils';
-import { 
-  loadPromptCollection, 
-  savePromptCollection, 
-  getActivePrompt, 
-  setActivePromptId,
-  updatePromptUsage,
-  createNewPrompt
-} from '../utils/promptUtils';
+import { createNewPrompt } from '../utils/promptUtils';
+import { useTreeContext } from '../context/TreeContext';
 
 // Legacy storage key for backward compatibility
 export const LEGACY_STORAGE_KEY = 'magic-wand-guidelines';
@@ -32,42 +26,20 @@ interface UseMagicWandResult {
 }
 
 export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult => {
-  const [promptCollection, setPromptCollection] = useState<PromptCollection>(() => loadPromptCollection());
+  const { prompts: promptCollection, setPrompts: setPromptCollection } = useTreeContext();
   const [activePromptId, setActivePromptIdState] = useState<string>(() => {
-    const active = getActivePrompt();
-    return active.id;
+    return promptCollection.activePromptId || promptCollection.prompts[0]?.id || '';
   });
   // Get the active prompt - use activePromptId first, fallback to collection's activePromptId
   const effectiveActivePromptId = activePromptId || promptCollection.activePromptId;
   const activePrompt = promptCollection.prompts.find(p => p.id === effectiveActivePromptId) || promptCollection.prompts[0];
-  // Effect to sync with localStorage changes from other components
+  // Effect to sync activePromptId with collection changes
   useEffect(() => {
-    const handleStorageChange = () => {
-      // Use setTimeout to defer state updates until after render
-      setTimeout(() => {
-        const updatedCollection = loadPromptCollection();
-        const updatedActivePrompt = getActivePrompt();
-        
-        setPromptCollection(updatedCollection);
-        setActivePromptIdState(updatedActivePrompt.id);
-      }, 0);
-    };
-
-    // Listen for localStorage changes from other tabs/windows
-    window.addEventListener('storage', handleStorageChange);
-    
-    // Listen for custom prompt change events (for same-tab updates)
-    const handlePromptChange = () => {
-      handleStorageChange();
-    };
-    
-    window.addEventListener('promptCollectionChanged', handlePromptChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('promptCollectionChanged', handlePromptChange);
-    };
-  }, []);
+    // Update local state when collection changes
+    if (promptCollection.activePromptId && promptCollection.activePromptId !== activePromptId) {
+      setActivePromptIdState(promptCollection.activePromptId);
+    }
+  }, [promptCollection.activePromptId, activePromptId]);
   // Legacy migration effect
   useEffect(() => {
     const legacyGuidelines = localStorage.getItem(LEGACY_STORAGE_KEY);
@@ -93,18 +65,12 @@ export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult =
         setTimeout(() => {
           const updatedCollection = {
             ...promptCollection,
-            prompts: [...promptCollection.prompts, customPrompt]
+            prompts: [...promptCollection.prompts, customPrompt],
+            activePromptId: customPrompt.id
           };
           
           setPromptCollection(updatedCollection);
-          savePromptCollection(updatedCollection);
-          
-          // Set as active prompt
-          setActivePromptId(customPrompt.id);
           setActivePromptIdState(customPrompt.id);
-          
-          // Emit custom event to notify other hook instances
-          window.dispatchEvent(new CustomEvent('promptCollectionChanged'));
           
           toast.success('Your custom guidelines have been migrated to the new prompt system!');
         }, 0);
@@ -113,67 +79,54 @@ export const useMagicWand = ({ nodes }: UseMagicWandProps): UseMagicWandResult =
       // Remove legacy storage
       localStorage.removeItem(LEGACY_STORAGE_KEY);
     }
-  }, [promptCollection]);const updatePromptCollection = useCallback((collection: PromptCollection) => {
+  }, [promptCollection, setPromptCollection]);
+
+  const updatePromptCollection = useCallback((collection: PromptCollection) => {
     setPromptCollection(collection);
-    savePromptCollection(collection);
     
     // If the collection has a different active prompt ID, update local state
     if (collection.activePromptId) {
       setActivePromptIdState(collection.activePromptId);
-      setActivePromptId(collection.activePromptId);
     }
-    
-    // Emit custom event to notify other hook instances
-    window.dispatchEvent(new CustomEvent('promptCollectionChanged'));
-  }, []);  const setActivePrompt = useCallback((promptId: string) => {
+  }, [setPromptCollection]);
+
+  const setActivePrompt = useCallback((promptId: string) => {
     // Update local state first
     setActivePromptIdState(promptId);
-    setActivePromptId(promptId);
-  }, []);
-  // Effect to update collection when activePromptId changes
-  useEffect(() => {
-    if (activePromptId !== promptCollection.activePromptId) {
-      // Use a timeout to prevent updating state during render
-      const timeoutId = setTimeout(() => {
-        setPromptCollection(currentCollection => {
-          const updatedCollection = { ...currentCollection, activePromptId };
-          savePromptCollection(updatedCollection);
-          
-          // Emit custom event to notify other hook instances
-          window.dispatchEvent(new CustomEvent('promptCollectionChanged'));
-          
-          return updatedCollection;
-        });
-      }, 0);
-      
-      return () => clearTimeout(timeoutId);
-    }
-  }, [activePromptId, promptCollection.activePromptId]);
+    
+    // Update the collection to reflect the new active prompt
+    setPromptCollection(prev => ({
+      ...prev,
+      activePromptId: promptId
+    }));
+  }, [setPromptCollection]);
 
   const createPrompt = useCallback(() => {
     return createNewPrompt();
-  }, []);  const generateMagicWandPrompt = useCallback(async (selectedNode: NodeData, promptId?: string) => {
-    // Get the most current active prompt ID from localStorage to avoid stale state
-    const currentActivePromptId = getActivePrompt().id;
-    const currentActivePrompt = promptCollection.prompts.find(p => p.id === currentActivePromptId) || promptCollection.prompts[0];
+  }, []);
+
+  const generateMagicWandPrompt = useCallback(async (selectedNode: NodeData, promptId?: string) => {
+    // Get the current active prompt
+    const currentActivePrompt = promptCollection.prompts.find(p => p.id === effectiveActivePromptId) || promptCollection.prompts[0];
     
     const selectedPrompt = promptId 
       ? promptCollection.prompts.find(p => p.id === promptId) || currentActivePrompt
-      : currentActivePrompt;    // Update usage count
-    updatePromptUsage(selectedPrompt.id);
-    
-    // Update local state to reflect usage - defer to prevent setState during render
+      : currentActivePrompt;
+
+    // Update usage count through TreeContext
     setTimeout(() => {
-      const updatedCollection = {
-        ...promptCollection,
-        prompts: promptCollection.prompts.map(p => 
+      setPromptCollection(prevCollection => ({
+        ...prevCollection,
+        prompts: prevCollection.prompts.map(p => 
           p.id === selectedPrompt.id 
-            ? { ...p, usageCount: (p.usageCount || 0) + 1 }
+            ? { 
+                ...p, 
+                usageCount: (p.usageCount || 0) + 1,
+                lastUsed: new Date()
+              }
             : p
         )
-      };
-      setPromptCollection(updatedCollection);
-      savePromptCollection(updatedCollection);
+      }));
     }, 0);
 
     // Build the context
@@ -239,9 +192,10 @@ Generate your response below:`;
       updateMagicWandStats(true, 0);
     } catch (err) {
       console.error("Failed to copy AI prompt to clipboard:", err);
-      toast.error("Failed to copy AI prompt. Check permissions (HTTPS/localhost) or see console for details.");      updateMagicWandStats(false, 0);
+      toast.error("Failed to copy AI prompt. Check permissions (HTTPS/localhost) or see console for details.");
+      updateMagicWandStats(false, 0);
     }
-  }, [nodes, promptCollection, activePromptId]);
+  }, [nodes, promptCollection, effectiveActivePromptId, setPromptCollection]);
 
   return {
     generateMagicWandPrompt,

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useRef } from 'react';
-import { NodeData } from '../types';
+import { NodeData, PromptCollection } from '../types';
 import { createInitialData } from '../utils/treeUtils';
 import {
   saveTreeToLocalStorage,
@@ -7,12 +7,15 @@ import {
   saveCollapsedNodesToLocalStorage,
   loadCollapsedNodesFromLocalStorage
 } from '../utils/storageUtils';
+import { loadPromptCollection, savePromptCollection } from '../utils/promptUtils';
 
 interface TreeContextType {
   nodes: NodeData[];
   setNodes: React.Dispatch<React.SetStateAction<NodeData[]>>;
   collapsed: Set<string>;
   setCollapsed: React.Dispatch<React.SetStateAction<Set<string>>>;
+  prompts: PromptCollection;
+  setPrompts: React.Dispatch<React.SetStateAction<PromptCollection>>;
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;  
   isInitializing: boolean;
@@ -26,10 +29,12 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isInitializing, setIsInitializing] = useState<boolean>(true);
   const [nodes, setNodes] = useState<NodeData[]>([]);
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
+  const [prompts, setPrompts] = useState<PromptCollection>(() => loadPromptCollection());
   
   // Track auto-save debouncing
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const collapsedSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const promptsSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Custom setter function that saves to storage automatically with debouncing
   const handleSetNodes = useCallback((newNodes: React.SetStateAction<NodeData[]>) => {
@@ -73,6 +78,34 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }, 500);
       
       return nextCollapsed;
+    });
+  }, []);
+
+  // Custom setter function for prompts that saves to storage automatically with debouncing
+  const handleSetPrompts = useCallback((newPrompts: React.SetStateAction<PromptCollection>) => {
+    setPrompts(prev => {
+      const nextPrompts = typeof newPrompts === 'function' ? newPrompts(prev) : newPrompts;
+      
+      // Clear any pending timeout
+      if (promptsSaveTimeoutRef.current) {
+        clearTimeout(promptsSaveTimeoutRef.current);
+      }
+      
+      // Only save if there's a meaningful change
+      if (JSON.stringify(prev) !== JSON.stringify(nextPrompts)) {
+        // Debounce prompts save by 1 second for better performance
+        promptsSaveTimeoutRef.current = setTimeout(async () => {
+          try {
+            savePromptCollection(nextPrompts);
+            // Emit custom event to notify other components
+            window.dispatchEvent(new CustomEvent('promptCollectionChanged'));
+          } catch (error) {
+            console.error('Error saving prompt collection:', error);
+          }
+        }, 1000);
+      }
+      
+      return nextPrompts;
     });
   }, []);
   
@@ -153,8 +186,12 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         clearTimeout(collapsedSaveTimeoutRef.current);
         saveCollapsedNodesToLocalStorage(collapsed);
       }
+      if (promptsSaveTimeoutRef.current) {
+        clearTimeout(promptsSaveTimeoutRef.current);
+        savePromptCollection(prompts);
+      }
     };
-  }, [nodes, collapsed]);
+  }, [nodes, collapsed, prompts]);
   
   // Add beforeunload handler to ensure saving when window/tab is closed
   useEffect(() => {
@@ -167,11 +204,15 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         clearTimeout(collapsedSaveTimeoutRef.current);
         saveCollapsedNodesToLocalStorage(collapsed);
       }
+      if (promptsSaveTimeoutRef.current) {
+        clearTimeout(promptsSaveTimeoutRef.current);
+        savePromptCollection(prompts);
+      }
     };
     
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [nodes, collapsed]);
+  }, [nodes, collapsed, prompts]);
 
   return (
     <TreeContext.Provider value={{
@@ -179,6 +220,8 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setNodes: handleSetNodes,
         collapsed,
         setCollapsed: handleSetCollapsed,
+        prompts,
+        setPrompts: handleSetPrompts,
         isLoading,
         setIsLoading,
         isInitializing,

@@ -5,7 +5,6 @@ import AboutPage from '../components/Pages/AboutPage';
 import HomePage from '../components/Pages/HomePage';
 import AdminPage from '../components/Pages/AdminPage';
 import { PromptsPage } from '../components/Pages/PromptsPage';
-import { useMagicWand } from '../hooks/useMagicWand';
 import { useTreeContext } from '../context/TreeContext';
 import { TreeProvider } from '../context/TreeContext';
 import { SyncProvider } from '../context/SyncContext';
@@ -13,39 +12,49 @@ import { Button } from '../components/ui/Button';
 
 // Wrapper component for PromptsPage to provide required props
 const PromptsPageWrapper: React.FC = () => {
-  const { nodes } = useTreeContext();
-  const { 
-    promptCollection, 
-    activePrompt, 
-    updatePromptCollection, 
-    setActivePrompt 
-  } = useMagicWand({ nodes });
+  const { prompts: promptCollection, setPrompts: setPromptCollection } = useTreeContext();
+  
   const handlePromptSave = (prompt: any) => {
-    const updatedPrompts = promptCollection.prompts.map(p => 
-      p.id === prompt.id ? prompt : p
-    );
-    if (!promptCollection.prompts.find(p => p.id === prompt.id)) {
-      updatedPrompts.push(prompt);
-    }
-    updatePromptCollection({ 
-      ...promptCollection, 
-      prompts: updatedPrompts,
-      activePromptId: activePrompt?.id || promptCollection.activePromptId
+    setPromptCollection(prev => {
+      const updatedPrompts = prev.prompts.map(p => 
+        p.id === prompt.id ? prompt : p
+      );
+      if (!prev.prompts.find(p => p.id === prompt.id)) {
+        updatedPrompts.push(prompt);
+      }
+      return { 
+        ...prev, 
+        prompts: updatedPrompts
+      };
     });
   };
 
   const handlePromptDelete = (promptId: string) => {
-    const updatedPrompts = promptCollection.prompts.filter(p => p.id !== promptId);
-    updatePromptCollection({ 
-      ...promptCollection, 
-      prompts: updatedPrompts,
-      activePromptId: activePrompt?.id || promptCollection.activePromptId
-    });  };  const handlePromptSelect = (promptId: string) => {
-    // Update the global active prompt (this handles all state updates)
-    setActivePrompt(promptId);
+    setPromptCollection(prev => {
+      const updatedPrompts = prev.prompts.filter(p => p.id !== promptId);
+      let newActivePromptId = prev.activePromptId;
+      
+      // If we're deleting the active prompt, select a different one
+      if (prev.activePromptId === promptId) {
+        newActivePromptId = updatedPrompts.length > 0 ? updatedPrompts[0].id : null;
+      }
+      
+      return { 
+        ...prev, 
+        prompts: updatedPrompts,
+        activePromptId: newActivePromptId
+      };
+    });
   };
 
-  const currentActivePromptId = activePrompt?.id || promptCollection.activePromptId || null;
+  const handlePromptSelect = (promptId: string) => {
+    setPromptCollection(prev => ({
+      ...prev,
+      activePromptId: promptId
+    }));
+  };
+
+  const currentActivePromptId = promptCollection.activePromptId;
 
   return (
     <PromptsPage

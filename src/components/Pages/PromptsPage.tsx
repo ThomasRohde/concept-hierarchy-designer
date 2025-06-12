@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { Plus, Search, Filter, Download, Upload, Wand2, Clock, Hash, Star } from 'lucide-react';
+import { Plus, Search, Filter, Download, Upload, Wand2, Clock, Hash, Star, CloudOff, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { Prompt } from '../../types';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { PromptEditor } from '../PromptEditor';
 import { filterPrompts, sortPrompts, createNewPrompt } from '../../utils/promptUtils';
+import { useSyncContext } from '../../context/SyncContext';
 
 interface PromptsPageProps {
   prompts: Prompt[];
@@ -27,6 +28,7 @@ export const PromptsPage: React.FC<PromptsPageProps> = ({
   const [sortBy, setSortBy] = useState<SortOption>('name');
   const [editingPrompt, setEditingPrompt] = useState<Prompt | null>(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const { syncState, triggerSync } = useSyncContext();
 
   // Filter and sort prompts
   const filteredAndSortedPrompts = useMemo(() => {
@@ -137,13 +139,59 @@ export const PromptsPage: React.FC<PromptsPageProps> = ({
     }
   };
 
+  const renderSyncStatus = () => {
+    const { isOnline, pendingOperations, isSyncing, lastSyncTime } = syncState;
+    
+    if (!isOnline) {
+      return (
+        <div className="flex items-center gap-2 text-gray-500">
+          <CloudOff className="w-4 h-4" />
+          <span className="text-sm">Offline - changes will sync when online</span>
+        </div>
+      );
+    }
+    
+    if (isSyncing) {
+      return (
+        <div className="flex items-center gap-2 text-blue-600">
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span className="text-sm">Syncing prompts...</span>
+        </div>
+      );
+    }
+    
+    if (pendingOperations > 0) {
+      return (
+        <div className="flex items-center gap-2 text-orange-600">
+          <AlertCircle className="w-4 h-4" />
+          <span className="text-sm">{pendingOperations} changes pending sync</span>
+          <Button size="sm" variant="ghost" onClick={triggerSync} className="ml-2">
+            Sync Now
+          </Button>
+        </div>
+      );
+    }
+    
+    return (
+      <div className="flex items-center gap-2 text-green-600">
+        <CheckCircle className="w-4 h-4" />
+        <span className="text-sm">
+          Synced {lastSyncTime ? new Date(lastSyncTime).toLocaleTimeString() : 'recently'}
+        </span>
+      </div>
+    );
+  };
+
   return (
     <div className="max-w-6xl mx-auto p-4 sm:p-6">
       {/* Header */}
       <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">AI Prompts</h1>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">AI Prompts</h1>
+          {renderSyncStatus()}
+        </div>
         <p className="text-sm sm:text-base text-gray-600">
-          Manage your collection of AI prompts for concept generation.
+          Manage your collection of AI prompts for concept generation. Your prompts sync automatically across all your devices.
         </p>
       </div>
 
