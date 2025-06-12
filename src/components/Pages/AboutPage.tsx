@@ -5,7 +5,14 @@ const AboutPage: React.FC = () => {
   return (
     <CardContent className="p-4 sm:p-6 flex-grow overflow-auto">
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-6">About Themis</h1>
+        <div className="flex items-center mb-6">
+          <img 
+            src="/favicon.svg" 
+            alt="Themis Logo" 
+            className="w-12 h-12 mr-4"
+          />
+          <h1 className="text-2xl sm:text-3xl font-bold">About Themis</h1>
+        </div>
 
         <section className="mb-8">
           <h2 className="text-xl font-semibold mb-3">Purpose</h2>
@@ -15,7 +22,8 @@ const AboutPage: React.FC = () => {
             in a simple and intuitive way. With cloud synchronization via GitHub Gists, you can backup, share, and collaborate on your concept trees from anywhere.
           </p>
         </section>
-          <section className="mb-8">
+
+        <section className="mb-8">
           <h2 className="text-xl font-semibold mb-3">Features</h2>
           <ul className="list-disc pl-4 sm:pl-5 space-y-2">
             <li>Drag and drop interface for intuitive organization</li>
@@ -37,6 +45,26 @@ const AboutPage: React.FC = () => {
         </section>
         
         <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-3">Node Row Icons</h2>
+          <p className="text-gray-700 mb-4">
+            Each node in the concept tree has the following icons available when hovering:
+          </p>
+          <ul className="list-disc pl-4 sm:pl-5 space-y-2">
+            <li><strong>Chevron Right/Down (▶/▼):</strong> Expand or collapse child nodes</li>
+            <li><strong>Edit (✏️):</strong> Edit the node name and description</li>
+            <li><strong>Capability Card (💳):</strong> View or edit the node's capability card (when available)</li>
+            <li><strong>Magic Wand (✨):</strong> Generate AI suggestions for this node</li>
+            <li><strong>Copy (📋):</strong> Copy this node and its children to clipboard</li>
+            <li><strong>Paste (📌):</strong> Paste clipboard content as children of this node</li>
+            <li><strong>Add Child (➕):</strong> Add a new child node</li>
+            <li><strong>Delete (🗑️):</strong> Delete this node and its children</li>
+          </ul>
+          <p className="text-gray-700 mt-3">
+            Nodes support drag and drop for easy reordering and restructuring. Hover tooltips display the full node description when available.
+          </p>
+        </section>
+        
+        <section className="mb-8">
           <h2 className="text-xl font-semibold mb-3">Keyboard Navigation</h2>
           <p className="text-gray-700 mb-4">
             Navigate your concept trees efficiently using keyboard shortcuts:
@@ -53,7 +81,8 @@ const AboutPage: React.FC = () => {
             <li><strong>Auto-scroll:</strong> Focused nodes automatically scroll into view</li>
           </ul>
         </section>
-          <section className="mb-8">
+
+        <section className="mb-8">
           <h2 className="text-xl font-semibold mb-3">Technology</h2>
           <p className="text-gray-700 mb-4">
             Built with modern web technologies including:
@@ -91,7 +120,22 @@ const AboutPage: React.FC = () => {
             <li>Secure local storage with encryption for sensitive data</li>
           </ul>
         </section>
-          <section className="mb-8">
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-3">Data Privacy</h2>
+          <p className="text-gray-700 mb-4">
+            Themis respects your privacy and data security:
+          </p>
+          <ul className="list-disc pl-4 sm:pl-5 space-y-2">
+            <li>All data is stored locally on your device</li>
+            <li>GitHub Personal Access Tokens are encrypted using the Web Crypto API</li>
+            <li>No data is sent to our servers - synchronization happens directly between your device and GitHub</li>
+            <li>When using AI features, only the minimum necessary data is sent to generate suggestions</li>
+            <li>You maintain full control over your data export and sharing options</li>
+          </ul>
+        </section>
+          
+        <section className="mb-8">
           <h2 className="text-xl font-semibold mb-3">Contact</h2>
           <p className="text-gray-700">
             For questions, bug reports, or feature suggestions, please contact the developer at:<br />
