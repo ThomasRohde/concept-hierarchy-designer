@@ -55,7 +55,7 @@ export const saveTreeToLocalStorage = async (nodes: NodeData[]): Promise<boolean
     const treeModel: TreeModel = {
       id: modelId,
       name: existingModel?.name || 'My Concept Hierarchy',
-      description: existingModel?.description || 'A concept hierarchy created with the Concept Hierarchy Designer',
+      description: existingModel?.description || 'A concept hierarchy created with Themis app',
       nodes: nodes,
       prompts: prompts,
       createdAt: existingModel?.createdAt || now,

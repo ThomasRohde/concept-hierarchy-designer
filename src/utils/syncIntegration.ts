@@ -143,7 +143,7 @@ export const convertNodesToTreeModel = async (
   const treeModel: TreeModel = {
     id: modelId,
     name: name !== undefined ? name : (existingModel?.name || 'My Concept Hierarchy'),
-    description: description !== undefined ? description : (existingModel?.description || 'A concept hierarchy created with the Concept Hierarchy Designer'),
+    description: description !== undefined ? description : (existingModel?.description || 'A concept hierarchy created with the Themis app'),
     nodes: nodes,
     prompts: prompts,
     createdAt: existingModel?.createdAt || now,

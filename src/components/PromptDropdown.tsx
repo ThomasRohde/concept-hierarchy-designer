@@ -10,6 +10,7 @@ interface PromptDropdownProps {
   onOpenPromptEditor: () => void;
   onCreateNewPrompt: () => void;
   disabled?: boolean;
+  className?: string;
 }
 
 export const PromptDropdown: React.FC<PromptDropdownProps> = ({
@@ -19,6 +20,7 @@ export const PromptDropdown: React.FC<PromptDropdownProps> = ({
   onOpenPromptEditor,
   onCreateNewPrompt,
   disabled = false,
+  className = '',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -100,7 +102,7 @@ export const PromptDropdown: React.FC<PromptDropdownProps> = ({
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className={`relative ${className}`} ref={dropdownRef}>
       {/* Trigger Button */}
       <Button
         onClick={() => setIsOpen(!isOpen)}

@@ -27,7 +27,7 @@ const Layout: React.FC = () => {
                         <div className="flex items-center justify-between">
                             <div className="flex items-center">
                                 <BurgerMenu className="mr-2" />
-                                <div className="text-xl sm:text-2xl font-bold">Concept Hierarchy Designer</div>
+                                <div className="text-xl sm:text-2xl font-bold">Themis</div>
                             </div>
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 flex items-center justify-center">

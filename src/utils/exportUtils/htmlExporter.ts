@@ -363,7 +363,7 @@ const generateCapabilityCardHtml = (nodes: NodeData[], currentNodeId: string): s
   <div class="card-container">
     <div class="header">
       <h1>${current.name}</h1>
-      <p>Exported from Concept Hierarchy Designer</p>
+      <p>Exported from Themis</p>
     </div>
       <div class="capability-card">      <!-- Current Capability -->
       <div class="capability-section current-section">

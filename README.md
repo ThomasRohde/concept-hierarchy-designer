@@ -1,11 +1,11 @@
-# 🌳 Concept Hierarchy Designer
+# 🌳 Themis
 
 ![100% Vibe Coded](https://img.shields.io/badge/100%25-Vibe%20Coded-ff69b4?style=for-the-badge&logoColor=white)
 ![Agent: GitHub Copilot](https://img.shields.io/badge/Agent-GitHub%20Copilot-blue?style=for-the-badge&logo=github&logoColor=white)
 
 A powerful interactive tool for creating, organizing, and visualizing hierarchical concept maps using AI assistance.
 
-![Concept Hierarchy Designer](public/screenshot.png) <!-- Consider replacing this with an actual screenshot of your app -->
+![Themis](public/screenshot.png) <!-- Consider replacing this with an actual screenshot of your app -->
 
 ## ✨ Features
 

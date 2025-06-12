@@ -5,12 +5,12 @@ const AboutPage: React.FC = () => {
   return (
     <CardContent className="p-4 sm:p-6 flex-grow overflow-auto">
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-6">About Concept Hierarchy Designer</h1>
-        
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6">About Themis</h1>
+
         <section className="mb-8">
           <h2 className="text-xl font-semibold mb-3">Purpose</h2>
           <p className="text-gray-700 mb-4">
-            Concept Hierarchy Designer is a powerful Progressive Web App (PWA) for creating, organizing, and visualizing hierarchical knowledge structures.
+            Themis (formerly Concept Hierarchy Designer) is a powerful Progressive Web App (PWA) for creating, organizing, and visualizing hierarchical knowledge structures.
             It was developed to help researchers, educators, and knowledge workers build conceptual frameworks and knowledge maps
             in a simple and intuitive way. With cloud synchronization via GitHub Gists, you can backup, share, and collaborate on your concept trees from anywhere.
           </p>

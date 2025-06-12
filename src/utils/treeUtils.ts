@@ -147,7 +147,7 @@ export const createInitialData = (): NodeData[] => {
   return [    // Root Node
     {
       id: rootId,
-      name: "🌳 Concept Hierarchy Designer",
+      name: "🌳 Themis",
       description: "A powerful Progressive Web App (PWA) for creating, organizing, and visualizing hierarchical concept maps using AI assistance. Built with React and TypeScript, this application provides an intuitive drag-and-drop interface for managing complex concept hierarchies with unlimited depth. The system features AI-powered content generation through the Magic Wand with multiple prompts, comprehensive keyboard navigation, export capabilities in multiple formats, GitHub Gist synchronization for cloud backup and sharing, offline-first functionality, and secure local storage with IndexedDB. Designed for knowledge workers, researchers, educators, and anyone who needs to organize complex information into structured hierarchies with seamless collaboration capabilities.",
       parent: null
     },

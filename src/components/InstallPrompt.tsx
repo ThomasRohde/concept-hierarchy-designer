@@ -77,7 +77,7 @@ export const InstallPrompt: React.FC = () => {
       <Modal
         isOpen={showInstallModal}
         onClose={() => setShowInstallModal(false)}
-        title="Install Concept Hierarchy Designer"
+        title="Install Themis"
       >
         <div className="space-y-4">
           <div className="flex items-center gap-4">
@@ -87,7 +87,7 @@ export const InstallPrompt: React.FC = () => {
               className="w-12 h-12 rounded-lg"
             />
             <div>
-              <h3 className="font-semibold">Concept Hierarchy Designer</h3>
+              <h3 className="font-semibold">Themis</h3>
               <p className="text-sm text-gray-600">Install for offline access</p>
             </div>
           </div>

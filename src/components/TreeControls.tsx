@@ -58,13 +58,12 @@ const TreeControls: React.FC<TreeControlsProps> = ({
   };
 
   return (
-    <>
-      <div className="flex items-center gap-2">
+    <>      <div className="flex items-center gap-2">
         <Button
           onClick={onExpandAll}
           disabled={disabled}
           variant="outline"
-          className="flex items-center gap-2"
+          className="hidden sm:flex items-center gap-1 p-2 sm:p-3"
           title="Expand All"
           aria-label="Expand All"
         >
@@ -76,7 +75,7 @@ const TreeControls: React.FC<TreeControlsProps> = ({
           onClick={onCollapseAll}
           disabled={disabled}
           variant="outline"
-          className="flex items-center gap-2"
+          className="hidden sm:flex items-center gap-1 p-2 sm:p-3"
           title="Collapse All"
           aria-label="Collapse All"
         >
@@ -91,8 +90,8 @@ const TreeControls: React.FC<TreeControlsProps> = ({
           onOpenPromptEditor={handleOpenPromptEditor}
           onCreateNewPrompt={handleCreateNewPrompt}
           disabled={disabled}
+          className="flex-grow sm:flex-grow-0 max-w-[130px] sm:max-w-none"
         />
-
       </div>      <PromptEditor
         isOpen={isPromptEditorOpen}
         onClose={() => setIsPromptEditorOpen(false)}
