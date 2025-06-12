@@ -4,10 +4,9 @@ import { CardContent } from '../ui/Card';
 const AboutPage: React.FC = () => {
   return (
     <CardContent className="p-4 sm:p-6 flex-grow overflow-auto">
-      <div className="max-w-3xl mx-auto">
-        <div className="flex items-center mb-6">
+      <div className="max-w-3xl mx-auto">        <div className="flex items-center mb-6">
           <img 
-            src="/favicon.svg" 
+            src="./favicon.svg" 
             alt="Themis Logo" 
             className="w-12 h-12 mr-4"
           />
