@@ -242,10 +242,11 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   );
 };
 
-export const useTreeContext = (): TreeContextType => {
+// Change to function declaration for better Fast Refresh compatibility
+export function useTreeContext(): TreeContextType {
   const context = useContext(TreeContext);
   if (context === undefined) {
     throw new Error('useTreeContext must be used within a TreeProvider');
   }
   return context;
-};
+}
