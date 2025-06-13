@@ -103,8 +103,15 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             // Trigger sync with current tree data to include updated prompts
             try {
               const { syncCurrentTreeToGitHub } = await import('../utils/syncIntegration');
-              await syncCurrentTreeToGitHub(nodes);
-              console.log('🔄 TreeContext: Prompt changes synced to GitHub');
+              // Get the latest nodes from the ref to ensure we have current data
+              setNodes(currentNodes => {
+                syncCurrentTreeToGitHub(currentNodes).then(() => {
+                  console.log('🔄 TreeContext: Prompt changes synced to GitHub');
+                }).catch((syncError) => {
+                  console.warn('⚠️ TreeContext: Failed to sync prompt changes:', syncError);
+                });
+                return currentNodes; // Return unchanged to avoid unnecessary re-render
+              });
             } catch (syncError) {
               console.warn('⚠️ TreeContext: Failed to sync prompt changes:', syncError);
             }
@@ -116,7 +123,7 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       return nextPrompts;
     });
-  }, [nodes]);
+  }, []); // Remove nodes dependency since we now get current nodes from setNodes callback
   
   // Initialize app with data
   useEffect(() => {
