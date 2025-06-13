@@ -247,9 +247,7 @@ export class GitHubGistService {
       
       if (!data.model || !data.metadata) {
         return null;
-      }
-
-      // Convert date strings back to Date objects
+      }      // Convert date strings back to Date objects
       const model: TreeModel = {
         ...data.model,
         createdAt: new Date(data.model.createdAt),
@@ -257,6 +255,13 @@ export class GitHubGistService {
         gistId: gist.id,
         gistUrl: gist.html_url
       };
+
+      // Log prompt data for debugging
+      console.log('🔄 parseGistToModel: Extracted prompts from gist:', {
+        hasPrompts: Boolean(model.prompts),
+        promptCount: model.prompts?.prompts?.length || 0,
+        activePromptId: model.prompts?.activePromptId
+      });
 
       return model;
     } catch (error) {

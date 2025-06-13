@@ -73,7 +73,17 @@ const renderTreeRecursive = (
 };
 
 const MainContent: React.FC = () => {
-    const { nodes, setNodes, collapsed, setCollapsed, isLoading, setIsLoading, isInitializing } = useTreeContext();
+    const { 
+        nodes, 
+        setNodes, 
+        collapsed, 
+        setCollapsed, 
+        isLoading, 
+        setIsLoading, 
+        isInitializing,
+        prompts,
+        setPrompts 
+    } = useTreeContext();
     const { notifyGistCreated } = useSyncContext();
 
     // Create a ref for the tree container to measure its width
@@ -347,7 +357,24 @@ const MainContent: React.FC = () => {
             // Add a small delay to show loading state for large trees
             await new Promise((resolve) => setTimeout(resolve, 300));
 
-            if (validateNodeData(loadedData)) {
+            // Check if the loaded data is a TreeModel with prompts
+            if (loadedData.nodes && loadedData.prompts) {
+                console.log('✅ Detected TreeModel format with prompts:', 
+                    loadedData.prompts?.prompts?.length || 0, 'prompts');
+                
+                // Set nodes from the model
+                setNodes(loadedData.nodes);
+                
+                // Set prompts if they exist
+                if (loadedData.prompts && loadedData.prompts.prompts) {
+                    setPrompts(loadedData.prompts);
+                }
+                
+                setCollapsed(new Set());
+                toast.success("Tree and prompts loaded successfully");
+            }
+            // Standard node array format
+            else if (validateNodeData(loadedData)) {
                 setNodes(loadedData);
                 setCollapsed(new Set());
                 toast.success("Tree loaded successfully");
@@ -360,7 +387,7 @@ const MainContent: React.FC = () => {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [setNodes, setCollapsed, setIsLoading, setPrompts]);
 
     // Edit Node Modal Handlers
     const handleOpenEditNodeModal = useCallback((node: NodeData) => {

@@ -13,7 +13,7 @@ import { toast } from 'react-hot-toast';
 
 export const LoadModelButton: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { setNodes, setCollapsed } = useTreeContext();
+  const { setNodes, setCollapsed, setPrompts } = useTreeContext();
   const { syncState, markChanges } = useSyncContext();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   
@@ -25,14 +25,29 @@ export const LoadModelButton: React.FC = () => {
     };
     
     checkAuth();
-  }, []);
-
-  const handleLoadModel = async (model: TreeModel) => {
+  }, []);  const handleLoadModel = async (model: TreeModel) => {
     try {
       // Update the current tree with the loaded model's data
       setNodes(model.nodes);
       setCollapsed(new Set()); // Reset collapsed state
       
+      // Load prompts from the model if they exist
+      if (model.prompts && model.prompts.prompts && model.prompts.prompts.length > 0) {
+        console.log('✅ Loading prompts from model:', {
+          count: model.prompts.prompts.length, 
+          activePromptId: model.prompts.activePromptId,
+          names: model.prompts.prompts.map(p => p.name)
+        });
+        setPrompts(model.prompts);
+      } else {
+        console.warn('⚠️ No prompts found in loaded model or prompts array is empty');
+      }
+      
+      // Load prompts from the model if they exist
+      if (model.prompts && model.prompts.prompts && model.prompts.prompts.length > 0) {
+        console.log('✅ Loading prompts from model:', model.prompts.prompts.length, 'prompts found');
+        setPrompts(model.prompts);
+      }
       // Save the loaded model as the current tree model
       await updateTreeModelMetadata({
         id: model.id,

@@ -99,6 +99,15 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             savePromptCollection(nextPrompts);
             // Emit custom event to notify other components
             window.dispatchEvent(new CustomEvent('promptCollectionChanged'));
+            
+            // Trigger sync with current tree data to include updated prompts
+            try {
+              const { syncCurrentTreeToGitHub } = await import('../utils/syncIntegration');
+              await syncCurrentTreeToGitHub(nodes);
+              console.log('🔄 TreeContext: Prompt changes synced to GitHub');
+            } catch (syncError) {
+              console.warn('⚠️ TreeContext: Failed to sync prompt changes:', syncError);
+            }
           } catch (error) {
             console.error('Error saving prompt collection:', error);
           }
@@ -107,7 +116,7 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       return nextPrompts;
     });
-  }, []);
+  }, [nodes]);
   
   // Initialize app with data
   useEffect(() => {
