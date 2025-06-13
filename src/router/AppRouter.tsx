@@ -114,7 +114,7 @@ const router = createBrowserRouter([
 ], {
   // This ensures all routes start with the base path defined in vite.config.ts
   // Use conditional basename based on the environment
-  basename: import.meta.env.DEV ? '/' : '/concept-hierarchy-designer'
+  basename: import.meta.env.PROD ? '/concept-hierarchy-designer' : '/'
 });
 
 const AppRouter: React.FC = () => {

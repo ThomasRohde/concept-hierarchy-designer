@@ -268,11 +268,11 @@ export const PromptEditor: React.FC<PromptEditorProps> = ({
         <div className="flex items-center gap-4 text-xs text-gray-500 pt-2 border-t border-gray-200">
           <div className="flex items-center gap-1">
             <Calendar className="w-3 h-3" />
-            Created: {editingPrompt.createdAt.toLocaleDateString()}
+            Created: {editingPrompt.createdAt instanceof Date ? editingPrompt.createdAt.toLocaleDateString() : new Date(editingPrompt.createdAt).toLocaleDateString()}
           </div>
           <div className="flex items-center gap-1">
             <Calendar className="w-3 h-3" />
-            Modified: {editingPrompt.lastModified.toLocaleDateString()}
+            Modified: {editingPrompt.lastModified instanceof Date ? editingPrompt.lastModified.toLocaleDateString() : new Date(editingPrompt.lastModified).toLocaleDateString()}
           </div>
           {editingPrompt.usageCount !== undefined && editingPrompt.usageCount > 0 && (
             <div>Used {editingPrompt.usageCount} times</div>
