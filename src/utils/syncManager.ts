@@ -292,53 +292,58 @@ export class SyncManager {
   private async createGist(model: TreeModel): Promise<SyncResult> {
     console.log('📝 SyncManager: Creating gist for model:', model.id);
     
-    // First check if there are existing concept hierarchy gists to prevent duplicates
-    try {
-      console.log('🔍 SyncManager: Checking for existing concept hierarchy gists...');
-      const existingGists = await GitHubGistService.listConceptHierarchyGists(1, 10);
-      
-      if (existingGists.length > 0) {
-        console.log('⚠️ SyncManager: Found', existingGists.length, 'existing concept hierarchy gists');
+    // Only check for existing gists if the model doesn't already have a gistId
+    // If we're in createGist, it means we explicitly want to create a new one
+    if (!model.gistId) {
+      try {
+        console.log('🔍 SyncManager: Checking for existing concept hierarchy gists...');
+        const existingGists = await GitHubGistService.listConceptHierarchyGists(1, 10);
         
-        // Find the most recent gist that could match this model
-        const mostRecentGist = existingGists
-          .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())[0];
-        
-        console.log('🔄 SyncManager: Most recent existing gist:', mostRecentGist.id, mostRecentGist.description);
-        
-        // Instead of creating a new gist, update the existing one
-        console.log('🔄 SyncManager: Updating existing gist instead of creating duplicate:', mostRecentGist.id);
-        
-        // Update the TreeModel with the existing gist info
-        const updateSuccess = await updateTreeModelMetadata({
-          gistId: mostRecentGist.id,
-          gistUrl: mostRecentGist.html_url,
-        });
-        
-        if (!updateSuccess) {
-          console.warn('⚠️ SyncManager: Failed to update TreeModel with existing gist metadata, using fallback');
-          model.gistId = mostRecentGist.id;
-          model.gistUrl = mostRecentGist.html_url;
-          await saveData('currentTreeModel', model);
-        }
-        
-        // Save gist association for persistence across sessions
-        try {
-          await saveData('gistAssociation', {
+        if (existingGists.length > 0) {
+          console.log('⚠️ SyncManager: Found', existingGists.length, 'existing concept hierarchy gists');
+          
+          // Find the most recent gist that could match this model
+          const mostRecentGist = existingGists
+            .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())[0];
+          
+          console.log('🔄 SyncManager: Most recent existing gist:', mostRecentGist.id, mostRecentGist.description);
+          
+          // Instead of creating a new gist, update the existing one
+          console.log('🔄 SyncManager: Updating existing gist instead of creating duplicate:', mostRecentGist.id);
+          
+          // Update the TreeModel with the existing gist info
+          const updateSuccess = await updateTreeModelMetadata({
             gistId: mostRecentGist.id,
             gistUrl: mostRecentGist.html_url,
-            timestamp: Date.now()
           });
-          console.log('💾 SyncManager: Existing gist association saved for session persistence');
-        } catch (error) {
-          console.warn('⚠️ SyncManager: Failed to save existing gist association:', error);
+          
+          if (!updateSuccess) {
+            console.warn('⚠️ SyncManager: Failed to update TreeModel with existing gist metadata, using fallback');
+            model.gistId = mostRecentGist.id;
+            model.gistUrl = mostRecentGist.html_url;
+            await saveData('currentTreeModel', model);
+          }
+          
+          // Save gist association for persistence across sessions
+          try {
+            await saveData('gistAssociation', {
+              gistId: mostRecentGist.id,
+              gistUrl: mostRecentGist.html_url,
+              timestamp: Date.now()
+            });
+            console.log('💾 SyncManager: Existing gist association saved for session persistence');
+          } catch (error) {
+            console.warn('⚠️ SyncManager: Failed to save existing gist association:', error);
+          }
+          
+          // Now update the existing gist with current model data
+          return await this.updateGist(model, mostRecentGist.id);
         }
-        
-        // Now update the existing gist with current model data
-        return await this.updateGist(model, mostRecentGist.id);
+      } catch (error) {
+        console.warn('⚠️ SyncManager: Failed to check for existing gists, proceeding with creation:', error);
       }
-    } catch (error) {
-      console.warn('⚠️ SyncManager: Failed to check for existing gists, proceeding with creation:', error);
+    } else {
+      console.log('🔄 SyncManager: Model already has gistId, but createGist was called. This might indicate a logic error.');
     }
     
     try {

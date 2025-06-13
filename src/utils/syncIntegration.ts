@@ -84,6 +84,13 @@ export const convertNodesToTreeModel = async (
   
   // Try to load existing model metadata or create new
   let existingModel = await getCurrentTreeModel();
+  console.log('🔄 convertNodesToTreeModel: getCurrentTreeModel result:', {
+    found: Boolean(existingModel),
+    gistId: existingModel?.gistId,
+    gistUrl: existingModel?.gistUrl,
+    id: existingModel?.id,
+    version: existingModel?.version
+  });
   
   // If no existing model found, check for persisted gist association
   if (!existingModel) {
@@ -270,8 +277,16 @@ export const syncCurrentTreeToGitHub = async (
 
     const syncManager = SyncManager.getInstance();
 
+    console.log('🔗 syncIntegration: Sync path decision check:', {
+      hasGistId: Boolean(treeModel.gistId),
+      gistIdValue: treeModel.gistId,
+      forceCreate: Boolean(options?.forceCreate),
+      willUpdate: Boolean(treeModel.gistId && !options?.forceCreate),
+      willCreate: Boolean(!treeModel.gistId || options?.forceCreate)
+    });
+
     if (treeModel.gistId && !options?.forceCreate) {
-      console.log('🔗 syncIntegration: Updating existing gist:', treeModel.gistId);
+      console.log('🔗 syncIntegration: ✅ TAKING UPDATE PATH - Updating existing gist:', treeModel.gistId);
       console.log('🔗 syncIntegration: Model details for UPDATE:', {
         id: treeModel.id,
         gistId: treeModel.gistId,
@@ -282,7 +297,7 @@ export const syncCurrentTreeToGitHub = async (
       });
       await syncManager.enqueueSync('UPDATE', treeModel, treeModel.gistId);
     } else {
-      console.log('🔗 syncIntegration: Creating new gist');
+      console.log('🔗 syncIntegration: ➕ TAKING CREATE PATH - Creating new gist');
       console.log('🔗 syncIntegration: Reasons for CREATE:', {
         hasGistId: Boolean(treeModel.gistId),
         gistIdValue: treeModel.gistId,
