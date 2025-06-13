@@ -14,7 +14,7 @@ export interface GistFile {
   type?: string;
   language?: string;
   size?: number;
-  raw_url?: string;
+  raw_url?: string; 
 }
 
 export interface Gist {
