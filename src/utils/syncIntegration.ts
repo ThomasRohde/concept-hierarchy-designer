@@ -2,6 +2,7 @@ import { NodeData, TreeModel, PromptCollection } from '../types';
 import { SyncManager } from './syncManager';
 import { loadData, saveData } from './offlineStorage';
 import { getCurrentTreeModel } from './storageUtils';
+import { getRootNode } from './gistUtils';
 
 // Robust sync lock system to prevent concurrent sync operations that could create duplicate gists
 interface SyncLockEntry {
@@ -149,10 +150,14 @@ export const convertNodesToTreeModel = async (
   const modelId = existingModel?.id || `tree_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   console.log('🔄 convertNodesToTreeModel: Using model ID:', modelId);
 
+  // Use root node name as model name if not explicitly provided
+  const rootNode = getRootNode(nodes);
+  const modelName = name !== undefined ? name : (rootNode ? rootNode.name : (existingModel?.name || 'My Concept Hierarchy'));
+
   // Create or update the tree model
   const treeModel: TreeModel = {
     id: modelId,
-    name: name !== undefined ? name : (existingModel?.name || 'My Concept Hierarchy'),
+    name: modelName,
     description: description !== undefined ? description : (existingModel?.description || 'A concept hierarchy created with the Themis app'),
     nodes: nodes,
     prompts: prompts,

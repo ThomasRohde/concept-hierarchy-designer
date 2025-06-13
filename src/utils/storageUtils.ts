@@ -2,6 +2,7 @@ import { NodeData, TreeModel, PromptCollection } from '../types';
 import { toast } from 'react-hot-toast';
 import { saveData, loadData, DB_NAME, DB_VERSION } from './offlineStorage';
 import { openDB } from 'idb';
+import { getRootNode } from './gistUtils';
 
 // Storage key names
 const STORAGE_KEY = 'concept-hierarchy-data';
@@ -52,9 +53,13 @@ export const saveTreeToLocalStorage = async (nodes: NodeData[]): Promise<boolean
     const now = new Date();
     const modelId = existingModel?.id || `tree_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
+    // Use root node name as model name
+    const rootNode = getRootNode(nodes);
+    const modelName = rootNode ? rootNode.name : (existingModel?.name || 'My Concept Hierarchy');
+    
     const treeModel: TreeModel = {
       id: modelId,
-      name: existingModel?.name || 'My Concept Hierarchy',
+      name: modelName,
       description: existingModel?.description || 'A concept hierarchy created with Themis app',
       nodes: nodes,
       prompts: prompts,

@@ -2,7 +2,7 @@ import { NodeData } from '../../types';
 import { saveTreeAsJson } from './jsonExporter.js';
 import { saveCapabilityCardAsHtml } from './htmlExporter.js';
 import { saveCapabilityCardAsPdf } from './pdfExporter.js';
-import { saveCapabilityCardAsSvg } from './svgExporter.js';
+// import { saveCapabilityCardAsSvg } from './svgExporter.js';
 import { saveCapabilityCardAsPng } from './pngExporter.js';
 
 export type ExportFormat = 'json' | 'html' | 'pdf' | 'svg' | 'svg-enhanced' | 'png';

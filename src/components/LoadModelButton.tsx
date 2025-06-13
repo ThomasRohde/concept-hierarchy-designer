@@ -9,6 +9,7 @@ import { updateTreeModelMetadata } from '../utils/storageUtils';
 import { useSyncContext } from '../context/SyncContext';
 import { GitHubAuthService } from '../services/githubAuthService';
 import { GitHubGistService } from '../services/githubGistService';
+import { getRootNode } from '../utils/gistUtils';
 import { toast } from 'react-hot-toast';
 
 export const LoadModelButton: React.FC = () => {
@@ -48,10 +49,15 @@ export const LoadModelButton: React.FC = () => {
         console.log('✅ Loading prompts from model:', model.prompts.prompts.length, 'prompts found');
         setPrompts(model.prompts);
       }
+      
+      // Use root node name as model name
+      const rootNode = getRootNode(model.nodes);
+      const modelName = rootNode ? rootNode.name : model.name;
+      
       // Save the loaded model as the current tree model
       await updateTreeModelMetadata({
         id: model.id,
-        name: model.name,
+        name: modelName,
         description: model.description,
         gistId: model.gistId,
         gistUrl: model.gistUrl,
@@ -80,13 +86,13 @@ export const LoadModelButton: React.FC = () => {
             gistUrl: gist.html_url
           });
           
-          toast.success(`Loaded "${model.name}" and created GitHub backup`);
+          toast.success(`Loaded "${modelName}" and created GitHub backup`);
         } catch (error) {
           console.warn('Failed to create gist for loaded model:', error);
-          toast.success(`Loaded "${model.name}" (GitHub backup failed)`);
+          toast.success(`Loaded "${modelName}" (GitHub backup failed)`);
         }
       } else {
-        toast.success(`Loaded "${model.name}" successfully`);
+        toast.success(`Loaded "${modelName}" successfully`);
       }
       
       // Mark changes for sync if sync is enabled

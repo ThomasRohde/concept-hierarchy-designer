@@ -86,12 +86,14 @@ export function isValidModelId(modelId: string): boolean {
  * Creates metadata object for Gist storage
  */
 export function createGistMetadata(model: TreeModel, author?: string, isPublic: boolean = false): GistMetadata {
-  const slug = createSlug(model.name);
+  const rootNode = getRootNode(model.nodes);
+  const modelName = rootNode ? rootNode.name : model.name;
+  const slug = createSlug(modelName);
   
   return {
     modelId: model.id,
     slug,
-    name: model.name,
+    name: modelName,
     description: model.description,
     category: model.category,
     tags: model.tags,

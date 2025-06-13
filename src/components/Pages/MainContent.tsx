@@ -81,7 +81,7 @@ const MainContent: React.FC = () => {
         isLoading, 
         setIsLoading, 
         isInitializing,
-        prompts,
+        prompts: _prompts,
         setPrompts 
     } = useTreeContext();
     const { notifyGistCreated } = useSyncContext();
