@@ -5,7 +5,7 @@
 
 A powerful interactive tool for creating, organizing, and visualizing hierarchical concept maps using AI assistance.
 
-![Themis](public/screenshot.png) <!-- Consider replacing this with an actual screenshot of your app -->
+![Themis](public/screenshot.png)
 
 ## ✨ Features
 
