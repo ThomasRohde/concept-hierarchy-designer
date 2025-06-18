@@ -25,6 +25,8 @@ export const SyncButton: React.FC<SyncButtonProps> = ({
     gistUrl?: string;
   }>({ hasGistId: false });
   const [isGistSyncing, setIsGistSyncing] = useState(false);
+  const [lastSyncAttempt, setLastSyncAttempt] = useState(0);
+  const SYNC_DEBOUNCE_MS = 2000; // Prevent sync attempts within 2 seconds of each other
 
   // Check authentication status and listen for changes
   useEffect(() => {
@@ -85,9 +87,12 @@ export const SyncButton: React.FC<SyncButtonProps> = ({
       unsubscribeMetadataUpdated();
     };
   }, []);
-
-  // Keyboard shortcut for manual sync (Ctrl+S or Cmd+S)
+  // Keyboard shortcut for manual sync (Ctrl+Shift+S)
+  // Only register keyboard shortcut for the first instance (icon-only in Layout)
   useEffect(() => {
+    // Only register keyboard shortcut for the main sync button in the layout
+    if (variant !== 'icon-only') return;
+    
     const handleKeyboardShortcut = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's' && e.shiftKey) {
         e.preventDefault();
@@ -97,9 +102,27 @@ export const SyncButton: React.FC<SyncButtonProps> = ({
 
     window.addEventListener('keydown', handleKeyboardShortcut);
     return () => window.removeEventListener('keydown', handleKeyboardShortcut);
-  }, [syncState.isOnline, syncState.isSyncing]);
+  }, []); // Remove dependencies to prevent event listener recreation
 
   const handleSyncClick = async () => {
+    const now = Date.now();
+    
+    // Debounce sync attempts to prevent multiple rapid clicks
+    if (now - lastSyncAttempt < SYNC_DEBOUNCE_MS) {
+      console.log('🔄 SyncButton: Ignoring sync click due to debounce (too soon after last attempt)');
+      // Visual feedback for throttled attempts
+      const button = document.activeElement as HTMLButtonElement;
+      if (button) {
+        button.style.animation = 'pulse 0.3s ease-in-out';
+        setTimeout(() => {
+          if (button.style) button.style.animation = '';
+        }, 300);
+      }
+      return;
+    }
+    
+    setLastSyncAttempt(now);
+    
     console.log('🔄 SyncButton: GitHub sync clicked');
     console.log('🔐 SyncButton: isAuthenticated state:', isAuthenticated);
     

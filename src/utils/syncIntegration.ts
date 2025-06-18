@@ -1,6 +1,6 @@
 import { NodeData, TreeModel, PromptCollection } from '../types';
 import { SyncManager } from './syncManager';
-import { loadData, saveData } from './offlineStorage';
+import { loadData } from './offlineStorage';
 import { createOrUpdateTreeModel, getCurrentTreeModel } from './treeModelUtils';
 
 // Robust sync lock system to prevent concurrent sync operations that could create duplicate gists
@@ -13,6 +13,10 @@ interface SyncLockEntry {
 // Global sync lock map that persists across component re-executions
 const syncLocks = new Map<string, SyncLockEntry>();
 const SYNC_LOCK_TIMEOUT = 30000; // 30 seconds timeout for abandoned locks
+
+// Additional global sync throttling to prevent rapid successive sync calls
+let lastGlobalSyncAttempt = 0;
+const GLOBAL_SYNC_THROTTLE_MS = 1000; // 1 second global throttle
 
 // Generate unique request ID for tracking
 const generateRequestId = (): string => {
@@ -135,6 +139,19 @@ export const syncCurrentTreeToGitHub = async (
     forceCreate?: boolean;
   }
 ): Promise<{ success: boolean; gistId?: string; error?: string }> => {
+  const now = Date.now();
+  
+  // Global throttling to prevent rapid successive sync calls from any source
+  if (now - lastGlobalSyncAttempt < GLOBAL_SYNC_THROTTLE_MS) {
+    console.log('⚠️ syncIntegration: Throttling sync attempt - too soon after last global sync');
+    return {
+      success: false,
+      error: 'Sync throttled: Please wait before attempting another sync.'
+    };
+  }
+  
+  lastGlobalSyncAttempt = now;
+  
   console.log('🔗 syncIntegration: Starting sync to GitHub...');
   console.log('🔗 syncIntegration: Nodes count:', nodes.length);
   console.log('🔗 syncIntegration: Options:', options);

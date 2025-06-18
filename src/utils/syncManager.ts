@@ -133,8 +133,7 @@ export class SyncManager {
     console.log('📋 SyncManager: Model name:', model.name);
     console.log('📋 SyncManager: Gist ID:', gistId);
     console.log('📋 SyncManager: Model nodes count:', model.nodes.length);
-    
-    // Check for existing pending sync operations for this model to prevent duplicates
+      // Check for existing pending sync operations for this model to prevent duplicates
     const existingQueue = await getQueue();
     const existingSyncItems = existingQueue.filter(item => 
       item.type === 'SYNC' && 
@@ -145,7 +144,26 @@ export class SyncManager {
     if (existingSyncItems.length > 0) {
       console.log('⚠️ SyncManager: Duplicate sync operation detected for model:', model.id, 'action:', action);
       console.log('⚠️ SyncManager: Existing items in queue:', existingSyncItems.length);
+      console.log('⚠️ SyncManager: Existing items:', existingSyncItems.map(item => ({
+        modelId: item.modelId,
+        action: item.action,
+        timestamp: item.timestamp,
+        retryCount: item.retryCount
+      })));
       console.log('⚠️ SyncManager: Skipping duplicate operation');
+      return;
+    }
+    
+    // Additional check: prevent duplicate operations within a short time window (1 second)
+    const recentItems = existingQueue.filter(item => 
+      item.type === 'SYNC' && 
+      (item as SyncQueueItem).modelId === model.id &&
+      (Date.now() - item.timestamp) < 1000 // 1 second window
+    ) as SyncQueueItem[];
+    
+    if (recentItems.length > 0) {
+      console.log('⚠️ SyncManager: Recent sync operation detected for model:', model.id, 'within 1 second');
+      console.log('⚠️ SyncManager: Skipping to prevent rapid-fire sync attempts');
       return;
     }
     
