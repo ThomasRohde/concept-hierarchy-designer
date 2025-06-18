@@ -72,6 +72,24 @@ class SimpleEncryption {
 export class GitHubAuthService {
   private static pat: string | null = null;
   private static authStatus: GitHubAuthStatus = { isAuthenticated: false };
+  
+  // Event system for auth state changes
+  private static listeners: Set<(status: GitHubAuthStatus) => void> = new Set();
+
+  static addAuthStateListener(callback: (status: GitHubAuthStatus) => void) {
+    this.listeners.add(callback);
+    return () => this.listeners.delete(callback);
+  }
+
+  private static notifyAuthStateChange(status: GitHubAuthStatus) {
+    this.listeners.forEach(callback => {
+      try {
+        callback(status);
+      } catch (error) {
+        console.warn('Error in auth state listener:', error);
+      }
+    });
+  }
 
   static async validatePAT(pat: string): Promise<{ isValid: boolean; username?: string; error?: string }> {
     try {
@@ -138,6 +156,7 @@ export class GitHubAuthService {
       await saveData(GITHUB_AUTH_STATUS_KEY, null);
       this.pat = null;
       this.authStatus = { isAuthenticated: false };
+      this.notifyAuthStateChange(this.authStatus);
     } catch (error) {
       throw new Error(`Failed to remove GitHub PAT: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
@@ -147,6 +166,7 @@ export class GitHubAuthService {
     try {
       await saveData(GITHUB_AUTH_STATUS_KEY, status);
       this.authStatus = status;
+      this.notifyAuthStateChange(status);
     } catch (error) {
       throw new Error(`Failed to save auth status: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }

@@ -18,7 +18,7 @@ export const LoadModelButton: React.FC = () => {
   const { syncState, markChanges } = useSyncContext();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   
-  // Check authentication status
+  // Check authentication status and listen for changes
   useEffect(() => {
     const checkAuth = async () => {
       const authStatus = await GitHubAuthService.testConnection();
@@ -26,6 +26,15 @@ export const LoadModelButton: React.FC = () => {
     };
     
     checkAuth();
+    
+    // Listen for auth state changes from other components
+    const unsubscribe = GitHubAuthService.addAuthStateListener((status) => {
+      setIsAuthenticated(status.isAuthenticated);
+    });
+    
+    return () => {
+      unsubscribe();
+    };
   }, []);  const handleLoadModel = async (model: TreeModel) => {
     try {
       // Update the current tree with the loaded model's data

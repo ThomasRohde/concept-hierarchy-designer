@@ -25,7 +25,7 @@ export const SyncButton: React.FC<SyncButtonProps> = ({
   }>({ hasGistId: false });
   const [isGistSyncing, setIsGistSyncing] = useState(false);
 
-  // Check authentication status and refresh periodically
+  // Check authentication status and listen for changes
   useEffect(() => {
     const checkAuth = async () => {
       // Use testConnection instead of loadAuthStatus to verify the token is actually valid
@@ -36,21 +36,14 @@ export const SyncButton: React.FC<SyncButtonProps> = ({
     
     checkAuth();
     
-    // Also check when the component becomes visible (in case auth changed in another tab/component)
-    const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        checkAuth();
-      }
-    };
-    
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    
-    // Refresh auth status every 30 seconds to stay in sync
-    const interval = setInterval(checkAuth, 30000);
+    // Listen for auth state changes from other components
+    const unsubscribe = GitHubAuthService.addAuthStateListener((status) => {
+      console.log('🔐 SyncButton: Auth state changed via listener:', status);
+      setIsAuthenticated(status.isAuthenticated);
+    });
     
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      clearInterval(interval);
+      unsubscribe();
     };
   }, []);
 

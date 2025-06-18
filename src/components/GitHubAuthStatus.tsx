@@ -18,6 +18,15 @@ export const GitHubAuthStatus: React.FC<GitHubAuthStatusProps> = ({
 
   useEffect(() => {
     loadAuthStatus();
+    
+    // Listen for auth state changes from other components
+    const unsubscribe = GitHubAuthService.addAuthStateListener((status) => {
+      setAuthStatus(status);
+    });
+    
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   const loadAuthStatus = async () => {

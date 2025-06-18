@@ -6,9 +6,9 @@ import LoadingSpinner from './LoadingSpinner';
 import { GitHubGistService } from '../services/githubGistService';
 import { GitHubAuthService } from '../services/githubAuthService';
 import { TreeModel } from '../types';
-import { getModelSummary, getModel } from '../utils/offlineStorage';
+import { getModelSummary, getModel, deleteModel } from '../utils/offlineStorage';
 import { useSyncContext } from '../context/SyncContext';
-import { Calendar, User, FileText, GitBranch, ExternalLink } from 'lucide-react';
+import { Calendar, User, FileText, GitBranch, ExternalLink, Trash2 } from 'lucide-react';
 
 interface ModelSummary {
   id: string;
@@ -34,6 +34,7 @@ const LoadModelModal: React.FC<LoadModelModalProps> = ({ isOpen, onClose, onLoad
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState<'local' | 'remote'>('local');
   const [loadingModelId, setLoadingModelId] = useState<string | null>(null);
+  const [deletingModelId, setDeletingModelId] = useState<string | null>(null);
   const { onGistCreated } = useSyncContext();
 
   useEffect(() => {
@@ -163,6 +164,51 @@ const LoadModelModal: React.FC<LoadModelModalProps> = ({ isOpen, onClose, onLoad
     }
   };
 
+  const handleDeleteLocal = async (modelId: string, modelName: string) => {
+    if (!confirm(`Are you sure you want to delete "${modelName}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    setDeletingModelId(modelId);
+    try {
+      await deleteModel(modelId);
+      toast.success(`Deleted "${modelName}" successfully`);
+      // Reload local models
+      const localSummaries = await getModelSummary();
+      setLocalModels(localSummaries);
+    } catch (error) {
+      console.error('Failed to delete local model:', error);
+      toast.error('Failed to delete model');
+    } finally {
+      setDeletingModelId(null);
+    }
+  };
+
+  const handleDeleteRemote = async (gistUrl: string, modelName: string) => {
+    if (!confirm(`Are you sure you want to delete "${modelName}" from GitHub? This action cannot be undone.`)) {
+      return;
+    }
+
+    setDeletingModelId(gistUrl);
+    try {
+      // Extract gist ID from URL
+      const gistId = gistUrl.split('/').pop();
+      if (!gistId) {
+        throw new Error('Invalid gist URL');
+      }
+
+      await GitHubGistService.deleteGist(gistId);
+      toast.success(`Deleted "${modelName}" from GitHub successfully`);
+      // Reload remote models
+      await loadRemoteModels();
+    } catch (error) {
+      console.error('Failed to delete remote model:', error);
+      toast.error('Failed to delete model from GitHub');
+    } finally {
+      setDeletingModelId(null);
+    }
+  };
+
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-US', {
       year: 'numeric',
@@ -174,7 +220,9 @@ const LoadModelModal: React.FC<LoadModelModalProps> = ({ isOpen, onClose, onLoad
   };
 
   const ModelCard: React.FC<{ model: ModelSummary; isRemote?: boolean }> = ({ model, isRemote = false }) => {
-    const isLoading = loadingModelId === (isRemote ? model.gistUrl : model.id);
+    const modelId = isRemote ? model.gistUrl : model.id;
+    const isLoading = loadingModelId === modelId;
+    const isDeleting = deletingModelId === modelId;
     
     return (
       <div className="p-4 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
@@ -213,14 +261,24 @@ const LoadModelModal: React.FC<LoadModelModalProps> = ({ isOpen, onClose, onLoad
               )}
             </div>
           </div>
-          <Button
-            size="sm"
-            onClick={() => isRemote ? handleLoadRemote(model.gistUrl!, model.name) : handleLoadLocal(model.id)}
-            disabled={isLoading}
-            className="ml-3"
-          >
-            {isLoading ? <LoadingSpinner size={16} /> : 'Load'}
-          </Button>
+          <div className="flex gap-2 ml-3">
+            <Button
+              size="sm"
+              onClick={() => isRemote ? handleLoadRemote(model.gistUrl!, model.name) : handleLoadLocal(model.id)}
+              disabled={isLoading || isDeleting}
+            >
+              {isLoading ? <LoadingSpinner size={16} /> : 'Load'}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => isRemote ? handleDeleteRemote(model.gistUrl!, model.name) : handleDeleteLocal(model.id, model.name)}
+              disabled={isLoading || isDeleting}
+              className="text-red-600 hover:text-red-700 hover:border-red-300"
+            >
+              {isDeleting ? <LoadingSpinner size={16} /> : <Trash2 className="w-4 h-4" />}
+            </Button>
+          </div>
         </div>
       </div>
     );

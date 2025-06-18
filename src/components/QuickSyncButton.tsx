@@ -23,13 +23,23 @@ export const QuickSyncButton: React.FC<QuickSyncButtonProps> = ({
     gistUrl?: string;
   }>({ hasGistId: false });
 
-  // Check authentication status
+  // Check authentication status and listen for changes
   useEffect(() => {
     const checkAuth = async () => {
       const authStatus = await GitHubAuthService.loadAuthStatus();
       setIsAuthenticated(authStatus.isAuthenticated);
     };
+    
     checkAuth();
+    
+    // Listen for auth state changes from other components
+    const unsubscribe = GitHubAuthService.addAuthStateListener((status) => {
+      setIsAuthenticated(status.isAuthenticated);
+    });
+    
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   // Load sync status

@@ -90,6 +90,12 @@ export class GitHubGistService {
       throw new Error(`GitHub API error (${response.status}): ${errorText}`);
     }
 
+    // Handle responses with no content (like DELETE operations)
+    if (response.status === 204 || response.headers.get('content-length') === '0') {
+      console.log('✅ GitHubGistService: Success response (no content)');
+      return null;
+    }
+
     const result = await response.json();
     console.log('✅ GitHubGistService: Success response:', result);
     return result;
