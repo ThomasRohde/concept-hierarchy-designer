@@ -93,32 +93,40 @@ export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       // Only save if there's a meaningful change
       if (JSON.stringify(prev) !== JSON.stringify(nextPrompts)) {
-        // Debounce prompts save by 1 second for better performance
+        // Debounce prompts save by 3 seconds to reduce rapid sync operations
         promptsSaveTimeoutRef.current = setTimeout(async () => {
           try {
             savePromptCollection(nextPrompts);
             // Emit custom event to notify other components
             window.dispatchEvent(new CustomEvent('promptCollectionChanged'));
             
-            // Trigger sync with current tree data to include updated prompts
-            try {
-              const { syncCurrentTreeToGitHub } = await import('../utils/syncIntegration');
-              // Get the latest nodes from the ref to ensure we have current data
-              setNodes(currentNodes => {
-                syncCurrentTreeToGitHub(currentNodes).then(() => {
-                  console.log('🔄 TreeContext: Prompt changes synced to GitHub');
-                }).catch((syncError) => {
-                  console.warn('⚠️ TreeContext: Failed to sync prompt changes:', syncError);
+            // Only trigger sync if there are significant changes (e.g., new prompts added/removed)
+            const hasStructuralChanges = prev.prompts.length !== nextPrompts.prompts.length ||
+              prev.activePromptId !== nextPrompts.activePromptId;
+            
+            if (hasStructuralChanges) {
+              console.log('🔄 TreeContext: Structural prompt changes detected, triggering sync');
+              try {
+                const { syncCurrentTreeToGitHub } = await import('../utils/syncIntegration');
+                // Get the latest nodes from the ref to ensure we have current data
+                setNodes(currentNodes => {
+                  syncCurrentTreeToGitHub(currentNodes).then(() => {
+                    console.log('🔄 TreeContext: Prompt changes synced to GitHub');
+                  }).catch((syncError) => {
+                    console.warn('⚠️ TreeContext: Failed to sync prompt changes:', syncError);
+                  });
+                  return currentNodes; // Return unchanged to avoid unnecessary re-render
                 });
-                return currentNodes; // Return unchanged to avoid unnecessary re-render
-              });
-            } catch (syncError) {
-              console.warn('⚠️ TreeContext: Failed to sync prompt changes:', syncError);
+              } catch (syncError) {
+                console.warn('⚠️ TreeContext: Failed to sync prompt changes:', syncError);
+              }
+            } else {
+              console.log('🔄 TreeContext: Minor prompt changes, skipping automatic sync');
             }
           } catch (error) {
             console.error('Error saving prompt collection:', error);
           }
-        }, 1000);
+        }, 3000); // Increased from 1s to 3s
       }
       
       return nextPrompts;

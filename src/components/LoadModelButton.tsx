@@ -5,11 +5,12 @@ import LoadModelModal from './LoadModelModal';
 import { TreeModel } from '../types';
 import { useTreeContext } from '../context/TreeContext';
 import { saveModel } from '../utils/offlineStorage';
-import { updateTreeModelMetadata } from '../utils/storageUtils';
+import { updateTreeModelGistMetadata } from '../utils/treeModelUtils';
 import { useSyncContext } from '../context/SyncContext';
 import { GitHubAuthService } from '../services/githubAuthService';
 import { GitHubGistService } from '../services/githubGistService';
 import { getRootNode } from '../utils/gistUtils';
+import { createSyncEventListener, syncEventSystem } from '../utils/syncEventSystem';
 import { toast } from 'react-hot-toast';
 
 export const LoadModelButton: React.FC = () => {
@@ -17,6 +18,7 @@ export const LoadModelButton: React.FC = () => {
   const { setNodes, setCollapsed, setPrompts } = useTreeContext();
   const { syncState, markChanges } = useSyncContext();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
   
   // Check authentication status and listen for changes
   useEffect(() => {
@@ -34,6 +36,32 @@ export const LoadModelButton: React.FC = () => {
     
     return () => {
       unsubscribe();
+    };
+  }, []);
+
+  // Listen for sync events to refresh the modal content
+  useEffect(() => {
+    const eventListener = createSyncEventListener();
+    
+    const unsubscribeGistCreated = eventListener.onGistCreated(() => {
+      console.log('🔄 LoadModelButton: Gist created, refreshing modal content');
+      setRefreshKey(prev => prev + 1);
+    });
+    
+    const unsubscribeGistUpdated = eventListener.onGistUpdated(() => {
+      console.log('🔄 LoadModelButton: Gist updated, refreshing modal content');
+      setRefreshKey(prev => prev + 1);
+    });
+    
+    const unsubscribeSyncCompleted = eventListener.onSyncCompleted(() => {
+      console.log('🔄 LoadModelButton: Sync completed, refreshing modal content');
+      setRefreshKey(prev => prev + 1);
+    });
+    
+    return () => {
+      unsubscribeGistCreated();
+      unsubscribeGistUpdated();
+      unsubscribeSyncCompleted();
     };
   }, []);  const handleLoadModel = async (model: TreeModel) => {
     try {
@@ -63,25 +91,10 @@ export const LoadModelButton: React.FC = () => {
       const rootNode = getRootNode(model.nodes);
       const modelName = rootNode ? rootNode.name : model.name;
       
-      // Save the loaded model as the current tree model
-      await updateTreeModelMetadata({
-        id: model.id,
-        name: modelName,
-        description: model.description,
-        gistId: model.gistId,
-        gistUrl: model.gistUrl,
-        category: model.category,
-        tags: model.tags,
-        author: model.author,
-        license: model.license,
-        isPublic: model.isPublic,
-        createdAt: model.createdAt,
-        version: model.version
-      });
-
-      // Also save it to the models collection for future reference
+      // Save the loaded model as the current tree model using centralized utility
+      // This will save the model and emit the appropriate events
       await saveModel(model);
-      
+
       // If syncing is enabled and the model doesn't have a gistId, create a gist
       const isAuthenticatedForSync = await GitHubAuthService.getCurrentPAT();
       if (isAuthenticatedForSync && !model.gistId) {
@@ -89,11 +102,8 @@ export const LoadModelButton: React.FC = () => {
           console.log('Creating gist for loaded model since sync is enabled...');
           const gist = await GitHubGistService.createGist(model, model.isPublic || false);
           
-          // Update the model with gist information
-          await updateTreeModelMetadata({
-            gistId: gist.id,
-            gistUrl: gist.html_url
-          });
+          // Update the model with gist information using centralized utility
+          await updateTreeModelGistMetadata(gist.id, gist.html_url, true);
           
           toast.success(`Loaded "${modelName}" and created GitHub backup`);
         } catch (error) {
@@ -103,6 +113,13 @@ export const LoadModelButton: React.FC = () => {
       } else {
         toast.success(`Loaded "${modelName}" successfully`);
       }
+      
+      // Emit model loaded event
+      syncEventSystem.emit('MODEL_LOADED', {
+        modelId: model.id,
+        gistId: model.gistId,
+        gistUrl: model.gistUrl
+      });
       
       // Mark changes for sync if sync is enabled
       if (isAuthenticatedForSync) {
@@ -135,6 +152,7 @@ export const LoadModelButton: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onLoadModel={handleLoadModel}
+        key={refreshKey} // Force refresh when sync events occur
       />
     </>
   );

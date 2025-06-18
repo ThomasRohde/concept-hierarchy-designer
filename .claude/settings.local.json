@@ -11,7 +11,9 @@
       "Bash(/home/thomas/.nvm/versions/node/v22.14.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg \"NewTreeModal|newTreeModalOpen|onNewTree\" /mnt/c/Users/thoma/Projects/concept-hierarchy-designer/src)",
       "WebFetch(domain:gist.github.com)",
       "Bash(npx tsc:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(npm test:*)",
+      "Bash(npm run:*)"
     ],
     "deny": []
   }

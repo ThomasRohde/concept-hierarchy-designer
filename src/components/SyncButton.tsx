@@ -4,6 +4,7 @@ import { useSyncContext } from '../context/SyncContext';
 import { useTreeContext } from '../context/TreeContext';
 import { syncCurrentTreeToGitHub, getTreeSyncStatus } from '../utils/syncIntegration';
 import { GitHubAuthService } from '../services/githubAuthService';
+import { createSyncEventListener } from '../utils/syncEventSystem';
 
 interface SyncButtonProps {
   variant?: 'default' | 'compact' | 'icon-only';
@@ -55,6 +56,35 @@ export const SyncButton: React.FC<SyncButtonProps> = ({
     };
     loadSyncStatus();
   }, [nodes]);
+
+  // Listen for sync events to update status automatically
+  useEffect(() => {
+    const eventListener = createSyncEventListener();
+    
+    const unsubscribeGistCreated = eventListener.onGistCreated(async () => {
+      console.log('🔄 SyncButton: Gist created, refreshing sync status');
+      const status = await getTreeSyncStatus();
+      setSyncStatus(status);
+    });
+    
+    const unsubscribeGistUpdated = eventListener.onGistUpdated(async () => {
+      console.log('🔄 SyncButton: Gist updated, refreshing sync status');
+      const status = await getTreeSyncStatus();
+      setSyncStatus(status);
+    });
+    
+    const unsubscribeMetadataUpdated = eventListener.onMetadataUpdated(async () => {
+      console.log('🔄 SyncButton: Metadata updated, refreshing sync status');
+      const status = await getTreeSyncStatus();
+      setSyncStatus(status);
+    });
+    
+    return () => {
+      unsubscribeGistCreated();
+      unsubscribeGistUpdated();
+      unsubscribeMetadataUpdated();
+    };
+  }, []);
 
   // Keyboard shortcut for manual sync (Ctrl+S or Cmd+S)
   useEffect(() => {

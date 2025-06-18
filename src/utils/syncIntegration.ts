@@ -1,8 +1,7 @@
 import { NodeData, TreeModel, PromptCollection } from '../types';
 import { SyncManager } from './syncManager';
 import { loadData, saveData } from './offlineStorage';
-import { getCurrentTreeModel } from './storageUtils';
-import { getRootNode } from './gistUtils';
+import { createOrUpdateTreeModel, getCurrentTreeModel } from './treeModelUtils';
 
 // Robust sync lock system to prevent concurrent sync operations that could create duplicate gists
 interface SyncLockEntry {
@@ -71,6 +70,7 @@ const releaseSyncLock = (treeId: string, requestId: string): void => {
 
 /**
  * Converts the current tree structure to a TreeModel for syncing
+ * Now uses centralized TreeModel creation for consistency
  */
 export const convertNodesToTreeModel = async (
   nodes: NodeData[],
@@ -82,55 +82,6 @@ export const convertNodesToTreeModel = async (
   console.log('🔄 convertNodesToTreeModel: Name override:', name);
   console.log('🔄 convertNodesToTreeModel: Description override:', description);
   
-  // Try to load existing model metadata or create new
-  let existingModel = await getCurrentTreeModel();
-  console.log('🔄 convertNodesToTreeModel: getCurrentTreeModel result:', {
-    found: Boolean(existingModel),
-    gistId: existingModel?.gistId,
-    gistUrl: existingModel?.gistUrl,
-    id: existingModel?.id,
-    version: existingModel?.version
-  });
-  
-  // If no existing model found, check for persisted gist association
-  if (!existingModel) {
-    try {
-      const gistAssociation = await loadData('gistAssociation');
-      if (gistAssociation && gistAssociation.gistId) {
-        console.log('🔍 convertNodesToTreeModel: Found persisted gist association:', gistAssociation.gistId);
-        
-        // Try to fetch the gist to verify it still exists and get updated metadata
-        const { GitHubGistService } = await import('../services/githubGistService');
-        try {
-          const existingGist = await GitHubGistService.getGist(gistAssociation.gistId);
-          const remoteModel = GitHubGistService.parseGistToModel(existingGist);
-          
-          if (remoteModel) {
-            console.log('✅ convertNodesToTreeModel: Successfully retrieved model from persisted gist');
-            existingModel = remoteModel;
-          }
-        } catch (error) {
-          console.warn('⚠️ convertNodesToTreeModel: Persisted gist no longer accessible:', error);
-          // Clear invalid association
-          await saveData('gistAssociation', null);
-        }
-      }
-    } catch (error) {
-      console.warn('⚠️ convertNodesToTreeModel: Failed to check gist association:', error);
-    }
-  }
-  if (existingModel) {
-    console.log('🔄 convertNodesToTreeModel: Loaded existing TreeModel with preserved metadata:', {
-      id: existingModel.id,
-      gistId: existingModel.gistId,
-      gistUrl: existingModel.gistUrl,
-      version: existingModel.version,
-      hasGistId: Boolean(existingModel.gistId)
-    });
-  } else {
-    console.log('🔄 convertNodesToTreeModel: No existing TreeModel found, creating new one');
-  }
-
   // Get current prompts collection from multiple sources
   let prompts: PromptCollection = { prompts: [], activePromptId: null };
   try {
@@ -153,42 +104,14 @@ export const convertNodesToTreeModel = async (
     }
   }
 
-  const now = new Date();
-  const modelId = existingModel?.id || `tree_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  console.log('🔄 convertNodesToTreeModel: Using model ID:', modelId);
-
-  // Use root node name as model name if not explicitly provided
-  const rootNode = getRootNode(nodes);
-  const modelName = name !== undefined ? name : (rootNode ? rootNode.name : (existingModel?.name || 'My Concept Hierarchy'));
-
-  // Create or update the tree model
-  const treeModel: TreeModel = {
-    id: modelId,
-    name: modelName,
-    description: description !== undefined ? description : (existingModel?.description || 'A concept hierarchy created with the Themis app'),
-    nodes: nodes,
-    prompts: prompts,
-    createdAt: existingModel?.createdAt || now,
-    lastModified: now,
-    version: (existingModel?.version || 0) + 1,
-    gistId: existingModel?.gistId,
-    gistUrl: existingModel?.gistUrl,
-    category: existingModel?.category || 'personal',
-    tags: existingModel?.tags || [],
-    author: existingModel?.author,
-    license: existingModel?.license || 'MIT',
-    isPublic: existingModel?.isPublic || false,
-  };
-
-  console.log('🔄 convertNodesToTreeModel: GistId assignment check:', {
-    existingGistId: existingModel?.gistId,
-    newModelGistId: treeModel.gistId,
-    preserved: existingModel?.gistId === treeModel.gistId,
-    existingGistUrl: existingModel?.gistUrl,
-    newModelGistUrl: treeModel.gistUrl
+  // Use centralized TreeModel creation for consistency
+  const treeModel = await createOrUpdateTreeModel(nodes, prompts, {
+    name,
+    description,
+    preserveExisting: true
   });
 
-  console.log('🔄 convertNodesToTreeModel: Created tree model:', {
+  console.log('🔄 convertNodesToTreeModel: Created tree model using centralized utility:', {
     id: treeModel.id,
     name: treeModel.name,
     nodeCount: treeModel.nodes.length,
@@ -196,15 +119,6 @@ export const convertNodesToTreeModel = async (
     gistId: treeModel.gistId,
     isPublic: treeModel.isPublic
   });
-
-  // Save the updated model
-  try {
-    await saveData('currentTreeModel', treeModel);
-    console.log('✅ convertNodesToTreeModel: Model saved to storage');
-  } catch (error) {
-    console.error('❌ convertNodesToTreeModel: Failed to save model:', error);
-    throw error;
-  }
 
   return treeModel;
 };

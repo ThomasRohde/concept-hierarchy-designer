@@ -6,9 +6,10 @@ import {
   saveData, 
   loadData 
 } from './offlineStorage';
-import { updateTreeModelMetadata } from './storageUtils';
+import { updateTreeModelGistMetadata, clearTreeModelGistMetadata } from './treeModelUtils';
 import { GitHubGistService } from '../services/githubGistService';
 import { GitHubAuthService } from '../services/githubAuthService';
+import { syncEventSystem } from './syncEventSystem';
 import { TreeModel } from '../types';
 
 export interface SyncConflict {
@@ -213,6 +214,9 @@ export class SyncManager {
     this.status.lastError = undefined;
     this.notifyListeners();
     console.log('⚙️ SyncManager: Started sync process');
+    
+    // Emit sync started event
+    syncEventSystem.emit('SYNC_STARTED');
 
     try {
       const queue = await getQueue();
@@ -251,9 +255,17 @@ export class SyncManager {
 
       this.status.lastSyncTime = Date.now();
       console.log('✅ SyncManager: Queue processing completed');
+      
+      // Emit sync completed event
+      syncEventSystem.emit('SYNC_COMPLETED');
     } catch (error) {
       console.error('❌ SyncManager: Error processing sync queue:', error);
       this.status.lastError = error instanceof Error ? error.message : 'Unknown sync error';
+      
+      // Emit sync error event
+      syncEventSystem.emit('SYNC_ERROR', { 
+        error: error instanceof Error ? error.message : 'Unknown sync error' 
+      });
     } finally {
       this.syncInProgress = false;
       this.status.isSyncing = false;
@@ -293,51 +305,49 @@ export class SyncManager {
     console.log('📝 SyncManager: Creating gist for model:', model.id);
     
     // Only check for existing gists if the model doesn't already have a gistId
-    // If we're in createGist, it means we explicitly want to create a new one
+    // And implement smarter duplicate detection based on model ID matching
     if (!model.gistId) {
       try {
-        console.log('🔍 SyncManager: Checking for existing concept hierarchy gists...');
-        const existingGists = await GitHubGistService.listConceptHierarchyGists(1, 10);
+        console.log('🔍 SyncManager: Checking for existing gists with matching model ID...');
+        const existingGists = await GitHubGistService.listConceptHierarchyGists(1, 20);
         
-        if (existingGists.length > 0) {
-          console.log('⚠️ SyncManager: Found', existingGists.length, 'existing concept hierarchy gists');
-          
-          // Find the most recent gist that could match this model
-          const mostRecentGist = existingGists
-            .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())[0];
-          
-          console.log('🔄 SyncManager: Most recent existing gist:', mostRecentGist.id, mostRecentGist.description);
-          
-          // Instead of creating a new gist, update the existing one
-          console.log('🔄 SyncManager: Updating existing gist instead of creating duplicate:', mostRecentGist.id);
+        // First, try to find a gist that contains this exact model ID
+        let matchingGist = null;
+        for (const gist of existingGists) {
+          try {
+            const gistModel = GitHubGistService.parseGistToModel(gist);
+            if (gistModel && gistModel.id === model.id) {
+              console.log('🎯 SyncManager: Found exact model ID match in gist:', gist.id);
+              matchingGist = gist;
+              break;
+            }
+          } catch (error) {
+            console.warn('⚠️ SyncManager: Failed to parse gist for model ID check:', gist.id, error);
+          }
+        }
+        
+        if (matchingGist) {
+          console.log('🔄 SyncManager: Updating existing gist with matching model ID:', matchingGist.id);
           
           // Update the TreeModel with the existing gist info
-          const updateSuccess = await updateTreeModelMetadata({
-            gistId: mostRecentGist.id,
-            gistUrl: mostRecentGist.html_url,
-          });
+          const updateSuccess = await updateTreeModelGistMetadata(
+            matchingGist.id,
+            matchingGist.html_url,
+            false // Don't increment version since we're just associating
+          );
           
           if (!updateSuccess) {
-            console.warn('⚠️ SyncManager: Failed to update TreeModel with existing gist metadata, using fallback');
-            model.gistId = mostRecentGist.id;
-            model.gistUrl = mostRecentGist.html_url;
-            await saveData('currentTreeModel', model);
+            console.warn('⚠️ SyncManager: Failed to update TreeModel with matching gist metadata');
           }
           
-          // Save gist association for persistence across sessions
-          try {
-            await saveData('gistAssociation', {
-              gistId: mostRecentGist.id,
-              gistUrl: mostRecentGist.html_url,
-              timestamp: Date.now()
-            });
-            console.log('💾 SyncManager: Existing gist association saved for session persistence');
-          } catch (error) {
-            console.warn('⚠️ SyncManager: Failed to save existing gist association:', error);
-          }
-          
-          // Now update the existing gist with current model data
-          return await this.updateGist(model, mostRecentGist.id);
+          // Update the existing gist with current model data
+          return await this.updateGist(model, matchingGist.id);
+        }
+        
+        // If no matching model ID found, check if user wants to handle existing gists
+        if (existingGists.length > 0) {
+          console.log('ℹ️ SyncManager: Found', existingGists.length, 'existing concept hierarchy gists but none match model ID');
+          console.log('ℹ️ SyncManager: Proceeding with new gist creation to avoid conflicts');
         }
       } catch (error) {
         console.warn('⚠️ SyncManager: Failed to check for existing gists, proceeding with creation:', error);
@@ -350,35 +360,37 @@ export class SyncManager {
       const gist = await GitHubGistService.createGist(model, model.isPublic);
       console.log('✅ SyncManager: Gist created successfully:', gist.id, gist.html_url);
       
-      // CRITICAL: Update the TreeModel metadata with gist information
-      const updateSuccess = await updateTreeModelMetadata({
-        gistId: gist.id,
-        gistUrl: gist.html_url,
-        version: model.version + 1
-      });
+      // CRITICAL: Update the TreeModel metadata with gist information using centralized utility
+      const updateSuccess = await updateTreeModelGistMetadata(gist.id, gist.html_url, true);
       
       if (updateSuccess) {
-        console.log('💾 SyncManager: TreeModel metadata updated with gist info');
+        console.log('💾 SyncManager: TreeModel metadata updated with gist info using centralized utility');
       } else {
         console.warn('⚠️ SyncManager: Failed to update TreeModel metadata, falling back to direct save');
         // Fallback to direct save
         model.gistId = gist.id;
         model.gistUrl = gist.html_url;
         await saveData('currentTreeModel', model);
+        
+        // Manual gist association save as fallback
+        try {
+          await saveData('gistAssociation', {
+            gistId: gist.id,
+            gistUrl: gist.html_url,
+            timestamp: Date.now()
+          });
+        } catch (error) {
+          console.warn('⚠️ SyncManager: Failed to save gist association in fallback:', error);
+        }
       }
       
-      // CRITICAL: Save gist association for persistence across sessions
-      try {
-        await saveData('gistAssociation', {
-          gistId: gist.id,
-          gistUrl: gist.html_url,
-          timestamp: Date.now()
-        });
-        console.log('💾 SyncManager: Gist association saved for session persistence');
-      } catch (error) {
-        console.warn('⚠️ SyncManager: Failed to save gist association:', error);
-      }
-      
+      // Emit gist created event
+      syncEventSystem.emit('GIST_CREATED', {
+        modelId: model.id,
+        gistId: gist.id,
+        gistUrl: gist.html_url
+      });
+
       return {
         success: true,
         action: 'CREATED',
@@ -418,12 +430,8 @@ export class SyncManager {
       const updatedGist = await GitHubGistService.updateGist(gistId, model, existingGist);
       console.log('✅ SyncManager: Gist updated successfully:', updatedGist.id);
       
-      // Update the TreeModel metadata with current gist information
-      const updateSuccess = await updateTreeModelMetadata({
-        gistId: updatedGist.id,
-        gistUrl: updatedGist.html_url,
-        version: model.version + 1
-      });
+      // Update the TreeModel metadata with current gist information using centralized utility
+      const updateSuccess = await updateTreeModelGistMetadata(updatedGist.id, updatedGist.html_url, true);
       
       if (!updateSuccess) {
         console.warn('⚠️ SyncManager: Failed to update TreeModel metadata after gist update, using fallback');
@@ -431,20 +439,26 @@ export class SyncManager {
         model.gistId = updatedGist.id;
         model.gistUrl = updatedGist.html_url;
         await saveData('currentTreeModel', model);
+        
+        // Manual gist association save as fallback
+        try {
+          await saveData('gistAssociation', {
+            gistId: updatedGist.id,
+            gistUrl: updatedGist.html_url,
+            timestamp: Date.now()
+          });
+        } catch (error) {
+          console.warn('⚠️ SyncManager: Failed to update gist association in fallback:', error);
+        }
       }
       
-      // Update gist association for persistence across sessions
-      try {
-        await saveData('gistAssociation', {
-          gistId: updatedGist.id,
-          gistUrl: updatedGist.html_url,
-          timestamp: Date.now()
-        });
-        console.log('💾 SyncManager: Gist association updated for session persistence');
-      } catch (error) {
-        console.warn('⚠️ SyncManager: Failed to update gist association:', error);
-      }
-      
+      // Emit gist updated event
+      syncEventSystem.emit('GIST_UPDATED', {
+        modelId: model.id,
+        gistId: updatedGist.id,
+        gistUrl: updatedGist.html_url
+      });
+
       return {
         success: true,
         action: 'UPDATED',
@@ -457,11 +471,8 @@ export class SyncManager {
       if (error instanceof Error && (error.message.includes('404') || error.message.includes('Not Found'))) {
         console.log('🗑️ SyncManager: Gist appears deleted, clearing local reference and creating new one');
         
-        // Clear the gist metadata from TreeModel
-        const clearSuccess = await updateTreeModelMetadata({
-          gistId: undefined,
-          gistUrl: undefined
-        });
+        // Clear the gist metadata from TreeModel using centralized utility
+        const clearSuccess = await clearTreeModelGistMetadata();
         
         if (!clearSuccess) {
           console.warn('⚠️ SyncManager: Failed to clear gist metadata, using fallback');
@@ -469,6 +480,7 @@ export class SyncManager {
           model.gistId = undefined;
           model.gistUrl = undefined;
           await saveData('currentTreeModel', model);
+          await saveData('gistAssociation', null);
         }
         
         // Try to create a new gist instead

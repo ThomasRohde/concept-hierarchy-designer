@@ -2,7 +2,7 @@ import { NodeData, TreeModel, PromptCollection } from '../types';
 import { toast } from 'react-hot-toast';
 import { saveData, loadData, DB_NAME, DB_VERSION } from './offlineStorage';
 import { openDB } from 'idb';
-import { getRootNode } from './gistUtils';
+import { createOrUpdateTreeModel, getCurrentTreeModel as getTreeModel } from './treeModelUtils';
 
 // Storage key names
 const STORAGE_KEY = 'concept-hierarchy-data';
@@ -25,19 +25,6 @@ export const saveTreeToLocalStorage = async (nodes: NodeData[]): Promise<boolean
   try {
     const timestamp = new Date().toISOString();
     
-    // Load existing TreeModel to preserve gist metadata
-    let existingModel: TreeModel | null = null;
-    try {
-      existingModel = await loadData('currentTreeModel');
-      console.log('🔄 saveTreeToLocalStorage: Preserving gist metadata from existing model:', {
-        gistId: existingModel?.gistId,
-        gistUrl: existingModel?.gistUrl,
-        version: existingModel?.version
-      });
-    } catch (error) {
-      console.log('🔄 saveTreeToLocalStorage: No existing TreeModel found, creating new one');
-    }
-
     // Get current prompts
     let prompts: PromptCollection = { prompts: [], activePromptId: null };
     try {
@@ -49,46 +36,14 @@ export const saveTreeToLocalStorage = async (nodes: NodeData[]): Promise<boolean
       console.warn('Could not load prompts, using default:', error);
     }
 
-    // Create/update TreeModel with preserved gist metadata
-    const now = new Date();
-    const modelId = existingModel?.id || `tree_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
-    // Use root node name as model name
-    const rootNode = getRootNode(nodes);
-    const modelName = rootNode ? rootNode.name : (existingModel?.name || 'My Concept Hierarchy');
-    
-    const treeModel: TreeModel = {
-      id: modelId,
-      name: modelName,
-      description: existingModel?.description || 'A concept hierarchy created with Themis app',
-      nodes: nodes,
-      prompts: prompts,
-      createdAt: existingModel?.createdAt || now,
-      lastModified: now,
-      version: (existingModel?.version || 0) + 1,
-      // CRITICAL: Preserve gist metadata
-      gistId: existingModel?.gistId,
-      gistUrl: existingModel?.gistUrl,
-      category: existingModel?.category || 'personal',
-      tags: existingModel?.tags || [],
-      author: existingModel?.author,
-      license: existingModel?.license || 'MIT',
-      isPublic: existingModel?.isPublic || false,
-    };
+    // Use centralized TreeModel creation to ensure consistency
+    await createOrUpdateTreeModel(nodes, prompts, { preserveExisting: true });
 
-    console.log('🔄 saveTreeToLocalStorage: Saving TreeModel with preserved gist metadata:', {
-      id: treeModel.id,
-      gistId: treeModel.gistId,
-      gistUrl: treeModel.gistUrl,
-      nodeCount: treeModel.nodes.length,
-      version: treeModel.version
-    });
-
-    // Save both legacy format and TreeModel format
-    await saveData(STORAGE_KEY, nodes); // Legacy compatibility
-    await saveData('currentTreeModel', treeModel); // Primary TreeModel storage
+    // Save legacy format for backward compatibility
+    await saveData(STORAGE_KEY, nodes);
     await saveData(LAST_SAVED_KEY, timestamp);
     
+    console.log('🔄 saveTreeToLocalStorage: Completed using centralized TreeModel creation');
     return true;
   } catch (error) {
     console.error('Error saving tree data:', error);
@@ -236,23 +191,7 @@ export const clearSavedData = async (): Promise<void> => {
  * @returns Promise resolving to TreeModel or null if none exists
  */
 export const getCurrentTreeModel = async (): Promise<TreeModel | null> => {
-  try {
-    const treeModel = await loadData('currentTreeModel');
-    if (treeModel && typeof treeModel === 'object' && treeModel.id) {
-      console.log('🔄 getCurrentTreeModel: Retrieved TreeModel with gist metadata:', {
-        id: treeModel.id,
-        gistId: treeModel.gistId,
-        gistUrl: treeModel.gistUrl,
-        version: treeModel.version,
-        nodeCount: treeModel.nodes?.length
-      });
-      return treeModel;
-    }
-    return null;
-  } catch (error) {
-    console.error('Error loading current TreeModel:', error);
-    return null;
-  }
+  return getTreeModel();
 };
 
 /**
